@@ -9,8 +9,8 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [role, setRole] = useState("tourist"); // Default role
-  const [key, setKey] = useState(""); // For guide or admin key
+  const [role, setRole] = useState("tourist");
+  const [key, setKey] = useState("");
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -44,9 +44,9 @@ const Login = () => {
 
       // Set user data in AuthContext (which will also save to localStorage)
       login({
-        fullName: data.fullName, // Use fullName from the backend response
-        email: data.email, // Use email from the backend response
-        role: data.role, // Use role from the backend response
+        fullName: data.fullName,
+        email: data.email,
+        role: data.role,
       });
 
       navigate("/");

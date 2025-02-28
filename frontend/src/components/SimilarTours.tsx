@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Tour } from "../types/tours"; // Define Tour interface in a shared types file
+import { Tour } from "../types/tours";
 
 interface SimilarToursProps {
   similarTours: Tour[];
@@ -44,7 +44,7 @@ const SimilarTours = ({ similarTours }: SimilarToursProps) => {
                 </div>
               </div>
               <Link
-                to={`/tour-details/${similarTour.id}`} // Ensure this matches the route in App.tsx
+                to={`/tour-details/${similarTour.id}`}
                 className="mt-4 block w-full px-4 py-2 bg-green-600 text-white text-center rounded-lg hover:bg-green-700 transition-all duration-300"
               >
                 View Details

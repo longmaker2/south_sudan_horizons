@@ -17,10 +17,10 @@ const TourSchema = new mongoose.Schema({
   video: { type: String, required: false },
   price: { type: Number, required: true },
   duration: { type: String, required: true },
-  reviews: [ReviewSchema], // Array of reviews
-  gallery: [{ type: String }], // Array of image URLs
-  included: [{ type: String }], // Array of included items
-  toBring: [{ type: String }], // Array of items to bring
+  reviews: [ReviewSchema],
+  gallery: [{ type: String }],
+  included: [{ type: String }],
+  toBring: [{ type: String }],
 });
 
 // Create and export the model

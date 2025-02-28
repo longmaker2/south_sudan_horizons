@@ -3,7 +3,7 @@ import ProfileComponent from "../components/ProfileComponent";
 import ChangePassword from "../components/ChangePassword";
 import BookingHistory from "../components/BookingHistory";
 import EditProfileModal from "../components/EditProfileModal";
-import config from "../config"; // Import your config file
+import config from "../config";
 
 interface Tourist {
   name: string;
@@ -33,7 +33,7 @@ const Profile: React.FC = () => {
   // Fetch the user's profile from the backend
   useEffect(() => {
     const fetchProfile = async () => {
-      const token = localStorage.getItem("token"); // Get the token from localStorage
+      const token = localStorage.getItem("token");
       if (!token) {
         console.error("No token found");
         return;
@@ -52,7 +52,7 @@ const Profile: React.FC = () => {
         }
 
         const data = await response.json();
-        console.log("Fetched profile data:", data); // Debugging log
+        console.log("Fetched profile data:", data);
 
         setTourist({
           name: data.fullName,

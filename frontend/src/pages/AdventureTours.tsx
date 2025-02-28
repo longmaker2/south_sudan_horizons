@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { fetchTours } from "../utils/api"; // Import the fetchTours function
-import { Tour } from "../types/tours"; // Import the Tour type
-import { FaStar } from "react-icons/fa"; // Import the star icon for ratings
-import { Link } from "react-router-dom"; // Import Link for the "View Details" button
+import { fetchTours } from "../utils/api";
+import { Tour } from "../types/tours";
+import { FaStar } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const AdventureTours = () => {
   const [adventureTours, setAdventureTours] = useState<Tour[]>([]);
@@ -143,7 +143,7 @@ const AdventureTours = () => {
                   </span>
                 </div>
                 <Link
-                  to={`/tour-details/${tour.id}`} // Link to the tour details page
+                  to={`/tour-details/${tour.id}`}
                   className="mt-4 block w-full px-4 py-2 bg-green-600 text-white text-center rounded-lg hover:bg-green-700 transition-all duration-300"
                 >
                   View Details

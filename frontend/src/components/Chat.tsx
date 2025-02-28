@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 
 interface ChatProps {
-  guideName: string; // Prop for the guide's name
-  isOpen: boolean; // Prop to control modal visibility
-  onClose: () => void; // Prop to close the modal
+  guideName: string;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 const Chat = ({ guideName, isOpen, onClose }: ChatProps) => {
-  const [buttonPosition, setButtonPosition] = useState({ x: 200, y: "50%" }); // State to track button position
+  const [buttonPosition, setButtonPosition] = useState({ x: 200, y: "50%" });
 
   const handleDrag = (
     e: React.MouseEvent<HTMLDivElement | HTMLButtonElement>,
@@ -48,8 +48,8 @@ const Chat = ({ guideName, isOpen, onClose }: ChatProps) => {
         onClick={onClose} // Toggle the modal
         onMouseDown={(e) => handleDrag(e, setButtonPosition)}
         className="bg-green-600 text-white p-4 rounded-full shadow-lg hover:bg-green-700 transition-all duration-300 cursor-move hover:scale-110"
-        title={`Chat with ${guideName}`} // Tooltip
-        aria-label="Chat with guide" // Accessibility
+        title={`Chat with ${guideName}`}
+        aria-label="Chat with guide"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -75,7 +75,7 @@ const Chat = ({ guideName, isOpen, onClose }: ChatProps) => {
             top: buttonPosition.y,
             left: `${buttonPosition.x + 60}px`,
             transform: "translateY(-50%)",
-            maxWidth: "90%", // Prevent overflow on small screens
+            maxWidth: "90%",
           }}
           className="bg-white rounded-lg shadow-lg w-80"
         >
@@ -84,7 +84,7 @@ const Chat = ({ guideName, isOpen, onClose }: ChatProps) => {
               Chat with {guideName}
             </h2>
             <button
-              onClick={onClose} // Close the modal
+              onClick={onClose}
               className="text-white hover:text-gray-200"
               aria-label="Close chat"
             >
@@ -107,10 +107,10 @@ const Chat = ({ guideName, isOpen, onClose }: ChatProps) => {
           <div className="p-4">
             <p className="text-gray-600">Start chatting with {guideName}!</p>
             <textarea
-              autoFocus // Auto-focus when modal opens
+              autoFocus
               className="w-full mt-4 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
               placeholder="Type your message (max 500 characters)..."
-              maxLength={500} // Add a character limit
+              maxLength={500}
               rows={3}
             />
             <button

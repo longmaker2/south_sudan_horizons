@@ -6,13 +6,13 @@ const userSchema = new mongoose.Schema(
     fullName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    profilePicture: { type: String }, // Stores path like "/uploads/1234567890-profile.jpg"
+    profilePicture: { type: String },
     role: {
       type: String,
       enum: ["tourist", "guide", "admin"],
       default: "tourist",
     },
-    key: { type: String }, // Optional field for guide/admin key
+    key: { type: String },
   },
   { timestamps: true }
 );

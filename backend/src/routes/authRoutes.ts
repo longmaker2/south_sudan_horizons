@@ -10,7 +10,7 @@ import { uploadTour } from "../middleware/upload";
 
 const router = express.Router();
 
-// Configure multer for file uploads with image filter
+// 📌 Profile Picture Storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/");
@@ -41,7 +41,7 @@ router.post(
   "/update-profile",
   upload.single("profilePicture"),
   async (req: Request, res: Response): Promise<void> => {
-    const token = req.headers.authorization?.split(" ")[1]; // Get token from headers
+    const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
       res.status(401).json({ message: "No token provided" });
       return;

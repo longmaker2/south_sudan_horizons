@@ -11,7 +11,7 @@ import {
   ChevronDownIcon,
 } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext"; // Import useAuth
+import { useAuth } from "../context/AuthContext";
 
 const navigation = [
   { name: "Home", href: "/", current: true },
@@ -125,9 +125,7 @@ const Navbar = () => {
             {user ? (
               <>
                 {/* Display the user's name */}
-                <span className="text-white font-medium">
-                  {user.fullName} {/* Render the user's name */}
-                </span>
+                <span className="text-white font-medium">{user.fullName}</span>
 
                 <button className="relative rounded-full bg-green-600 p-1 text-white hover:text-gray-300 focus:ring-2 focus:ring-white z-50">
                   <span className="sr-only">View notifications</span>

@@ -1,11 +1,11 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react"; // Import useState
-import Chat from "../components/Chat"; // Import the Chat component
+import { useState } from "react";
+import Chat from "../components/Chat";
 
 // Mock data for available guides
 const availableGuides = [
   {
-    id: 1,
+    id: "507f1f77bcf86cd799439011",
     name: "John Doe",
     profile: "Experienced guide with 5+ years of expertise in mountain tours.",
     email: "john.doe@example.com",
@@ -22,7 +22,7 @@ const availableGuides = [
     ],
   },
   {
-    id: 2,
+    id: "507f1f77bcf86cd799439012",
     name: "Jane Smith",
     profile: "Specializes in cultural and historical tours.",
     email: "jane.smith@example.com",
@@ -35,7 +35,7 @@ const availableGuides = [
     ],
   },
   {
-    id: 3,
+    id: "507f1f77bcf86cd799439013",
     name: "Alex Johnson",
     profile: "Adventure guide with a focus on extreme sports.",
     email: "alex.johnson@example.com",
@@ -50,11 +50,11 @@ const availableGuides = [
 ];
 
 const GuideProfile = () => {
-  const { guideId } = useParams(); // Get the guide ID from the URL
-  const navigate = useNavigate(); // Hook for navigation
-  const guide = availableGuides.find((g) => g.id === Number(guideId));
+  const { guideId } = useParams();
+  const navigate = useNavigate();
+  const guide = availableGuides.find((g) => g.id === guideId);
 
-  const [isChatOpen, setIsChatOpen] = useState(false); // State to control chat modal visibility
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   if (!guide) {
     return (
@@ -71,18 +71,18 @@ const GuideProfile = () => {
   }
 
   const handleChat = () => {
-    setIsChatOpen(true); // Open the chat modal
+    setIsChatOpen(true);
   };
 
   const handleBackToBooking = () => {
-    navigate(-1); // Go back to the previous page (booking page)
+    navigate(-1);
   };
 
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 mt-12">
       <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6">
         <img
-          src="https://via.placeholder.com/800x400" // Replace with actual image URL
+          src="https://via.placeholder.com/800x400"
           alt={guide.name}
           className="w-full h-64 object-cover rounded-lg"
         />
@@ -224,7 +224,7 @@ const GuideProfile = () => {
 
         <div className="mt-6 flex space-x-4">
           <button
-            onClick={handleChat} // Open the chat modal
+            onClick={handleChat}
             className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300"
           >
             Chat with {guide.name}

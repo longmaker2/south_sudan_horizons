@@ -1,4 +1,4 @@
-// import tours from "../assets/data/tours"; // Ensure the correct path to your tours data
+// import tours from "../assets/data/tours";
 
 // // Function to shuffle and get 9 random tours
 // const getRandomTours = (type?: string) => {

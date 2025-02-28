@@ -66,7 +66,7 @@ const getAllTours: RequestHandler<
 const getTourById: RequestHandler<{ id: string }> = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("Fetching tour with ID:", id); // Log the ID
+    console.log("Fetching tour with ID:", id);
     const tour = await Tour.findById(id);
     if (!tour) {
       res.status(404).json({ error: "Tour not found" });

@@ -60,7 +60,7 @@ const FunFactSection = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setFactIndex((prevIndex) => (prevIndex + 1) % facts.length);
-    }, 5000); // Change fact every 5 seconds
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
 

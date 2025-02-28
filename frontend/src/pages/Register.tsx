@@ -8,9 +8,9 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [password, setPassword] = useState(""); // Track password input
-  const [role, setRole] = useState("tourist"); // Default role
-  const [key, setKey] = useState(""); // For guide or admin key
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("tourist");
+  const [key, setKey] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -47,7 +47,7 @@ const Register = () => {
 
       // Check if the response is OK (status code 200-299)
       if (!response.ok) {
-        const errorData = await response.json(); // Parse the error response as JSON
+        const errorData = await response.json();
         console.error("Error Response:", errorData);
 
         // Display user-friendly error message
@@ -55,11 +55,11 @@ const Register = () => {
         return;
       }
 
-      const data = await response.json(); // Parse the response as JSON
+      const data = await response.json();
       console.log("Registration Success:", data);
 
       // Redirect to login page after successful registration
-      navigate("/login"); // Redirect to login page
+      navigate("/login");
     } catch (error) {
       console.error("Registration Error:", error);
       setError("An unexpected error occurred. Please try again.");
@@ -73,10 +73,10 @@ const Register = () => {
     let strength = 0;
 
     // Criteria for password strength
-    if (password.length >= 8) strength += 1; // Minimum length
-    if (/[A-Z]/.test(password)) strength += 1; // Uppercase letter
-    if (/[0-9]/.test(password)) strength += 1; // Number
-    if (/[^A-Za-z0-9]/.test(password)) strength += 1; // Special character
+    if (password.length >= 8) strength += 1;
+    if (/[A-Z]/.test(password)) strength += 1;
+    if (/[0-9]/.test(password)) strength += 1;
+    if (/[^A-Za-z0-9]/.test(password)) strength += 1;
 
     return strength;
   };
@@ -85,28 +85,28 @@ const Register = () => {
   const getProgressBarStyle = (password: string) => {
     const strength = calculatePasswordStrength(password);
     let width = 0;
-    let color = "bg-red-500"; // Default to red for weak password
+    let color = "bg-red-500";
 
     switch (strength) {
       case 1:
         width = 25;
-        color = "bg-red-500"; // Weak
+        color = "bg-red-500";
         break;
       case 2:
         width = 50;
-        color = "bg-yellow-500"; // Medium
+        color = "bg-yellow-500";
         break;
       case 3:
         width = 75;
-        color = "bg-green-500"; // Strong
+        color = "bg-green-500";
         break;
       case 4:
         width = 100;
-        color = "bg-green-700"; // Very strong
+        color = "bg-green-700";
         break;
       default:
         width = 0;
-        color = "bg-red-500"; // Very weak
+        color = "bg-red-500";
     }
 
     return { width: `${width}%`, color };
@@ -161,7 +161,7 @@ const Register = () => {
               className="w-full border border-green-400 px-4 py-2 rounded-lg focus:ring-2 focus:ring-green-500 text-gray-700"
               required
               value={password}
-              onChange={(e) => setPassword(e.target.value)} // Track password input
+              onChange={(e) => setPassword(e.target.value)}
             />
             <span
               className="absolute top-10 right-3 cursor-pointer text-gray-600"

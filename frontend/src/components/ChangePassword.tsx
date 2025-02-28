@@ -1,8 +1,8 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { FaLock } from "react-icons/fa";
-import PasswordInput from "./PasswordInput"; // Import the PasswordInput component
-import PasswordStrengthMeter from "./PasswordStrengthMeter"; // Import the PasswordStrengthMeter component
+import PasswordInput from "./PasswordInput";
+import PasswordStrengthMeter from "./PasswordStrengthMeter";
 
 interface ChangePasswordProps {
   currentPassword: string;

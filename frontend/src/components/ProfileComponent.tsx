@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { FaUser, FaEdit } from "react-icons/fa";
-import config from "../config"; // Import your config file
+import config from "../config";
 
 interface Tourist {
   name: string;
@@ -31,7 +31,7 @@ const ProfileComponent: React.FC<ProfileComponentProps> = ({
     ? `${config.baseUrl}/uploads/${tourist.profilePicture}`
     : null;
 
-  console.log("Image URL:", imageUrl); // Debugging log
+  console.log("Image URL:", imageUrl);
 
   return (
     <motion.div

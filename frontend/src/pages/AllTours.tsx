@@ -23,7 +23,7 @@ const AllTours = () => {
     const loadTours = async () => {
       try {
         const data = await fetchTours();
-        console.log(data); // Log the fetched tours to verify the image URLs
+        console.log(data);
         setTours(data);
         setFilteredTours(data);
       } catch (error) {
@@ -152,9 +152,9 @@ const AllTours = () => {
                     </div>
                   </div>
                   <Link
-                    to={`/tour-details/${tour.id}`} // Ensure this matches your route
+                    to={`/tour-details/${tour.id}`}
                     className="mt-4 block w-full px-4 py-2 bg-green-600 text-white text-center rounded-lg hover:bg-green-700 transition-all duration-300"
-                    onClick={() => console.log("Tour ID:", tour.id)} // Log the ID
+                    onClick={() => console.log("Tour ID:", tour.id)}
                   >
                     View Details
                   </Link>

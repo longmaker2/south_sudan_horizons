@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { fetchTours } from "../utils/api"; // Updated import
+import { fetchTours } from "../utils/api";
 import { Tour } from "../types/tours";
 
 const FeaturedDestinationsSection = () => {
@@ -10,9 +10,9 @@ const FeaturedDestinationsSection = () => {
   useEffect(() => {
     const loadDestinations = async () => {
       try {
-        const data = await fetchTours(); // Using fetchTours from api.ts
+        const data = await fetchTours();
         // Optionally limit the number of featured destinations
-        setDestinations(data.slice(0, 9)); // Showing 3 featured destinations
+        setDestinations(data.slice(0, 9));
       } catch (error) {
         console.error("Error loading destinations:", error);
       }
@@ -45,11 +45,10 @@ const FeaturedDestinationsSection = () => {
             className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
           >
             <img
-              src={destination.image} // Full URL is already constructed in fetchTours
+              src={destination.image}
               alt={destination.title}
               className="w-full h-48 object-cover rounded-lg"
               onError={(e) => {
-                // Fallback image if loading fails
                 (e.target as HTMLImageElement).src = "/fallback-image.jpg";
               }}
             />

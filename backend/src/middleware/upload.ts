@@ -2,7 +2,6 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 
-// Ensure directories exist
 const ensureDirectory = (dir: string) => {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
@@ -12,7 +11,7 @@ const ensureDirectory = (dir: string) => {
 // 📌 Profile Picture Storage
 const profileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const dir = path.join(__dirname, "../../uploads/"); // Ensuring correct path
+    const dir = path.join(__dirname, "../../uploads/");
     ensureDirectory(dir);
     cb(null, dir);
   },
@@ -24,7 +23,7 @@ const profileStorage = multer.diskStorage({
 // 📌 Tour Image Storage
 const tourStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const dir = path.join(__dirname, "../../tour_pics/"); // Ensuring correct path
+    const dir = path.join(__dirname, "../../tour_pics/");
     ensureDirectory(dir);
     cb(null, dir);
   },

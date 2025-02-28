@@ -39,9 +39,6 @@ const PopularTours = () => {
           data = allTours
             .sort((a, b) => (b.rating || 0) - (a.rating || 0))
             .slice(0, 9);
-
-          // If you want truly random tours instead of rating-based:
-          // data = allTours.sort(() => Math.random() - 0.5).slice(0, 9);
         }
 
         setPopularTours(data);

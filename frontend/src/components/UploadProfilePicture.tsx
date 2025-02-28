@@ -35,7 +35,7 @@ const UploadProfilePicture: React.FC<UploadProfilePictureProps> = ({
       setError("");
 
       const response = await axios.post(
-        `${config.baseUrl}/api/auth/update-profile`, // Reusing update-profile route
+        `${config.baseUrl}/api/auth/update-profile`,
         formData,
         {
           headers: {

@@ -23,7 +23,6 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
-  // Initialize user from localStorage on app load
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -33,12 +32,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = (userData: User) => {
     setUser(userData);
-    localStorage.setItem("user", JSON.stringify(userData)); // Save user data to localStorage
+    localStorage.setItem("user", JSON.stringify(userData));
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem("user"); // Remove user data from localStorage
+    localStorage.removeItem("user");
     localStorage.removeItem("token");
     localStorage.removeItem("role");
   };
@@ -50,6 +49,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
+// Export useAuth as a named export
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -57,3 +57,5 @@ export const useAuth = () => {
   }
   return context;
 };
+
+export { AuthContext };

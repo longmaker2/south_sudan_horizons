@@ -5,7 +5,7 @@ import {
   FaTwitter,
   FaLinkedinIn,
 } from "react-icons/fa";
-import StayUpdated from "./StayUpdated"; // Import the enhanced StayUpdated component
+import StayUpdated from "./StayUpdated";
 
 const Footer = () => {
   return (

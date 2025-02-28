@@ -4,8 +4,9 @@ import express from "express";
 import cors from "cors";
 import multer from "multer";
 import connectDB from "./config/db";
-import authRoutes from "./routes/authRoutes"; // Import auth routes
-import tourRoutes from "./routes/tourRoutes"; // Import tour routes
+import authRoutes from "./routes/authRoutes";
+import tourRoutes from "./routes/tourRoutes";
+import bookingRoutes from "./routes/bookingRoutes";
 
 // Load environment variables
 dotenv.config({ path: path.resolve(__dirname, ".env") });
@@ -41,7 +42,8 @@ connectDB();
 
 // Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/tours", tourRoutes); // Register tour routes
+app.use("/api/tours", tourRoutes);
+app.use("/api/bookings", bookingRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 5000;

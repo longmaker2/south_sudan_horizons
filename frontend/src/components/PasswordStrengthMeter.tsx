@@ -7,7 +7,7 @@ interface PasswordStrengthMeterProps {
 const PasswordStrengthMeter: React.FC<PasswordStrengthMeterProps> = ({
   password,
 }) => {
-  const strength = Math.min(password.length * 10, 100); // Simple strength calculation
+  const strength = Math.min(password.length * 10, 100);
   return (
     <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
       <div

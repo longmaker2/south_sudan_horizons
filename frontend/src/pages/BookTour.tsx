@@ -1,9 +1,9 @@
 import { useParams } from "react-router-dom";
 
 const BookTour = () => {
-  useParams(); // Get the tour ID from the URL
+  useParams();
 
-  // Fetch tour details based on the ID (you can use an API or static data)
+  // Fetch tour details based on the ID
   const tour = {
     id: 1,
     name: "Adventure Tours",
