@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
-import { FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaLock } from "react-icons/fa";
 import PasswordInput from "./PasswordInput"; // Import the PasswordInput component
 import PasswordStrengthMeter from "./PasswordStrengthMeter"; // Import the PasswordStrengthMeter component
 

@@ -21,9 +21,9 @@ const toursData = [
 ];
 
 // Debounce function to delay search
-const debounce = (func: Function, delay: number) => {
-  let timer: NodeJS.Timeout;
-  return (...args: any[]) => {
+const debounce = (func: (...args: unknown[]) => void, delay: number) => {
+  let timer: ReturnType<typeof setTimeout>;
+  return (...args: unknown[]) => {
     clearTimeout(timer);
     timer = setTimeout(() => func(...args), delay);
   };

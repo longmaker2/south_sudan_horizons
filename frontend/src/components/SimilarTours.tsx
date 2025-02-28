@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Tour } from "../types"; // Define Tour interface in a shared types file
+import { Tour } from "../types/tours"; // Define Tour interface in a shared types file
 
 interface SimilarToursProps {
   similarTours: Tour[];

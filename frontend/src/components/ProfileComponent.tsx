@@ -47,7 +47,7 @@ const ProfileComponent: React.FC<ProfileComponentProps> = ({
         {/* Display profile picture or initials */}
         {tourist.profilePicture ? (
           <img
-            src={imageUrl}
+            src={imageUrl || ""}
             alt="Profile"
             className="w-16 h-16 rounded-full"
           />
