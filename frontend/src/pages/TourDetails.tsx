@@ -67,7 +67,7 @@ const TourDetails = () => {
   const getInitials = (name: string): string => {
     const names = name.split(" ");
     const initials = names.map((n) => n[0]).join("");
-    return initials.toUpperCase();
+    return initials.toUpperCase(); // Convert to uppercase
   };
 
   if (isLoading) {
