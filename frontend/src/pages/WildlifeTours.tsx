@@ -1,9 +1,44 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import tours from "../assets/data/tours"; // Import the tours data
+import { fetchTours } from "../utils/api"; // Import the fetchTours function
+import { Tour } from "../types/tours"; // Import the Tour type
+import { FaStar } from "react-icons/fa"; // Import the star icon for ratings
+import { Link } from "react-router-dom"; // Import Link for the "View Details" button
 
 const WildlifeTours = () => {
-  // Filter tours to get only Wildlife tours
-  const wildlifeTours = tours.filter((tour) => tour.type === "Wildlife");
+  const [wildlifeTours, setWildlifeTours] = useState<Tour[]>([]);
+
+  useEffect(() => {
+    const loadTours = async () => {
+      try {
+        const data = await fetchTours();
+        const filteredWildlifeTours = data.filter(
+          (tour) => tour.type === "Wildlife"
+        );
+        setWildlifeTours(filteredWildlifeTours);
+      } catch (error) {
+        console.error("Failed to fetch tours:", error);
+      }
+    };
+    loadTours();
+  }, []);
+
+  // Function to render star ratings
+  const renderStars = (rating: number) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        <FaStar
+          key={i}
+          className={`${
+            i <= rating ? "text-yellow-400" : "text-gray-300"
+          } text-sm`}
+          fill="currentColor"
+        />
+      );
+    }
+    return <div className="flex space-x-1">{stars}</div>;
+  };
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -95,11 +130,22 @@ const WildlifeTours = () => {
                 </h3>
                 <p className="text-gray-700 mt-2">{tour.description}</p>
                 <div className="mt-4 flex justify-between items-center">
+                  <div className="flex items-center space-x-1">
+                    {renderStars(tour.rating)}
+                    <span className="text-sm text-gray-600">
+                      ({tour.rating})
+                    </span>
+                  </div>
                   <span className="text-green-800 font-bold">
                     ${tour.price}
                   </span>
-                  <span className="text-gray-600">{tour.duration}</span>
                 </div>
+                <Link
+                  to={`/tour-details/${tour.id}`} // Link to the tour details page
+                  className="mt-4 block w-full px-4 py-2 bg-green-600 text-white text-center rounded-lg hover:bg-green-700 transition-all duration-300"
+                >
+                  View Details
+                </Link>
               </div>
             </motion.div>
           ))}

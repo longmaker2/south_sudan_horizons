@@ -22,24 +22,6 @@ const travelTips = [
     image: travelTipsImage3,
     description: "A guide to the wildlife you can encounter in South Sudan.",
   },
-  {
-    id: 1,
-    title: "Top 10 Travel Tips",
-    image: travelTipsImage,
-    description: "Essential tips for traveling to South Sudan.",
-  },
-  {
-    id: 2,
-    title: "Cultural Etiquette",
-    image: travelTipsImage2,
-    description: "Learn about the cultural norms and etiquette in South Sudan.",
-  },
-  {
-    id: 3,
-    title: "Wildlife Guide",
-    image: travelTipsImage3,
-    description: "A guide to the wildlife you can encounter in South Sudan.",
-  },
 ];
 
 const TravelTipsSection = () => {

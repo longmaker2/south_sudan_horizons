@@ -33,8 +33,18 @@ const SimilarTours = ({ similarTours }: SimilarToursProps) => {
               <h3 className="text-xl font-bold text-green-800">
                 {similarTour.title}
               </h3>
+              <p className="mt-2 text-gray-700">{similarTour.description}</p>
+              <div className="mt-4 flex justify-between items-center">
+                <div className="flex items-center">
+                  <span className="text-yellow-500">★</span>
+                  <span className="ml-1 text-gray-700">
+                    {similarTour.rating} ({Math.floor(Math.random() * 100) + 1}{" "}
+                    reviews)
+                  </span>
+                </div>
+              </div>
               <Link
-                to={`/tours/${similarTour.id}`}
+                to={`/tour-details/${similarTour.id}`} // Ensure this matches the route in App.tsx
                 className="mt-4 block w-full px-4 py-2 bg-green-600 text-white text-center rounded-lg hover:bg-green-700 transition-all duration-300"
               >
                 View Details
