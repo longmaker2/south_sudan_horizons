@@ -14,6 +14,8 @@ const BookingDetails: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedDate, setEditedDate] = useState("");
   const [editedGuests, setEditedGuests] = useState<number>(1);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchBooking = async () => {
@@ -32,14 +34,18 @@ const BookingDetails: React.FC = () => {
   }, [id]);
 
   const handleCancel = async () => {
-    if (window.confirm("Are you sure you want to cancel this booking?")) {
-      try {
-        await cancelBooking(id!);
-        setBooking({ ...booking!, status: "cancelled" });
-        alert("Booking cancelled successfully!");
-      } catch {
-        setError("Failed to cancel booking. Please try again.");
-      }
+    setShowCancelConfirm(true);
+  };
+
+  const confirmCancel = async () => {
+    try {
+      await cancelBooking(id!);
+      setBooking({ ...booking!, status: "cancelled" });
+      setSuccessMessage("Your booking has been successfully cancelled.");
+      setShowCancelConfirm(false);
+      setTimeout(() => setSuccessMessage(null), 5000);
+    } catch {
+      setError("Failed to cancel booking. Please try again.");
     }
   };
 
@@ -53,7 +59,8 @@ const BookingDetails: React.FC = () => {
       const updatedBooking = await fetchBookingById(id!);
       setBooking(updatedBooking);
       setIsEditing(false);
-      alert("Booking updated successfully!");
+      setSuccessMessage("Your booking has been successfully updated.");
+      setTimeout(() => setSuccessMessage(null), 5000);
     } catch {
       setError("Failed to update booking. Please try again.");
     }
@@ -95,7 +102,7 @@ const BookingDetails: React.FC = () => {
       transition={{ duration: 0.5 }}
       className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 py-12 px-4 sm:px-6 lg:px-8 mt-16"
     >
-      <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-8">
+      <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-8 relative">
         {/* Back Link */}
         <Link
           to="/profile"
@@ -214,11 +221,52 @@ const BookingDetails: React.FC = () => {
           </form>
         )}
 
+        {/* Success Message */}
+        {successMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="mt-6 bg-green-50 p-4 rounded-lg text-center text-green-800 text-lg font-semibold shadow-sm"
+          >
+            {successMessage}
+          </motion.div>
+        )}
+
         {/* Error Message */}
         {error && (
           <p className="mt-6 text-red-500 text-center text-lg font-semibold bg-red-50 p-4 rounded-lg">
             {error}
           </p>
+        )}
+
+        {/* Cancel Confirmation */}
+        {showCancelConfirm && (
+          <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 shadow-lg max-w-md w-full">
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                Confirm Cancellation
+              </h3>
+              <p className="text-gray-700 mb-6">
+                Are you sure you want to cancel this booking? This action cannot
+                be undone.
+              </p>
+              <div className="flex space-x-4">
+                <button
+                  onClick={confirmCancel}
+                  className="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                >
+                  Yes, Cancel Booking
+                </button>
+                <button
+                  onClick={() => setShowCancelConfirm(false)}
+                  className="w-full px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition-all duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                >
+                  No, Keep Booking
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </motion.div>
