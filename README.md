@@ -30,7 +30,7 @@ South Sudan Horizons is a digital tourism platform that connects travelers with 
 
 ### **Deployment & Hosting**
 
-- Vercel for frontend deployment
+- Vercel is used for frontend deployment - **[Link to the deployed frontend](https://south-sudan-horizons.vercel.app/)**
 - Render for backend deployment
 
 ## 📂 Project Structure
