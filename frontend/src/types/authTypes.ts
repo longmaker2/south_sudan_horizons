@@ -1,3 +1,10 @@
+export interface User {
+  id: string;
+  fullName: string;
+  email: string;
+  role: string;
+}
+
 export interface AuthFormProps {
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   isLoading: boolean;
@@ -22,4 +29,10 @@ export interface UserCredentials {
 export interface RegisterCredentials extends UserCredentials {
   fullName: string;
   confirmPassword: string;
+}
+
+export interface AuthContextType {
+  user: User | null;
+  login: (userData: User) => void;
+  logout: () => void;
 }

@@ -5,12 +5,7 @@ import {
   ReactNode,
   useEffect,
 } from "react";
-
-interface User {
-  fullName: string;
-  email: string;
-  role: string;
-}
+import { User } from "../types/authTypes";
 
 interface AuthContextType {
   user: User | null;
@@ -31,6 +26,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const login = (userData: User) => {
+    console.log("Setting User Data in AuthContext:", userData);
     setUser(userData);
     localStorage.setItem("user", JSON.stringify(userData));
   };
@@ -49,7 +45,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// Export useAuth as a named export
+// Export useAuth
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

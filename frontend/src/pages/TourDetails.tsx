@@ -8,7 +8,7 @@ import { Tour } from "../types/tours";
 import { fetchTourDetails, fetchTours, submitReview } from "../utils/api";
 
 const TourDetails = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [tour, setTour] = useState<Tour | null>(null);
   const [similarTours, setSimilarTours] = useState<Tour[]>([]);
@@ -25,15 +25,27 @@ const TourDetails = () => {
     const loadTourDetails = async () => {
       try {
         setIsLoading(true);
-        if (id) {
-          const tourData = await fetchTourDetails(id);
-          setTour(tourData);
-          const allTours = await fetchTours();
-          const similar = allTours
-            .filter((t) => t.type === tourData.type && t.id !== tourData.id)
-            .slice(0, 3);
-          setSimilarTours(similar);
+        setError(null);
+
+        if (!id) {
+          throw new Error("Tour ID is missing.");
         }
+
+        // Fetch tour details
+        const tourData = await fetchTourDetails(id);
+        console.log("Fetched tour data:", tourData);
+
+        if (!tourData) {
+          throw new Error("Tour not found.");
+        }
+        setTour(tourData);
+
+        // Fetch similar tours
+        const allTours = await fetchTours();
+        const similar = allTours
+          .filter((t) => t.type === tourData.type && t.id !== tourData.id)
+          .slice(0, 3);
+        setSimilarTours(similar);
       } catch (error) {
         console.error("Failed to fetch tour details:", error);
         setError("Failed to load tour details. Please try again later.");
@@ -41,6 +53,7 @@ const TourDetails = () => {
         setIsLoading(false);
       }
     };
+
     loadTourDetails();
   }, [id]);
 
@@ -67,7 +80,7 @@ const TourDetails = () => {
   const getInitials = (name: string): string => {
     const names = name.split(" ");
     const initials = names.map((n) => n[0]).join("");
-    return initials.toUpperCase(); // Convert to uppercase
+    return initials.toUpperCase();
   };
 
   if (isLoading) {
@@ -122,7 +135,8 @@ const TourDetails = () => {
             setNewReview={setNewReview}
             getInitials={getInitials}
           />
-          <Booking />
+
+          <Booking tourId={tour.id.toString()} />
         </div>
 
         <SimilarTours similarTours={similarTours} />

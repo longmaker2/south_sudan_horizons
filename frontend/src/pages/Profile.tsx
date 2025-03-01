@@ -4,19 +4,12 @@ import ChangePassword from "../components/ChangePassword";
 import BookingHistory from "../components/BookingHistory";
 import EditProfileModal from "../components/EditProfileModal";
 import config from "../config";
+import { Booking } from "../types/bookings";
 
 interface Tourist {
   name: string;
   email: string;
   profilePicture: string | null;
-}
-
-interface Booking {
-  id: number;
-  title: string;
-  date: string;
-  price: number;
-  description: string;
 }
 
 const Profile: React.FC = () => {
@@ -30,7 +23,6 @@ const Profile: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
 
-  // Fetch the user's profile from the backend
   useEffect(() => {
     const fetchProfile = async () => {
       const token = localStorage.getItem("token");
@@ -69,40 +61,96 @@ const Profile: React.FC = () => {
     fetchProfile();
   }, []);
 
-  // Handle profile updates
+  useEffect(() => {
+    const fetchBookingHistory = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("No token found for booking history");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(`${config.baseUrl}/api/bookings/user`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch booking history");
+        }
+
+        const bookings = await response.json();
+        console.log("Fetched booking history:", bookings);
+
+        interface BookingResponse {
+          _id: string;
+          tourId:
+            | { _id: string; title: string; price: number; description: string }
+            | string;
+          userId: string;
+          name: string;
+          email: string;
+          guests: number;
+          date: string;
+          needsGuide: boolean;
+          guideId?: { _id: string; fullName: string } | string;
+          status?: string;
+        }
+
+        const mappedBookings: Booking[] = bookings.map(
+          (booking: BookingResponse) => ({
+            id: booking._id,
+            tourId:
+              typeof booking.tourId === "string"
+                ? booking.tourId
+                : booking.tourId._id,
+            userId: booking.userId,
+            name: booking.name,
+            email: booking.email,
+            guests: booking.guests,
+            date: new Date(booking.date).toLocaleDateString(),
+            needsGuide: booking.needsGuide,
+            guideId:
+              typeof booking.guideId === "string"
+                ? booking.guideId
+                : booking.guideId?._id,
+            status: booking.status || "pending",
+            title:
+              typeof booking.tourId === "string"
+                ? "Unknown Tour"
+                : booking.tourId.title || "Unknown Tour",
+            price:
+              typeof booking.tourId === "string"
+                ? 0
+                : booking.tourId.price || 0,
+            description:
+              typeof booking.tourId === "string"
+                ? "No description available"
+                : booking.tourId.description || "No description available",
+            guideName:
+              typeof booking.guideId === "string"
+                ? undefined
+                : booking.guideId?.fullName || undefined,
+          })
+        );
+
+        setBookingHistory(mappedBookings);
+      } catch (error) {
+        console.error("Error fetching booking history:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBookingHistory();
+  }, []);
+
   const handleSaveProfile = (updatedTourist: Tourist) => {
     setTourist(updatedTourist);
   };
-
-  // Simulated API Call for Booking History
-  useEffect(() => {
-    setTimeout(() => {
-      setBookingHistory([
-        {
-          id: 1,
-          title: "Boma National Park Safari",
-          date: "2023-10-15",
-          price: 600,
-          description: "Explore one of Africa's largest national parks.",
-        },
-        {
-          id: 2,
-          title: "White Nile Rafting Adventure",
-          date: "2023-09-25",
-          price: 350,
-          description: "Experience the thrill of rafting on the White Nile.",
-        },
-        {
-          id: 3,
-          title: "Juba Cultural Experience",
-          date: "2023-08-10",
-          price: 200,
-          description: "Immerse yourself in the vibrant culture of Juba.",
-        },
-      ]);
-      setLoading(false);
-    }, 1200);
-  }, []);
 
   return (
     <div className="min-h-screen bg-gray-100 p-6 mt-15">
@@ -111,13 +159,11 @@ const Profile: React.FC = () => {
           Tourist Dashboard
         </h1>
 
-        {/* Profile Section */}
         <ProfileComponent
           tourist={tourist}
           onEditProfile={() => setIsEditingProfile(true)}
         />
 
-        {/* Edit Profile Modal */}
         {isEditingProfile && (
           <EditProfileModal
             tourist={tourist}
@@ -126,7 +172,6 @@ const Profile: React.FC = () => {
           />
         )}
 
-        {/* Change Password Form */}
         <ChangePassword
           currentPassword={""}
           setCurrentPassword={() => {}}
@@ -145,7 +190,6 @@ const Profile: React.FC = () => {
           handlePasswordChange={() => {}}
         />
 
-        {/* Booking History */}
         <BookingHistory loading={loading} bookingHistory={bookingHistory} />
       </div>
     </div>

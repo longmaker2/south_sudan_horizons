@@ -18,6 +18,7 @@ import TourDetails from "./pages/TourDetails";
 import GuideProfile from "./pages/GuideProfile";
 import BackToTopButton from "./components/BackToTopButton";
 import { AuthProvider } from "./context/AuthContext";
+import BookingDetails from "./pages/BookingDetails";
 
 const App = () => {
   return (
@@ -40,6 +41,7 @@ const App = () => {
           <Route path="/tours/all" element={<AllTours />} />
           <Route path="/tour-details/:id" element={<TourDetails />} />
           <Route path="/guides/:guideId" element={<GuideProfile />} />
+          <Route path="/booking-details/:id" element={<BookingDetails />} />
         </Routes>
         <BackToTopButton />
         <Footer />

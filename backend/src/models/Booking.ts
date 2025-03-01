@@ -10,7 +10,7 @@ const BookingSchema = new mongoose.Schema({
   needsGuide: { type: Boolean, default: false },
   guideId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Guide",
+    ref: "User",
     required: false,
   },
   status: {

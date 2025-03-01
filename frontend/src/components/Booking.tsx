@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { submitBooking } from "../utils/api";
 
@@ -24,23 +24,87 @@ const availableGuides = [
 ];
 
 const Booking = ({ tourId }: { tourId: string }) => {
-  const { user } = useAuth(); // Get the authenticated user
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  console.log("Authenticated User:", user);
+
   const [name, setName] = useState(user?.fullName || "");
   const [email, setEmail] = useState(user?.email || "");
   const [guests, setGuests] = useState(1);
   const [date, setDate] = useState("");
   const [needsGuide, setNeedsGuide] = useState(false);
   const [selectedGuide, setSelectedGuide] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [showSuccess, setShowSuccess] = useState(false);
+  interface BookingSummary {
+    tourId: string;
+    name: string;
+    email: string;
+    guests: number;
+    date: string;
+    needsGuide: boolean;
+    guide: string | undefined;
+  }
+
+  const [bookingSummary, setBookingSummary] = useState<BookingSummary | null>(
+    null
+  );
+
+  // Reset success message after 5 seconds
+  useEffect(() => {
+    if (showSuccess) {
+      const timer = setTimeout(() => {
+        setShowSuccess(false);
+        setBookingSummary(null);
+      }, 5000); // 5 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [showSuccess]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+
+    if (!tourId) {
+      setError("Tour ID is missing. Please try again.");
+      setIsLoading(false);
+      return;
+    }
+
+    if (!user?.id) {
+      setError("User is not authenticated. Please log in.");
+      setIsLoading(false);
+      navigate("/login");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    console.log("Token:", token);
+    if (!token) {
+      setError("No authentication token found. Please log in again.");
+      setIsLoading(false);
+      navigate("/login");
+      return;
+    }
+
+    const selectedDate = new Date(date);
+    const currentDate = new Date();
+
+    if (selectedDate <= currentDate) {
+      setError("Please select a future date for the tour.");
+      setIsLoading(false);
+      return;
+    }
 
     const bookingData = {
       tourId,
+      userId: user.id,
       name,
       email,
       guests: Number(guests),
-      date: new Date(date).toISOString(), // Convert date to ISO string
+      date: selectedDate.toISOString(),
       needsGuide,
       guideId: selectedGuide || undefined,
     };
@@ -49,11 +113,30 @@ const Booking = ({ tourId }: { tourId: string }) => {
 
     try {
       const result = await submitBooking(bookingData);
-      alert("Booking successful!");
+      // Update booking summary and show success message
+      setBookingSummary({
+        tourId,
+        name,
+        email,
+        guests,
+        date: selectedDate.toLocaleDateString(),
+        needsGuide,
+        guide: selectedGuide
+          ? availableGuides.find((g) => g.id === selectedGuide)?.name
+          : "None",
+      });
+      setShowSuccess(true);
       console.log("Booking result:", result);
     } catch (error) {
       console.error("Error submitting booking:", error);
-      alert("Failed to submit booking. Please try again.");
+      if (
+        (error as Error).message === "Session expired. Please log in again."
+      ) {
+        navigate("/login");
+      }
+      setError("Failed to submit booking. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -175,13 +258,41 @@ const Booking = ({ tourId }: { tourId: string }) => {
               </div>
             </div>
           )}
+          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
           <button
             type="submit"
-            className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300"
+            disabled={isLoading}
+            className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300 disabled:bg-gray-400"
           >
-            Book Now
+            {isLoading ? "Booking..." : "Book Now"}
           </button>
         </form>
+
+        {/* Success Message and Summary */}
+        {showSuccess && bookingSummary && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.5 }}
+            className="mt-4 p-4 bg-green-100 border border-green-400 rounded-lg"
+          >
+            <h3 className="text-lg font-semibold text-green-800">
+              Booking Successful!
+            </h3>
+            <p className="text-sm text-gray-700 mt-2">Booking Summary:</p>
+            <ul className="text-sm text-gray-600 list-disc list-inside">
+              <li>Name: {bookingSummary.name}</li>
+              <li>Email: {bookingSummary.email}</li>
+              <li>Guests: {bookingSummary.guests}</li>
+              <li>Date: {bookingSummary.date}</li>
+              <li>
+                Guide:{" "}
+                {bookingSummary.needsGuide ? bookingSummary.guide : "No guide"}
+              </li>
+            </ul>
+          </motion.div>
+        )}
       </div>
     </motion.div>
   );

@@ -14,16 +14,25 @@ const authenticateUser = (
 
   if (!token) {
     res.status(401).json({ error: "Access denied. No token provided." });
-    return; // Explicitly return to avoid further execution
+    return;
   }
 
   try {
+    console.log("Verifying token:", token);
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
-      userId: string;
+      id?: string;
+      userId?: string;
+      _id?: string;
     };
-    req.userId = decoded.userId; // Attach the user ID to the request object
-    next(); // Call next() to proceed to the next middleware/route handler
+    console.log("Decoded token:", decoded);
+
+    req.userId = decoded.id || decoded.userId || decoded._id;
+    if (!req.userId) {
+      throw new Error("No valid user ID found in token");
+    }
+    next();
   } catch (err) {
+    console.error("Token verification failed:", err);
     res.status(401).json({ error: "Invalid token." });
   }
 };

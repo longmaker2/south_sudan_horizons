@@ -209,6 +209,7 @@ router.post(
 
       res.status(200).json({
         token,
+        id: user._id,
         fullName: user.fullName,
         email: user.email,
         role: user.role,
