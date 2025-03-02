@@ -6,6 +6,7 @@ import {
   useEffect,
 } from "react";
 import { User } from "../types/authTypes";
+import config from "../config";
 
 interface AuthContextType {
   user: User | null;
@@ -19,10 +20,37 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
+    const restoreSession = async () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        try {
+          const response = await fetch(`${config.baseUrl}/api/auth/profile`, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error("Invalid token");
+          }
+
+          const data = await response.json();
+          const restoredUser: User = {
+            id: data.id,
+            fullName: data.fullName,
+            email: data.email,
+            role: data.role,
+          };
+          setUser(restoredUser);
+          localStorage.setItem("user", JSON.stringify(restoredUser));
+        } catch (error) {
+          console.error("Failed to restore session:", error);
+        }
+      }
+    };
+
+    restoreSession();
   }, []);
 
   const login = (userData: User) => {
@@ -45,7 +73,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// Export useAuth
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

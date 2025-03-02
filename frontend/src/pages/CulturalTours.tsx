@@ -112,7 +112,7 @@ const CulturalTours = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {culturalTours.map((tour) => (
             <motion.div
-              key={tour.id}
+              key={tour._id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -141,7 +141,7 @@ const CulturalTours = () => {
                   </span>
                 </div>
                 <Link
-                  to={`/tour-details/${tour.id}`}
+                  to={`/tour-details/${tour._id}`}
                   className="mt-4 block w-full px-4 py-2 bg-green-600 text-white text-center rounded-lg hover:bg-green-700 transition-all duration-300"
                 >
                   View Details

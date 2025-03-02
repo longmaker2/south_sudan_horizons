@@ -6,17 +6,21 @@ import TourDetail from "../components/TourDetail";
 import SimilarTours from "../components/SimilarTours";
 import { Tour } from "../types/tours";
 import { fetchTourDetails, fetchTours, submitReview } from "../utils/api";
+import { useAuth } from "../context/AuthContext";
 
 const TourDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth(); // Get user from AuthContext
   const [tour, setTour] = useState<Tour | null>(null);
   const [similarTours, setSimilarTours] = useState<Tour[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [reviewError, setReviewError] = useState<string | null>(null);
+  const [reviewSuccess, setReviewSuccess] = useState<string | null>(null);
 
   const [newReview, setNewReview] = useState({
-    author: "",
+    author: user?.fullName || "",
     comment: "",
     rating: 0,
   });
@@ -31,7 +35,11 @@ const TourDetails = () => {
           throw new Error("Tour ID is missing.");
         }
 
-        // Fetch tour details
+        if (!user) {
+          navigate("/login");
+          return;
+        }
+
         const tourData = await fetchTourDetails(id);
         console.log("Fetched tour data:", tourData);
 
@@ -40,12 +48,17 @@ const TourDetails = () => {
         }
         setTour(tourData);
 
-        // Fetch similar tours
         const allTours = await fetchTours();
         const similar = allTours
-          .filter((t) => t.type === tourData.type && t.id !== tourData.id)
+          .filter((t) => t.type === tourData.type && t._id !== tourData._id)
           .slice(0, 3);
         setSimilarTours(similar);
+
+        // Update author if user changes after initial load
+        setNewReview((prev) => ({
+          ...prev,
+          author: user?.fullName || "",
+        }));
       } catch (error) {
         console.error("Failed to fetch tour details:", error);
         setError("Failed to load tour details. Please try again later.");
@@ -55,24 +68,30 @@ const TourDetails = () => {
     };
 
     loadTourDetails();
-  }, [id]);
+  }, [id, user, navigate]);
 
   const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (newReview.author && newReview.comment && newReview.rating > 0 && id) {
-      try {
-        // Submit the review to the backend
-        const updatedTour = await submitReview(id, newReview);
+    if (!newReview.author || !newReview.comment || newReview.rating <= 0) {
+      setReviewError("Please provide a comment and a rating.");
+      return;
+    }
 
-        // Update the local state with the updated tour
-        setTour(updatedTour);
-
-        // Reset the form
-        setNewReview({ author: "", comment: "", rating: 0 });
-      } catch (error) {
-        console.error("Failed to submit review:", error);
-        setError("Failed to submit review. Please try again.");
+    try {
+      const updatedTour = await submitReview(id!, newReview);
+      setTour(updatedTour);
+      setNewReview({ author: user?.fullName || "", comment: "", rating: 0 });
+      setReviewSuccess("Your review has been submitted successfully!");
+      setReviewError(null);
+      setTimeout(() => setReviewSuccess(null), 5000);
+    } catch (error) {
+      if (error instanceof Error) {
+        setReviewError(
+          error.message || "Failed to submit review. Please try again."
+        );
+      } else {
+        setReviewError("Failed to submit review. Please try again.");
       }
     }
   };
@@ -85,26 +104,50 @@ const TourDetails = () => {
 
   if (isLoading) {
     return (
-      <div className="text-center py-12 text-gray-700">
-        <p>Loading tour details...</p>
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-green-600 mx-auto"></div>
+          <p className="mt-4 text-lg font-medium text-gray-700">
+            Loading tour details...
+          </p>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="text-center py-12 text-gray-700">
-        <h2 className="text-2xl font-semibold text-red-600">{error}</h2>
-        <p>Please go back and try again.</p>
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+          <h2 className="text-2xl font-semibold text-red-600">{error}</h2>
+          <button
+            onClick={() => navigate(-1)}
+            className="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300"
+          >
+            Go Back
+          </button>
+        </div>
       </div>
     );
   }
 
   if (!tour) {
     return (
-      <div className="text-center py-12 text-gray-700">
-        <h2 className="text-2xl font-semibold text-red-600">Tour not found</h2>
-        <p>Please go back and select a valid tour.</p>
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+          <h2 className="text-2xl font-semibold text-red-600">
+            Tour not found
+          </h2>
+          <p className="mt-2 text-gray-700">
+            Please go back and select a valid tour.
+          </p>
+          <button
+            onClick={() => navigate(-1)}
+            className="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300"
+          >
+            Go Back
+          </button>
+        </div>
       </div>
     );
   }
@@ -124,7 +167,7 @@ const TourDetails = () => {
           onClick={() => navigate(-1)}
           className="mb-6 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300"
         >
-          &larr; Back to Tours
+          ← Back to Tours
         </motion.button>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -134,9 +177,10 @@ const TourDetails = () => {
             newReview={newReview}
             setNewReview={setNewReview}
             getInitials={getInitials}
+            reviewError={reviewError}
+            reviewSuccess={reviewSuccess}
           />
-
-          <Booking tourId={tour.id.toString()} />
+          <Booking tourId={tour._id.toString()} />
         </div>
 
         <SimilarTours similarTours={similarTours} />

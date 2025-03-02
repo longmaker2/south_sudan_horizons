@@ -12,7 +12,7 @@ export const fetchTours = async (): Promise<Tour[]> => {
   console.log("Fetched tours:", tours);
   return tours.map((tour: Tour) => ({
     ...tour,
-    id: tour._id,
+    _id: tour._id,
     image: `http://localhost:5000/tour_pics/${tour.image}`,
   }));
 };
@@ -30,6 +30,7 @@ export const getRandomTours = async (
   const tours = await response.json();
   return tours.map((tour: Tour) => ({
     ...tour,
+    _id: tour._id,
     image: `http://localhost:5000/tour_pics/${tour.image}`,
   }));
 };
@@ -42,6 +43,7 @@ export const fetchTourById = async (id: string): Promise<Tour> => {
   const tour = await response.json();
   return {
     ...tour,
+    _id: tour._id,
     image: `http://localhost:5000/tour_pics/${tour.image}`,
   };
 };
@@ -54,7 +56,7 @@ export const fetchTourDetails = async (id: string): Promise<Tour> => {
   const tour = await response.json();
   return {
     ...tour,
-    id: tour._id,
+    _id: tour._id,
     image: `http://localhost:5000/tour_pics/${tour.image}`,
   };
 };
@@ -72,11 +74,16 @@ export const submitReview = async (
   });
 
   if (!response.ok) {
-    throw new Error("Failed to submit review");
+    const errorData = await response.json();
+    throw new Error(errorData.error || "Failed to submit review");
   }
 
   const updatedTour = await response.json();
-  return updatedTour;
+  return {
+    ...updatedTour,
+    _id: updatedTour._id,
+    image: `http://localhost:5000/tour_pics/${updatedTour.image}`,
+  };
 };
 
 export const submitBooking = async (bookingData: {

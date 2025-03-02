@@ -1,11 +1,10 @@
 export interface Tour {
   _id: string;
-  id: number;
   title: string;
   description: string;
   image: string;
   gallery?: string[];
-  video: string;
+  video?: string;
   price: number;
   duration: string;
   rating: number;

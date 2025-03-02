@@ -49,7 +49,9 @@ const Profile: React.FC = () => {
         setTourist({
           name: data.fullName,
           email: data.email,
-          profilePicture: data.profilePicture,
+          profilePicture: data.profilePicture
+            ? `${config.baseUrl}${data.profilePicture}`
+            : null,
         });
       } catch (error) {
         console.error("Error fetching profile:", error);
@@ -149,7 +151,12 @@ const Profile: React.FC = () => {
   }, []);
 
   const handleSaveProfile = (updatedTourist: Tourist) => {
-    setTourist(updatedTourist);
+    setTourist({
+      ...updatedTourist,
+      profilePicture: updatedTourist.profilePicture
+        ? `${config.baseUrl}${updatedTourist.profilePicture}`
+        : null,
+    });
   };
 
   return (

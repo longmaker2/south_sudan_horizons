@@ -32,37 +32,30 @@ const facts = [
     icon: "🦒",
     bgColor: "bg-yellow-100",
   },
-  {
-    text: "Octopuses have three hearts, and two of them stop beating when they swim.",
-    icon: "🐙",
-    bgColor: "bg-pink-100",
-  },
-  {
-    text: "Bananas are berries, but strawberries aren't!",
-    icon: "🍌",
-    bgColor: "bg-yellow-100",
-  },
-  {
-    text: "The Eiffel Tower can grow taller by up to 6 inches during summer due to thermal expansion.",
-    icon: "🗼",
-    bgColor: "bg-blue-100",
-  },
-  {
-    text: "Honey never spoils. Archaeologists have found 3,000-year-old honey in ancient Egyptian tombs that's still edible!",
-    icon: "🍯",
-    bgColor: "bg-orange-100",
-  },
 ];
 
 const FunFactSection = () => {
   const [factIndex, setFactIndex] = useState(0);
+  const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 768);
 
+  // Update isLargeScreen on window resize
   useEffect(() => {
-    const interval = setInterval(() => {
-      setFactIndex((prevIndex) => (prevIndex + 1) % facts.length);
-    }, 5000);
-    return () => clearInterval(interval);
+    const handleResize = () => {
+      setIsLargeScreen(window.innerWidth >= 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // Auto-slide only on large screens
+  useEffect(() => {
+    if (isLargeScreen) {
+      const interval = setInterval(() => {
+        setFactIndex((prevIndex) => (prevIndex + 1) % facts.length);
+      }, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [isLargeScreen]);
 
   const handleNextFact = () => {
     setFactIndex((prevIndex) => (prevIndex + 1) % facts.length);
@@ -80,57 +73,81 @@ const FunFactSection = () => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 1 }}
-      className="py-12 bg-gray-100 text-center"
+      className="py-10 sm:py-12 bg-gray-100 text-center overflow-hidden"
     >
-      <div className="relative max-w-lg mx-auto">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={factIndex}
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.5 }}
-            className={`${facts[factIndex].bgColor} px-6 py-4 rounded-lg shadow-lg`}
-          >
-            <div className="text-lg font-medium text-green-800">
-              <span className="text-2xl">{facts[factIndex].icon}</span> Fun
-              Fact: {facts[factIndex].text}
+      <div className="max-w-md sm:max-w-lg md:max-w-6xl mx-auto relative">
+        {isLargeScreen ? (
+          <div className="relative flex items-center justify-center">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={factIndex}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ duration: 0.5 }}
+                className={`${facts[factIndex].bgColor} px-4 sm:px-6 py-3 sm:py-4 rounded-lg shadow-lg`}
+              >
+                <div className="text-base sm:text-lg font-medium text-green-800 flex items-center justify-center space-x-2">
+                  <span className="text-xl sm:text-2xl">
+                    {facts[factIndex].icon}
+                  </span>
+                  <span className="text-center">
+                    Fun Fact: {facts[factIndex].text}
+                  </span>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Navigation Buttons (closer to the card on large screens) */}
+            <div className="absolute inset-y-0 flex justify-between w-full px-2 sm:px-4 md:flex hidden">
+              <button
+                onClick={handlePrevFact}
+                className="p-1 sm:p-2 bg-white rounded-full shadow-md hover:bg-gray-100 transition self-center"
+                aria-label="Previous fact"
+              >
+                ←
+              </button>
+              <button
+                onClick={handleNextFact}
+                className="p-1 sm:p-2 bg-white rounded-full shadow-md hover:bg-gray-100 transition self-center"
+                aria-label="Next fact"
+              >
+                →
+              </button>
             </div>
-          </motion.div>
-        </AnimatePresence>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {facts.map((fact) => (
+              <div
+                key={fact.text}
+                className={`${fact.bgColor} px-4 py-3 rounded-lg shadow-md`}
+              >
+                <div className="text-base font-medium text-green-800 flex items-center justify-center space-x-2">
+                  <span className="text-xl">{fact.icon}</span>
+                  <span className="text-center">Fun Fact: {fact.text}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
-        {/* Navigation Buttons */}
-        <div className="absolute top-1/2 -translate-y-1/2 w-full flex justify-between px-4">
-          <button
-            onClick={handlePrevFact}
-            className="p-2 bg-white rounded-full shadow-md hover:bg-gray-100 transition"
-            aria-label="Previous fact"
-          >
-            ←
-          </button>
-          <button
-            onClick={handleNextFact}
-            className="p-2 bg-white rounded-full shadow-md hover:bg-gray-100 transition"
-            aria-label="Next fact"
-          >
-            →
-          </button>
+      {/* Navigation Dots (visible only on large screens) */}
+      {isLargeScreen && (
+        <div className="flex justify-center mt-4 space-x-2">
+          {facts.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setFactIndex(index)}
+              className={`w-3 h-3 rounded-full ${
+                factIndex === index ? "bg-green-600" : "bg-gray-400"
+              }`}
+              aria-label={`Go to fact ${index + 1}`}
+            />
+          ))}
         </div>
-      </div>
-
-      {/* Navigation Dots */}
-      <div className="flex justify-center mt-4 space-x-2">
-        {facts.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setFactIndex(index)}
-            className={`w-3 h-3 rounded-full ${
-              factIndex === index ? "bg-green-600" : "bg-gray-400"
-            }`}
-            aria-label={`Go to fact ${index + 1}`}
-          />
-        ))}
-      </div>
+      )}
     </motion.div>
   );
 };

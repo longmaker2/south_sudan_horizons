@@ -57,7 +57,7 @@ const AllTours = () => {
         <FaStar
           key={i}
           className={`${
-            i <= rating ? "text-yellow-400" : "text-gray-300"
+            i <= Math.round(rating) ? "text-yellow-400" : "text-gray-300"
           } text-sm`}
           fill="currentColor"
         />
@@ -127,7 +127,7 @@ const AllTours = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredTours.map((tour) => (
               <motion.div
-                key={tour.id}
+                key={tour._id} // Changed to _id
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
@@ -147,14 +147,14 @@ const AllTours = () => {
                     <div className="flex items-center space-x-1">
                       {renderStars(tour.rating)}
                       <span className="text-sm text-gray-600">
-                        ({tour.rating})
+                        ({tour.rating.toFixed(1)})
                       </span>
                     </div>
                   </div>
                   <Link
-                    to={`/tour-details/${tour.id}`}
+                    to={`/tour-details/${tour._id}`}
                     className="mt-4 block w-full px-4 py-2 bg-green-600 text-white text-center rounded-lg hover:bg-green-700 transition-all duration-300"
-                    onClick={() => console.log("Tour ID:", tour.id)}
+                    onClick={() => console.log("Tour _id:", tour._id)}
                   >
                     View Details
                   </Link>

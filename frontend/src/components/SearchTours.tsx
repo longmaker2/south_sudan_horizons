@@ -1,24 +1,9 @@
 import { useState, useEffect } from "react";
 import { FaSearch, FaTimes, FaSpinner } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-
-// Sample Tours Data (Will be replaced with API call)
-const toursData = [
-  {
-    id: 1,
-    title: "Wildlife Safari in Boma Park",
-    slug: "wildlife-safari-boma",
-  },
-  { id: 2, title: "Cultural Tour in Juba", slug: "cultural-tour-juba" },
-  { id: 3, title: "Nile River Expedition", slug: "nile-river-expedition" },
-  { id: 4, title: "Mount Kinyeti Adventure", slug: "mount-kinyeti-adventure" },
-  {
-    id: 5,
-    title: "Traditional Dinka Village Experience",
-    slug: "dinka-village-tour",
-  },
-];
+import { fetchTours } from "../utils/api";
+import { Tour } from "../types/tours";
 
 // Debounce function to delay search
 const debounce = (func: (...args: unknown[]) => void, delay: number) => {
@@ -33,46 +18,72 @@ const SearchTours = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showResults, setShowResults] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [tours, setTours] = useState<Tour[]>([]);
+  const [filteredTours, setFilteredTours] = useState<Tour[]>([]);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
-  // Simulate API call with debounce
+  useEffect(() => {
+    const loadTours = async () => {
+      setIsLoading(true);
+      try {
+        const fetchedTours = await fetchTours();
+        setTours(fetchedTours);
+        setFilteredTours(fetchedTours);
+      } catch (err) {
+        setError("Failed to load tours. Please try again later.");
+        console.error("Error fetching tours:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadTours();
+  }, []);
+
   useEffect(() => {
     if (searchTerm) {
       setIsLoading(true);
       setError(null);
       const debouncedSearch = debounce(() => {
+        const results = tours.filter((tour) =>
+          tour.title.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        setFilteredTours(results);
         setIsLoading(false);
-        // Simulate an error for demonstration
-        if (searchTerm.toLowerCase() === "error") {
-          setError("Failed to fetch results. Please try again.");
-        }
-      }, 300); // 300ms debounce delay
+        setShowResults(true);
+      }, 300);
       debouncedSearch();
     } else {
+      setFilteredTours(tours);
+      setShowResults(false);
       setIsLoading(false);
     }
-  }, [searchTerm]);
+  }, [searchTerm, tours]);
 
-  // Filter tours based on search term
-  const filteredTours = toursData.filter((tour) =>
-    tour.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  // Handle input change
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-    setShowResults(e.target.value.length > 0);
     setHighlightedIndex(-1);
   };
 
-  // Clear search input
   const handleClearSearch = () => {
     setSearchTerm("");
     setShowResults(false);
+    setHighlightedIndex(-1);
   };
 
-  // Handle keyboard navigation
+  const handleSearchSubmit = () => {
+    if (highlightedIndex >= 0 && filteredTours[highlightedIndex]) {
+      navigate(`/tours/${filteredTours[highlightedIndex]._id}`);
+      setShowResults(false);
+      setSearchTerm("");
+    } else if (filteredTours.length > 0) {
+      navigate(`/tours/${filteredTours[0]._id}`);
+      setShowResults(false);
+      setSearchTerm("");
+    }
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "ArrowDown") {
       setHighlightedIndex((prev) =>
@@ -80,12 +91,12 @@ const SearchTours = () => {
       );
     } else if (e.key === "ArrowUp") {
       setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : prev));
-    } else if (e.key === "Enter" && highlightedIndex >= 0) {
-      window.location.href = `/tours/${filteredTours[highlightedIndex].slug}`;
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      handleSearchSubmit();
     }
   };
 
-  // Highlight matching text in results
   const highlightText = (text: string, query: string) => {
     if (!query) return text;
     const regex = new RegExp(`(${query})`, "gi");
@@ -102,16 +113,16 @@ const SearchTours = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 pt-20">
-      <h2 className="text-3xl font-bold text-green-800 text-center mb-6">
+      <h2 className="text-2xl sm:text-3xl font-bold text-green-800 text-center mb-6">
         Search Popular Tours
       </h2>
-      <div className="flex items-center justify-center relative">
-        <div className="relative w-full max-w-2xl">
-          <div className="relative">
+      <div className="relative flex items-center justify-center">
+        <div className="relative w-full max-w-md sm:max-w-lg md:max-w-2xl">
+          <div className="relative flex items-center">
             <input
               type="text"
               placeholder="Search tours..."
-              className="w-full border-2 border-green-400 px-4 py-3 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-green-900 placeholder-green-500 transition-all duration-300 outline-none pr-12"
+              className="w-full border-2 border-green-400 px-4 py-2 sm:py-3 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-green-900 placeholder-green-500 transition-all duration-300 outline-none pr-20 sm:pr-24"
               value={searchTerm}
               onChange={handleSearchChange}
               onFocus={() => setShowResults(true)}
@@ -122,66 +133,72 @@ const SearchTours = () => {
             {searchTerm && (
               <button
                 onClick={handleClearSearch}
-                className="absolute right-14 top-3 text-green-600 hover:text-green-800 transition"
+                className="absolute right-12 sm:right-14 top-1/2 -translate-y-1/2 text-green-600 hover:text-green-800 transition"
                 aria-label="Clear search"
               >
-                <FaTimes />
+                <FaTimes className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             )}
             <button
+              onClick={handleSearchSubmit}
               title="Search"
-              className="absolute right-2 top-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300"
+              className="absolute right-2 top-1/2 -translate-y-1/2 px-2 sm:px-3 py-1 sm:py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300"
               aria-label="Search"
             >
               {isLoading ? (
-                <FaSpinner className="animate-spin" />
+                <FaSpinner className="animate-spin w-4 h-4 sm:w-5 sm:h-5" />
               ) : (
-                <FaSearch />
+                <FaSearch className="w-4 h-4 sm:w-5 sm:h-5" />
               )}
             </button>
           </div>
-        </div>
 
-        {/* Search Results Dropdown */}
-        <AnimatePresence>
-          {showResults && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
-              className="absolute top-full mt-2 w-full max-w-lg bg-white shadow-lg rounded-lg z-10"
-            >
-              {error ? (
-                <p className="text-red-600 text-center p-4">{error}</p>
-              ) : filteredTours.length > 0 ? (
-                <ul className="space-y-2 p-3 max-h-64 overflow-y-auto">
-                  {filteredTours.map((tour, index) => (
-                    <li key={tour.id}>
-                      <Link
-                        to={`/tours/${tour.slug}`}
-                        className={`block px-4 py-3 rounded-lg text-green-800 hover:bg-green-100 transition ${
-                          highlightedIndex === index ? "bg-green-100" : ""
-                        }`}
-                        aria-selected={highlightedIndex === index}
-                      >
-                        {highlightText(tour.title, searchTerm)}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-gray-600 text-center p-4">
-                  {isLoading ? (
-                    <FaSpinner className="animate-spin mx-auto" />
-                  ) : (
-                    "No tours found."
-                  )}
-                </p>
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
+          <AnimatePresence>
+            {showResults && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+                className="absolute top-full mt-2 w-full bg-white shadow-lg rounded-lg z-10 max-h-64 overflow-y-auto"
+              >
+                {error ? (
+                  <p className="text-red-600 text-center p-4 text-sm sm:text-base">
+                    {error}
+                  </p>
+                ) : filteredTours.length > 0 ? (
+                  <ul className="space-y-1 p-2">
+                    {filteredTours.map((tour, index) => (
+                      <li key={tour._id}>
+                        <Link
+                          to={`/tour-details/${tour._id}`}
+                          className={`block px-3 py-2 rounded-lg text-green-800 hover:bg-green-100 transition text-sm sm:text-base ${
+                            highlightedIndex === index ? "bg-green-100" : ""
+                          }`}
+                          aria-selected={highlightedIndex === index}
+                          onClick={() => {
+                            setShowResults(false);
+                            setSearchTerm("");
+                          }}
+                        >
+                          {highlightText(tour.title, searchTerm)}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-gray-600 text-center p-4 text-sm sm:text-base">
+                    {isLoading ? (
+                      <FaSpinner className="animate-spin mx-auto w-5 h-5" />
+                    ) : (
+                      "No tours found."
+                    )}
+                  </p>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );
