@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const teamMembers = [
   {
@@ -145,10 +146,16 @@ const About = () => {
         <p className="mt-4 text-lg max-w-2xl mx-auto text-gray-700">
           Whether you're looking for an adventure, cultural immersion, or a
           local experience, we're here to guide you.
+          <div className="text-center">
+            <Link
+              to="/contact"
+              className="mt-4 inline-block px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-all duration-300"
+              onClick={() => console.log("Contact Us")}
+            >
+              Contact Us
+            </Link>
+          </div>
         </p>
-        <button className="mt-6 px-6 py-3 bg-green-800 text-white font-semibold rounded-lg hover:bg-green-700 transition-all duration-300">
-          Contact Us
-        </button>
       </motion.div>
     </div>
   );

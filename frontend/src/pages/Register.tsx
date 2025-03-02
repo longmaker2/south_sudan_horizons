@@ -115,12 +115,12 @@ const Register = () => {
   const progressBarStyle = getProgressBarStyle(password);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 mt-12">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 mt-16">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
-        className="bg-white p-8 rounded-lg shadow-lg w-96 "
+        className="bg-white p-8 rounded-lg shadow-lg w-96 my-16"
       >
         <h2 className="text-3xl font-bold text-green-800 text-center">
           Register

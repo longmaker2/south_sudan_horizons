@@ -153,8 +153,8 @@ const Profile: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6 mt-15">
-      <div className="max-w-3xl mx-auto">
+    <div className="min-h-screen bg-gray-100 p-6 mt-15 mt-16">
+      <div className="max-w-3xl mx-auto my-16">
         <h1 className="text-3xl font-bold text-green-800 mb-6">
           Tourist Dashboard
         </h1>

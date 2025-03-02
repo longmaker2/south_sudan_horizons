@@ -43,7 +43,9 @@ const Contact = () => {
             <h3 className="mt-4 text-xl font-semibold text-green-800">
               Call Us
             </h3>
-            <p className="text-gray-700 mt-2">+211 987 654 321</p>
+            <p className="text-gray-700 mt-2">
+              +254 725 253 330 / +250 791 697 348
+            </p>
           </div>
 
           {/* Email */}
