@@ -158,7 +158,7 @@ const Navbar = () => {
                   <ChevronDownIcon className="ml-1 h-3 w-3 sm:h-4 sm:w-4" />
                 </button>
                 {isToursOpen && (
-                  <div className="absolute left-0 top-full w-40 sm:w-48 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition-all duration-200 z-10">
+                  <div className="absolute left-0 top-full w-40 sm:w-48 rounded-md bg-white shadow-lg ring-1 ring-green-700 ring-opacity-5 transition-all duration-200 z-10">
                     <Link
                       to="/tours/all"
                       className="block px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-green-50 hover:text-green-800"
@@ -235,7 +235,7 @@ const Navbar = () => {
                     )}
                   </button>
                   {isProfileOpen && (
-                    <div className="absolute right-0 top-full w-40 sm:w-48 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition-all duration-200 z-10">
+                    <div className="absolute right-0 top-full w-40 sm:w-48 rounded-md bg-white shadow-lg ring-1 ring-green-700 ring-opacity-5 transition-all duration-200 z-10">
                       <Link
                         to="/profile"
                         className="block px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-green-50 hover:text-green-800"
