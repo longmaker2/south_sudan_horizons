@@ -79,11 +79,23 @@ const Navbar = () => {
     fetchProfilePicture();
   }, [user]);
 
-  // Handle logout and redirect to login page only on explicit sign-out
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
+
+  // Debounce closing to allow cursor transition
+  const debounce = (func: () => void, delay: number) => {
+    let timer: ReturnType<typeof setTimeout>;
+    return () => {
+      clearTimeout(timer);
+      timer = setTimeout(func, delay);
+    };
+  };
+
+  const closeTours = debounce(() => setIsToursOpen(false), 100);
+  const closeProfile = debounce(() => setIsProfileOpen(false), 100);
+  const closeLanguage = debounce(() => setIsLanguageOpen(false), 100);
 
   return (
     <Disclosure
@@ -135,44 +147,50 @@ const Navbar = () => {
                   {item.name}
                 </Link>
               ))}
+              {/* Tours Dropdown */}
               <div
-                className="relative"
+                className="relative group"
                 onMouseEnter={() => setIsToursOpen(true)}
-                onMouseLeave={() => setIsToursOpen(false)}
+                onMouseLeave={closeTours}
               >
                 <button className="flex items-center text-white hover:bg-green-700 hover:text-gray-200 rounded-md px-2 py-1 sm:px-3 sm:py-2 text-xs sm:text-sm md:text-base font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white">
                   Tours
                   <ChevronDownIcon className="ml-1 h-3 w-3 sm:h-4 sm:w-4" />
                 </button>
                 {isToursOpen && (
-                  <div className="absolute left-0 mt-2 w-40 sm:w-48 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition-all duration-200">
+                  <div className="absolute left-0 top-full w-40 sm:w-48 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition-all duration-200 z-10">
                     <Link
                       to="/tours/all"
                       className="block px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-green-50 hover:text-green-800"
+                      onClick={() => setIsToursOpen(false)}
                     >
                       All Tours
                     </Link>
                     <Link
                       to="/tours/adventure"
                       className="block px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-green-50 hover:text-green-800"
+                      onClick={() => setIsToursOpen(false)}
                     >
                       Adventure Tours
                     </Link>
                     <Link
                       to="/tours/cultural"
                       className="block px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-green-50 hover:text-green-800"
+                      onClick={() => setIsToursOpen(false)}
                     >
                       Cultural Tours
                     </Link>
                     <Link
                       to="/tours/wildlife"
                       className="block px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-green-50 hover:text-green-800"
+                      onClick={() => setIsToursOpen(false)}
                     >
                       Wildlife Tours
                     </Link>
                     <Link
                       to="/tours/nature"
                       className="block px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-green-50 hover:text-green-800"
+                      onClick={() => setIsToursOpen(false)}
                     >
                       Nature Tours
                     </Link>
@@ -197,10 +215,11 @@ const Navbar = () => {
                     3
                   </span>
                 </button>
+                {/* Profile Dropdown */}
                 <div
-                  className="relative"
+                  className="relative group"
                   onMouseEnter={() => setIsProfileOpen(true)}
-                  onMouseLeave={() => setIsProfileOpen(false)}
+                  onMouseLeave={closeProfile}
                 >
                   <button className="relative flex rounded-full bg-green-700 text-sm focus:ring-2 focus:ring-white focus:outline-none transition-all duration-200 h-8 w-8 sm:h-10 sm:w-10 items-center justify-center">
                     {profilePicture ? (
@@ -216,10 +235,11 @@ const Navbar = () => {
                     )}
                   </button>
                   {isProfileOpen && (
-                    <div className="absolute right-0 mt-2 w-40 sm:w-48 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition-all duration-200">
+                    <div className="absolute right-0 top-full w-40 sm:w-48 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition-all duration-200 z-10">
                       <Link
                         to="/profile"
                         className="block px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-green-50 hover:text-green-800"
+                        onClick={() => setIsProfileOpen(false)}
                       >
                         Profile & Bookings
                       </Link>
@@ -249,17 +269,18 @@ const Navbar = () => {
                 </Link>
               </>
             )}
+            {/* Language Dropdown */}
             <div
-              className="relative"
+              className="relative group"
               onMouseEnter={() => setIsLanguageOpen(true)}
-              onMouseLeave={() => setIsLanguageOpen(false)}
+              onMouseLeave={closeLanguage}
             >
               <button className="flex items-center text-white hover:bg-green-700 hover:text-gray-200 rounded-md px-2 py-1 sm:px-3 sm:py-2 text-xs sm:text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white">
                 EN
                 <ChevronDownIcon className="ml-1 h-3 w-3 sm:h-4 sm:w-4" />
               </button>
               {isLanguageOpen && (
-                <div className="absolute right-0 mt-2 w-24 sm:w-28 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition-all duration-200">
+                <div className="absolute right-0 top-full w-24 sm:w-28 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition-all duration-200 z-10">
                   <button className="block w-full px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-green-50 hover:text-green-800">
                     English
                   </button>
