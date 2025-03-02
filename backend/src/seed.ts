@@ -1,17 +1,29 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import path from "path";
 import Tour from "./models/Tour";
 
-dotenv.config();
+// Manually specify .env location
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
+
+// Check if MONGO_URI is defined
+console.log("Loaded MONGO_URI:", process.env.MONGO_URI);
+
+if (!process.env.MONGO_URI) {
+  console.error("❌ ERROR: MONGO_URI is not defined. Check your .env file.");
+  process.exit(1);
+}
 
 mongoose
   .connect(process.env.MONGO_URI as string)
   .then(() => console.log("✅ MongoDB Connected for Seeding"))
-  .catch((err) => console.error("❌ MongoDB Connection Error:", err));
+  .catch((err) => {
+    console.error("❌ MongoDB Connection Error:", err);
+    process.exit(1);
+  });
 
 const tours = [
   {
-    id: 1,
     rating: 4.5,
     title: "Boma National Park Safari",
     type: "Wildlife",
@@ -21,9 +33,9 @@ const tours = [
     video: "/assets/tour_videos/boma.mp4",
     price: 600,
     duration: "4 days",
+    reviews: [],
   },
   {
-    id: 2,
     rating: 4.8,
     title: "White Nile Rafting Adventure",
     type: "Adventure",
@@ -33,9 +45,9 @@ const tours = [
     video: "/assets/tour_videos/white-nile.mp4",
     price: 350,
     duration: "2 days",
+    reviews: [],
   },
   {
-    id: 3,
     rating: 4.2,
     title: "Juba Cultural Experience",
     type: "Cultural",
@@ -45,9 +57,9 @@ const tours = [
     video: "/assets/tour_videos/juba.mp4",
     price: 200,
     duration: "1 day",
+    reviews: [],
   },
   {
-    id: 4,
     rating: 4.6,
     title: "Sudd Wetlands Exploration",
     type: "Wildlife",
@@ -57,9 +69,9 @@ const tours = [
     video: "/assets/tour_videos/sudd.mp4",
     price: 450,
     duration: "3 days",
+    reviews: [],
   },
   {
-    id: 5,
     rating: 4.4,
     title: "Mount Kinyeti Trekking",
     type: "Adventure",
@@ -69,9 +81,9 @@ const tours = [
     video: "/assets/tour_videos/kinyeti.mp4",
     price: 500,
     duration: "5 days",
+    reviews: [],
   },
   {
-    id: 6,
     rating: 4.7,
     title: "Bor Wildlife Reserve Tour",
     type: "Wildlife",
@@ -81,9 +93,9 @@ const tours = [
     video: "/assets/tour_videos/bor.mp4",
     price: 400,
     duration: "3 days",
+    reviews: [],
   },
   {
-    id: 7,
     rating: 4.3,
     title: "Nimule National Park Safari",
     type: "Wildlife",
@@ -93,9 +105,9 @@ const tours = [
     video: "/assets/tour_videos/nimule.mp4",
     price: 550,
     duration: "4 days",
+    reviews: [],
   },
   {
-    id: 8,
     rating: 4.9,
     title: "Traditional Dinka Village Visit",
     type: "Cultural",
@@ -105,9 +117,9 @@ const tours = [
     video: "/assets/tour_videos/dinka.mp4",
     price: 300,
     duration: "2 days",
+    reviews: [],
   },
   {
-    id: 9,
     rating: 4.1,
     title: "Bandingilo National Park Tour",
     type: "Wildlife",
@@ -117,9 +129,9 @@ const tours = [
     video: "/assets/tour_videos/bandingilo.mp4",
     price: 600,
     duration: "5 days",
+    reviews: [],
   },
   {
-    id: 10,
     rating: 4.7,
     title: "Kapoeta Cultural Tour",
     type: "Cultural",
@@ -129,9 +141,9 @@ const tours = [
     video: "/assets/tour_videos/kapoeta.mp4",
     price: 250,
     duration: "2 days",
+    reviews: [],
   },
   {
-    id: 11,
     rating: 4.5,
     title: "Fula Rapids Adventure",
     type: "Adventure",
@@ -141,9 +153,9 @@ const tours = [
     video: "/assets/tour_videos/fula.mp4",
     price: 400,
     duration: "3 days",
+    reviews: [],
   },
   {
-    id: 12,
     rating: 4.8,
     title: "Wau Cultural Experience",
     type: "Cultural",
@@ -153,9 +165,9 @@ const tours = [
     video: "/assets/tour_videos/wau.mp4",
     price: 300,
     duration: "2 days",
+    reviews: [],
   },
   {
-    id: 13,
     rating: 4.6,
     title: "Shambe National Park Birdwatching",
     type: "Wildlife",
@@ -165,9 +177,9 @@ const tours = [
     video: "/assets/tour_videos/shambe.mp4",
     price: 500,
     duration: "4 days",
+    reviews: [],
   },
   {
-    id: 14,
     rating: 4.4,
     title: "Lantoto National Park Safari",
     type: "Wildlife",
@@ -177,9 +189,9 @@ const tours = [
     video: "/assets/tour_videos/lantoto.mp4",
     price: 450,
     duration: "3 days",
+    reviews: [],
   },
   {
-    id: 15,
     rating: 4.9,
     title: "Jebel Kujur Hiking Adventure",
     type: "Adventure",
@@ -189,9 +201,9 @@ const tours = [
     video: "/assets/tour_videos/kujur.mp4",
     price: 300,
     duration: "1 day",
+    reviews: [],
   },
   {
-    id: 16,
     rating: 4.2,
     title: "Yirol Lakeside Retreat",
     type: "Cultural",
@@ -201,9 +213,9 @@ const tours = [
     video: "/assets/tour_videos/yirol.mp4",
     price: 350,
     duration: "2 days",
+    reviews: [],
   },
   {
-    id: 17,
     rating: 4.7,
     title: "Kidepo Game Reserve Safari",
     type: "Wildlife",
@@ -213,9 +225,9 @@ const tours = [
     video: "/assets/tour_videos/kidepo.mp4",
     price: 700,
     duration: "5 days",
+    reviews: [],
   },
   {
-    id: 18,
     rating: 4.5,
     title: "Torit Cultural Immersion",
     type: "Cultural",
@@ -225,9 +237,9 @@ const tours = [
     video: "/assets/tour_videos/torit.mp4",
     price: 250,
     duration: "2 days",
+    reviews: [],
   },
   {
-    id: 19,
     rating: 4.8,
     title: "Imatong Mountains Trek",
     type: "Adventure",
@@ -237,9 +249,9 @@ const tours = [
     video: "/assets/tour_videos/imatong.mp4",
     price: 550,
     duration: "4 days",
+    reviews: [],
   },
   {
-    id: 20,
     rating: 4.3,
     title: "Malakal Riverside Experience",
     type: "Cultural",
@@ -249,9 +261,9 @@ const tours = [
     video: "/assets/tour_videos/malakal.mp4",
     price: 300,
     duration: "2 days",
+    reviews: [],
   },
   {
-    id: 21,
     rating: 4.6,
     title: "Badingilo National Park Safari",
     type: "Wildlife",
@@ -261,9 +273,9 @@ const tours = [
     video: "/assets/tour_videos/badingilo.mp4",
     price: 650,
     duration: "5 days",
+    reviews: [],
   },
   {
-    id: 22,
     rating: 4.9,
     title: "Kapoeta Rock Formations Tour",
     type: "Adventure",
@@ -273,9 +285,9 @@ const tours = [
     video: "/assets/tour_videos/kapoeta.mp4",
     price: 400,
     duration: "3 days",
+    reviews: [],
   },
   {
-    id: 23,
     rating: 4.4,
     title: "Terekeka Cultural Experience",
     type: "Cultural",
@@ -285,9 +297,9 @@ const tours = [
     video: "/assets/tour_videos/terekeka.mp4",
     price: 300,
     duration: "2 days",
+    reviews: [],
   },
   {
-    id: 24,
     rating: 4.7,
     title: "Nimule Waterfalls Adventure",
     type: "Adventure",
@@ -297,9 +309,9 @@ const tours = [
     video: "/assets/tour_videos/nimule.mp4",
     price: 350,
     duration: "2 days",
+    reviews: [],
   },
   {
-    id: 25,
     rating: 4.5,
     title: "Juba City Tour",
     type: "Cultural",
@@ -309,9 +321,9 @@ const tours = [
     video: "/assets/tour_videos/juba.mp4",
     price: 150,
     duration: "1 day",
+    reviews: [],
   },
   {
-    id: 26,
     rating: 4.8,
     title: "Bahr el Ghazal River Cruise",
     type: "Adventure",
@@ -321,9 +333,9 @@ const tours = [
     video: "/assets/tour_videos/bahr-el-ghazal.mp4",
     price: 500,
     duration: "3 days",
+    reviews: [],
   },
   {
-    id: 27,
     rating: 4.2,
     title: "Yambio Cultural Tour",
     type: "Cultural",
@@ -333,9 +345,9 @@ const tours = [
     video: "/assets/tour_videos/yambio.mp4",
     price: 250,
     duration: "2 days",
+    reviews: [],
   },
   {
-    id: 28,
     rating: 4.6,
     title: "Lobonok Eco-Tour",
     type: "Adventure",
@@ -345,9 +357,9 @@ const tours = [
     video: "/assets/tour_videos/lobonok.mp4",
     price: 400,
     duration: "3 days",
+    reviews: [],
   },
   {
-    id: 29,
     rating: 4.9,
     title: "Rumbek Cattle Camp Experience",
     type: "Cultural",
@@ -357,9 +369,9 @@ const tours = [
     video: "/assets/tour_videos/rumbek.mp4",
     price: 300,
     duration: "2 days",
+    reviews: [],
   },
   {
-    id: 30,
     rating: 4.4,
     title: "Kapoeta Desert Safari",
     type: "Adventure",
@@ -369,9 +381,9 @@ const tours = [
     video: "/assets/tour_videos/kapoeta.mp4",
     price: 450,
     duration: "3 days",
+    reviews: [],
   },
   {
-    id: 31,
     rating: 4.7,
     title: "Boma-Jonglei Landscape Tour",
     type: "Wildlife",
@@ -381,9 +393,9 @@ const tours = [
     video: "/assets/tour_videos/boma-jonglei.mp4",
     price: 700,
     duration: "6 days",
+    reviews: [],
   },
   {
-    id: 32,
     rating: 4.5,
     title: "Kapoeta Hot Springs Adventure",
     type: "Adventure",
@@ -393,9 +405,9 @@ const tours = [
     video: "/assets/tour_videos/kapoeta.mp4",
     price: 300,
     duration: "2 days",
+    reviews: [],
   },
   {
-    id: 33,
     rating: 4.8,
     title: "Wau Cathedral and Historical Sites",
     type: "Cultural",
@@ -405,9 +417,9 @@ const tours = [
     video: "/assets/tour_videos/wau.mp4",
     price: 200,
     duration: "1 day",
+    reviews: [],
   },
   {
-    id: 34,
     rating: 4.2,
     title: "Imatong Forest Exploration",
     type: "Adventure",
@@ -417,9 +429,9 @@ const tours = [
     video: "/assets/tour_videos/imatong.mp4",
     price: 450,
     duration: "3 days",
+    reviews: [],
   },
   {
-    id: 35,
     rating: 4.6,
     title: "Pibor River Fishing Expedition",
     type: "Adventure",
@@ -429,9 +441,9 @@ const tours = [
     video: "/assets/tour_videos/pibor.mp4",
     price: 400,
     duration: "3 days",
+    reviews: [],
   },
   {
-    id: 36,
     rating: 4.9,
     title: "Torit Mountain Climbing",
     type: "Adventure",
@@ -441,9 +453,9 @@ const tours = [
     video: "/assets/tour_videos/torit.mp4",
     price: 500,
     duration: "4 days",
+    reviews: [],
   },
   {
-    id: 37,
     rating: 4.4,
     title: "Yirol Cultural Festival Tour",
     type: "Cultural",
@@ -453,9 +465,9 @@ const tours = [
     video: "/assets/tour_videos/yirol.mp4",
     price: 350,
     duration: "2 days",
+    reviews: [],
   },
   {
-    id: 38,
     rating: 4.7,
     title: "Lobonok River Rafting",
     type: "Adventure",
@@ -465,9 +477,9 @@ const tours = [
     video: "/assets/tour_videos/lobonok.mp4",
     price: 450,
     duration: "3 days",
+    reviews: [],
   },
   {
-    id: 39,
     rating: 4.5,
     title: "Kapoeta Camel Safari",
     type: "Adventure",
@@ -477,9 +489,9 @@ const tours = [
     video: "/assets/tour_videos/kapoeta.mp4",
     price: 500,
     duration: "4 days",
+    reviews: [],
   },
   {
-    id: 40,
     rating: 4.8,
     title: "Juba Night Market Experience",
     type: "Cultural",
@@ -489,9 +501,9 @@ const tours = [
     video: "/assets/tour_videos/juba.mp4",
     price: 150,
     duration: "1 day",
+    reviews: [],
   },
   {
-    id: 41,
     rating: 4.2,
     title: "Boma Plateau Trek",
     type: "Adventure",
@@ -501,9 +513,9 @@ const tours = [
     video: "/assets/tour_videos/boma.mp4",
     price: 600,
     duration: "5 days",
+    reviews: [],
   },
   {
-    id: 42,
     rating: 4.6,
     title: "Kapoeta Rock Art Exploration",
     type: "Cultural",
@@ -513,9 +525,9 @@ const tours = [
     video: "/assets/tour_videos/kapoeta.mp4",
     price: 350,
     duration: "2 days",
+    reviews: [],
   },
   {
-    id: 43,
     rating: 4.9,
     title: "Juba Botanical Gardens Tour",
     type: "Nature",
@@ -525,9 +537,9 @@ const tours = [
     video: "/assets/tour_videos/juba.mp4",
     price: 100,
     duration: "1 day",
+    reviews: [],
   },
   {
-    id: 44,
     rating: 4.4,
     title: "Sobat River Canoeing",
     type: "Adventure",
@@ -537,9 +549,9 @@ const tours = [
     video: "/assets/tour_videos/sobat.mp4",
     price: 400,
     duration: "3 days",
+    reviews: [],
   },
   {
-    id: 45,
     rating: 4.7,
     title: "Torit Cultural Heritage Tour",
     type: "Cultural",
@@ -549,9 +561,9 @@ const tours = [
     video: "/assets/tour_videos/torit.mp4",
     price: 250,
     duration: "2 days",
+    reviews: [],
   },
   {
-    id: 46,
     rating: 4.5,
     title: "Lobonok Waterfall Hike",
     type: "Adventure",
@@ -561,9 +573,9 @@ const tours = [
     video: "/assets/tour_videos/lobonok.mp4",
     price: 300,
     duration: "2 days",
+    reviews: [],
   },
   {
-    id: 47,
     rating: 4.8,
     title: "Kapoeta Star Gazing Experience",
     type: "Nature",
@@ -573,9 +585,9 @@ const tours = [
     video: "/assets/tour_videos/kapoeta.mp4",
     price: 200,
     duration: "1 night",
+    reviews: [],
   },
   {
-    id: 48,
     rating: 4.2,
     title: "Yirol Lakeside Birdwatching",
     type: "Nature",
@@ -585,9 +597,9 @@ const tours = [
     video: "/assets/tour_videos/yirol.mp4",
     price: 250,
     duration: "2 days",
+    reviews: [],
   },
   {
-    id: 49,
     rating: 4.6,
     title: "Bahr el Jebel River Cruise",
     type: "Adventure",
@@ -597,9 +609,9 @@ const tours = [
     video: "/assets/tour_videos/bahr-el-jebel.mp4",
     price: 500,
     duration: "3 days",
+    reviews: [],
   },
   {
-    id: 50,
     rating: 4.9,
     title: "Juba Street Food Tour",
     type: "Cultural",
@@ -609,14 +621,21 @@ const tours = [
     video: "/assets/tour_videos/juba.mp4",
     price: 150,
     duration: "1 day",
+    reviews: [],
   },
 ];
 
 const seedDB = async () => {
-  await Tour.deleteMany({});
-  await Tour.insertMany(tours);
-  console.log("✅ Database Seeded Successfully");
-  mongoose.connection.close();
+  try {
+    await Tour.deleteMany({});
+    await Tour.insertMany(tours);
+    console.log("✅ Database Seeded Successfully");
+  } catch (err) {
+    console.error("❌ Seeding Error:", err);
+  } finally {
+    mongoose.connection.close();
+    console.log("🔌 MongoDB Connection Closed");
+  }
 };
 
 seedDB();

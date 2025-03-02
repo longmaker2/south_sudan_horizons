@@ -33,10 +33,6 @@ router.post(
   }
 );
 
-/**
- * 📌 Get all tours with optional type and limit query parameters
- * Example: GET /api/tours?type=Adventure&limit=5
- */
 const getAllTours: RequestHandler<
   {},
   any,
@@ -59,10 +55,6 @@ const getAllTours: RequestHandler<
   }
 };
 
-/**
- * 📌 Get a single tour by ID
- * Example: GET /api/tours/:id
- */
 const getTourById: RequestHandler<{ id: string }> = async (req, res) => {
   try {
     const { id } = req.params;
@@ -79,10 +71,6 @@ const getTourById: RequestHandler<{ id: string }> = async (req, res) => {
   }
 };
 
-/**
- * 📌 Add a new tour
- * Example: POST /api/tours
- */
 const addTour: RequestHandler<{}, any, any> = async (req, res) => {
   try {
     const newTour = new Tour(req.body);
@@ -94,10 +82,6 @@ const addTour: RequestHandler<{}, any, any> = async (req, res) => {
   }
 };
 
-/**
- * 📌 Update a tour by ID
- * Example: PUT /api/tours/:id
- */
 const updateTour: RequestHandler<{ id: string }, any, any> = async (
   req,
   res
@@ -119,10 +103,6 @@ const updateTour: RequestHandler<{ id: string }, any, any> = async (
   }
 };
 
-/**
- * 📌 Delete a tour by ID
- * Example: DELETE /api/tours/:id
- */
 const deleteTour: RequestHandler<{ id: string }> = async (req, res) => {
   try {
     const { id } = req.params;
@@ -132,10 +112,47 @@ const deleteTour: RequestHandler<{ id: string }> = async (req, res) => {
       return;
     }
     res.json({ message: "Tour deleted successfully" });
-    return;
   } catch (err) {
     console.error("Error deleting tour:", err);
     res.status(500).json({ error: "Failed to delete tour" });
+  }
+};
+
+const addReview: RequestHandler<
+  { id: string },
+  any,
+  { author: string; comment: string; rating: number }
+> = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { author, comment, rating } = req.body;
+
+    if (!author || !comment || !rating) {
+      res.status(400).json({ error: "Missing required review fields" });
+      return;
+    }
+
+    const tour = await Tour.findById(id);
+    if (!tour) {
+      res.status(404).json({ error: "Tour not found" });
+      return;
+    }
+
+    const newReview = { author, comment, rating };
+    tour.reviews.push(newReview);
+
+    // Calculate new average rating
+    const totalRating = tour.reviews.reduce(
+      (sum, review) => sum + review.rating,
+      0
+    );
+    tour.rating = totalRating / tour.reviews.length;
+
+    await tour.save();
+    res.status(201).json(tour);
+  } catch (err) {
+    console.error("Error adding review:", err);
+    res.status(500).json({ error: "Failed to add review" });
   }
 };
 
@@ -144,5 +161,6 @@ router.get("/:id", getTourById);
 router.post("/", addTour);
 router.put("/:id", updateTour);
 router.delete("/:id", deleteTour);
+router.post("/:id/reviews", addReview);
 
 export default router;

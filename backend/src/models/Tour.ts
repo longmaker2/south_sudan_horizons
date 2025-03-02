@@ -1,16 +1,14 @@
 import mongoose from "mongoose";
 
-// Define the review sub-schema
 const ReviewSchema = new mongoose.Schema({
   author: { type: String, required: true },
   comment: { type: String, required: true },
-  rating: { type: Number, required: true },
+  rating: { type: Number, required: true, min: 1, max: 5 },
 });
 
-// Define the main tour schema
 const TourSchema = new mongoose.Schema({
   title: { type: String, required: true },
-  rating: { type: Number, required: true },
+  rating: { type: Number, default: 0 },
   type: { type: String, required: true },
   description: { type: String, required: true },
   image: { type: String, required: true },
@@ -23,6 +21,5 @@ const TourSchema = new mongoose.Schema({
   toBring: [{ type: String }],
 });
 
-// Create and export the model
 const Tour = mongoose.model("Tour", TourSchema);
 export default Tour;
