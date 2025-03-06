@@ -97,6 +97,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
               onChange={(e) => setEditedName(e.target.value)}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
               required
+              aria-label="Full Name"
             />
           </div>
           <div>
@@ -109,6 +110,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
               onChange={(e) => setEditedEmail(e.target.value)}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
               required
+              aria-label="Email"
             />
           </div>
           <div>
