@@ -1,6 +1,6 @@
 # South Sudan Horizons
 
-**South Sudan Horizons** is a modern digital tourism platform designed to connect travelers with immersive, authentic experiences in South Sudan. From cultural insights to seamless tour bookings, real-time chat, and user-driven reviews, this platform showcases the beauty and diversity of South Sudan’s landscapes and heritage.
+**South Sudan Horizons** is a modern digital tourism platform designed to connect travelers with immersive, authentic experiences in South Sudan. From cultural insights to seamless tour bookings, real-time chat, and user-driven reviews, this platform showcases the beauty and diversity of South Sudan’s landscapes and heritage. With a focus on user experience and community engagement, South Sudan Horizons empowers travelers to explore the country's rich cultural heritage and natural wonders.
 
 [![Frontend Deploy](https://img.shields.io/badge/Vercel-Deployed-brightgreen)](https://south-sudan-horizons.vercel.app/)
 [![Node.js](https://img.shields.io/badge/Node.js-v22.13.1-blue)](https://nodejs.org/)
