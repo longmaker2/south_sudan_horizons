@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { FaUser, FaEdit } from "react-icons/fa";
-import config from "../config";
+import { API_BASE_URL } from "../utils/api";
 
 interface Tourist {
   name: string;
@@ -28,7 +28,7 @@ const ProfileComponent: React.FC<ProfileComponentProps> = ({
   };
 
   const imageUrl = tourist.profilePicture
-    ? `${config.baseUrl}/uploads/${tourist.profilePicture}`
+    ? `${API_BASE_URL}/uploads/${tourist.profilePicture}`
     : null;
 
   console.log("Image URL:", imageUrl);

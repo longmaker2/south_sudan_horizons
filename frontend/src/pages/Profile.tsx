@@ -3,7 +3,7 @@ import ProfileComponent from "../components/ProfileComponent";
 import ChangePassword from "../components/ChangePassword";
 import BookingHistory from "../components/BookingHistory";
 import EditProfileModal from "../components/EditProfileModal";
-import config from "../config";
+import { API_BASE_URL } from "../utils/api";
 import { Booking } from "../types/bookings";
 
 interface Tourist {
@@ -32,7 +32,7 @@ const Profile: React.FC = () => {
       }
 
       try {
-        const response = await fetch(`${config.baseUrl}/api/auth/profile`, {
+        const response = await fetch(`${API_BASE_URL}/api/auth/profile`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -50,7 +50,7 @@ const Profile: React.FC = () => {
           name: data.fullName,
           email: data.email,
           profilePicture: data.profilePicture
-            ? `${config.baseUrl}${data.profilePicture}`
+            ? `${API_BASE_URL}${data.profilePicture}`
             : null,
         });
       } catch (error) {
@@ -73,7 +73,7 @@ const Profile: React.FC = () => {
       }
 
       try {
-        const response = await fetch(`${config.baseUrl}/api/bookings/user`, {
+        const response = await fetch(`${API_BASE_URL}/api/bookings/user`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -154,7 +154,7 @@ const Profile: React.FC = () => {
     setTourist({
       ...updatedTourist,
       profilePicture: updatedTourist.profilePicture
-        ? `${config.baseUrl}${updatedTourist.profilePicture}`
+        ? `${API_BASE_URL}${updatedTourist.profilePicture}`
         : null,
     });
   };

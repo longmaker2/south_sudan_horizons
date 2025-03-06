@@ -12,7 +12,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import config from "../config";
+import { API_BASE_URL } from "../utils/api";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -50,7 +50,7 @@ const Navbar = () => {
         }
 
         try {
-          const response = await fetch(`${config.baseUrl}/api/auth/profile`, {
+          const response = await fetch(`${API_BASE_URL}/api/auth/profile`, {
             method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -63,9 +63,7 @@ const Navbar = () => {
 
           const data = await response.json();
           setProfilePicture(
-            data.profilePicture
-              ? `${config.baseUrl}${data.profilePicture}`
-              : null
+            data.profilePicture ? `${API_BASE_URL}${data.profilePicture}` : null
           );
         } catch (error) {
           console.error("Error fetching profile picture:", error);

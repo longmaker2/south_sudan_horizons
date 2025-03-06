@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FaTimes, FaSpinner } from "react-icons/fa";
 import axios from "axios";
-import config from "../config";
+import { API_BASE_URL } from "../utils/api";
 
 interface Tourist {
   name: string;
@@ -45,7 +45,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
     try {
       const response = await axios.post(
-        `${config.baseUrl}/api/auth/update-profile`,
+        `${API_BASE_URL}/api/auth/update-profile`,
         formData,
         {
           headers: {

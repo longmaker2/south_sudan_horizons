@@ -6,7 +6,7 @@ import {
   useEffect,
 } from "react";
 import { User } from "../types/authTypes";
-import config from "../config";
+import { API_BASE_URL } from "../utils/api";
 
 interface AuthContextType {
   user: User | null;
@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const token = localStorage.getItem("token");
       if (token) {
         try {
-          const response = await fetch(`${config.baseUrl}/api/auth/profile`, {
+          const response = await fetch(`${API_BASE_URL}/api/auth/profile`, {
             method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
