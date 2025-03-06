@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import config from "../config";
 import { useAuth } from "../context/AuthContext";
+import { API_BASE_URL } from "../utils/api";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -23,7 +23,7 @@ const Login = () => {
     const password = formData.get("password") as string;
 
     try {
-      const response = await fetch(`${config.baseUrl}/api/auth/login`, {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, role, key }),
@@ -56,41 +56,6 @@ const Login = () => {
       setError("An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
-    }
-
-    try {
-      const response = await fetch(`${config.baseUrl}/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, role, key }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Error Response:", errorData);
-        setError(errorData.message || "Login failed. Please try again.");
-        return;
-      }
-
-      const data = await response.json();
-      console.log("Login Success:", data);
-
-      // Store and verify token
-      localStorage.setItem("token", data.token);
-      console.log("Stored Token:", localStorage.getItem("token"));
-      localStorage.setItem("role", role);
-
-      login({
-        id: data.id,
-        fullName: data.fullName,
-        email: data.email,
-        role: data.role,
-      });
-
-      navigate("/");
-    } catch (error) {
-      console.error("Login Error:", error);
-      setError("An unexpected error occurred. Please try again.");
     }
   };
 

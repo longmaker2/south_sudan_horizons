@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import config from "../config";
+import { API_BASE_URL } from "../utils/api";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -39,18 +39,15 @@ const Register = () => {
     }
 
     try {
-      const response = await fetch(`${config.baseUrl}/api/auth/register`, {
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ fullName, email, password, role, key }),
       });
 
-      // Check if the response is OK (status code 200-299)
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Error Response:", errorData);
-
-        // Display user-friendly error message
         setError(errorData.message || "Registration failed. Please try again.");
         return;
       }
@@ -58,7 +55,6 @@ const Register = () => {
       const data = await response.json();
       console.log("Registration Success:", data);
 
-      // Redirect to login page after successful registration
       navigate("/login");
     } catch (error) {
       console.error("Registration Error:", error);
@@ -68,20 +64,15 @@ const Register = () => {
     }
   };
 
-  // Function to calculate password strength
   const calculatePasswordStrength = (password: string) => {
     let strength = 0;
-
-    // Criteria for password strength
     if (password.length >= 8) strength += 1;
     if (/[A-Z]/.test(password)) strength += 1;
     if (/[0-9]/.test(password)) strength += 1;
     if (/[^A-Za-z0-9]/.test(password)) strength += 1;
-
     return strength;
   };
 
-  // Function to get progress bar color and width based on password strength
   const getProgressBarStyle = (password: string) => {
     const strength = calculatePasswordStrength(password);
     let width = 0;
@@ -169,7 +160,6 @@ const Register = () => {
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </span>
-            {/* Password Strength Indicator */}
             <div className="mt-2 h-1 bg-gray-200 rounded">
               <div
                 className={`h-1 rounded ${progressBarStyle.color}`}
