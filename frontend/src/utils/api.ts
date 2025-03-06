@@ -13,7 +13,7 @@ export const fetchTours = async (): Promise<Tour[]> => {
   return tours.map((tour: Tour) => ({
     ...tour,
     _id: tour._id,
-    image: `http://localhost:5000/tour_pics/${tour.image}`,
+    image: `${API_BASE_URL}/../tour_pics/${tour.image}`,
   }));
 };
 
@@ -31,7 +31,7 @@ export const getRandomTours = async (
   return tours.map((tour: Tour) => ({
     ...tour,
     _id: tour._id,
-    image: `http://localhost:5000/tour_pics/${tour.image}`,
+    image: `${API_BASE_URL}/../tour_pics/${tour.image}`,
   }));
 };
 
@@ -44,7 +44,7 @@ export const fetchTourById = async (id: string): Promise<Tour> => {
   return {
     ...tour,
     _id: tour._id,
-    image: `http://localhost:5000/tour_pics/${tour.image}`,
+    image: `${API_BASE_URL}/../tour_pics/${tour.image}`,
   };
 };
 
@@ -57,7 +57,7 @@ export const fetchTourDetails = async (id: string): Promise<Tour> => {
   return {
     ...tour,
     _id: tour._id,
-    image: `http://localhost:5000/tour_pics/${tour.image}`,
+    image: `${API_BASE_URL}/../tour_pics/${tour.image}`,
   };
 };
 
@@ -82,7 +82,7 @@ export const submitReview = async (
   return {
     ...updatedTour,
     _id: updatedTour._id,
-    image: `http://localhost:5000/tour_pics/${updatedTour.image}`,
+    image: `${API_BASE_URL}/../tour_pics/${updatedTour.image}`,
   };
 };
 
