@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import config from "../config";
+import { API_BASE_URL } from "../utils/api";
 
 interface UploadProfilePictureProps {
   onUploadSuccess: (filePath: string) => void;
@@ -35,7 +35,7 @@ const UploadProfilePicture: React.FC<UploadProfilePictureProps> = ({
       setError("");
 
       const response = await axios.post(
-        `${config.baseUrl}/api/auth/update-profile`,
+        `${API_BASE_URL}/api/auth/update-profile`,
         formData,
         {
           headers: {
