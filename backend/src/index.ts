@@ -19,7 +19,7 @@ app.use(cors());
 // Middleware to parse JSON bodies
 app.use(express.json());
 
-// Ensure directories exist for static files
+// Ensures directories exist for static files
 const ensureDirectory = (dir: string) => {
   try {
     if (!fs.existsSync(dir)) {
@@ -59,12 +59,9 @@ app.use(
   })
 );
 
-// Root route with a user-friendly message
+// Root route to avoid "Cannot GET /" error
 app.get("/", (req, res) => {
-  res.status(200).json({
-    message:
-      "Hello! This is the South Sudan Horizons API. To explore tours, bookings, or user services, please use the appropriate endpoints (e.g., /api/tours, /api/bookings, /api/auth).",
-  });
+  res.status(200).json({ message: "Welcome to South Sudan Horizons API" });
 });
 
 // Base API route to avoid "Cannot GET /api" error
