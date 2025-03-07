@@ -1,10 +1,13 @@
 import { Tour } from "../types/tours";
 import { Booking } from "../types/bookings";
 
-// export const API_BASE_URL = "http://localhost:5000/api"; // For local development
-// export const BASE_URL = "http://localhost:5000"; // For local development
-export const API_BASE_URL = "https://south-sudan-horizons.onrender.com/api"; // For production
-export const BASE_URL = "https://south-sudan-horizons.onrender.com"; // For production
+// For local development (uncomment for local testing)
+// export const API_BASE_URL = "http://localhost:5000/api";
+// export const BASE_URL = "http://localhost:5000";
+
+// For production
+export const API_BASE_URL = "https://south-sudan-horizons.onrender.com/api";
+export const BASE_URL = "https://south-sudan-horizons.onrender.com";
 
 export const fetchTours = async (): Promise<Tour[]> => {
   const response = await fetch(`${API_BASE_URL}/tours`);
@@ -16,7 +19,7 @@ export const fetchTours = async (): Promise<Tour[]> => {
   return tours.map((tour: Tour) => ({
     ...tour,
     _id: tour._id,
-    image: `${API_BASE_URL}/../tour_pics/${tour.image}`,
+    image: `${BASE_URL}/tour_pics/${tour.image}`,
   }));
 };
 
@@ -34,7 +37,7 @@ export const getRandomTours = async (
   return tours.map((tour: Tour) => ({
     ...tour,
     _id: tour._id,
-    image: `${API_BASE_URL}/../tour_pics/${tour.image}`,
+    image: `${BASE_URL}/tour_pics/${tour.image}`,
   }));
 };
 
@@ -47,7 +50,7 @@ export const fetchTourById = async (id: string): Promise<Tour> => {
   return {
     ...tour,
     _id: tour._id,
-    image: `${API_BASE_URL}/../tour_pics/${tour.image}`,
+    image: `${BASE_URL}/tour_pics/${tour.image}`,
   };
 };
 
@@ -60,7 +63,7 @@ export const fetchTourDetails = async (id: string): Promise<Tour> => {
   return {
     ...tour,
     _id: tour._id,
-    image: `${API_BASE_URL}/../tour_pics/${tour.image}`,
+    image: `${BASE_URL}/tour_pics/${tour.image}`,
   };
 };
 
@@ -85,7 +88,7 @@ export const submitReview = async (
   return {
     ...updatedTour,
     _id: updatedTour._id,
-    image: `${API_BASE_URL}/../tour_pics/${updatedTour.image}`,
+    image: `${BASE_URL}/tour_pics/${updatedTour.image}`,
   };
 };
 
@@ -100,7 +103,6 @@ export const submitBooking = async (bookingData: {
   guideId?: string;
 }): Promise<{ success: boolean; message: string }> => {
   const token = localStorage.getItem("token");
-
   if (!token) {
     throw new Error("User is not authenticated. Please log in.");
   }

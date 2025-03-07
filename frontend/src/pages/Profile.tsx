@@ -24,45 +24,45 @@ const Profile: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
 
+  const fetchProfile = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("No authentication token found. Please log in.");
+      setLoadingProfile(false);
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/profile`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch profile");
+      }
+
+      const data = await response.json();
+      console.log("Fetched profile data:", data);
+
+      setTourist({
+        name: data.fullName,
+        email: data.email,
+        profilePicture: data.profilePicture
+          ? `${BASE_URL}${data.profilePicture}`
+          : null,
+      });
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+      setError("Failed to load profile data.");
+    } finally {
+      setLoadingProfile(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchProfile = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setError("No authentication token found. Please log in.");
-        setLoadingProfile(false);
-        return;
-      }
-
-      try {
-        const response = await fetch(`${API_BASE_URL}/auth/profile`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch profile");
-        }
-
-        const data = await response.json();
-        console.log("Fetched profile data:", data);
-
-        setTourist({
-          name: data.fullName,
-          email: data.email,
-          profilePicture: data.profilePicture
-            ? `${BASE_URL}${data.profilePicture}`
-            : null,
-        });
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-        setError("Failed to load profile data.");
-      } finally {
-        setLoadingProfile(false);
-      }
-    };
-
     const fetchBookingHistory = async () => {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -160,10 +160,11 @@ const Profile: React.FC = () => {
     setTourist({
       ...updatedTourist,
       profilePicture: updatedTourist.profilePicture
-        ? `${API_BASE_URL}${updatedTourist.profilePicture}`
+        ? `${BASE_URL}${updatedTourist.profilePicture}`
         : null,
     });
     setIsEditingProfile(false);
+    fetchProfile();
   };
 
   if (loadingProfile || loadingBookings) {

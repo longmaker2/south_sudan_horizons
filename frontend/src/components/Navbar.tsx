@@ -12,7 +12,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { API_BASE_URL } from "../utils/api";
+import { API_BASE_URL, BASE_URL } from "../utils/api";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -64,9 +64,7 @@ const Navbar = () => {
           const data = await response.json();
           console.log("Fetched profile data:", data);
           setProfilePicture(
-            data.profilePicture
-              ? `http://localhost:5000${data.profilePicture}`
-              : null
+            data.profilePicture ? `${BASE_URL}${data.profilePicture}` : null
           );
         } catch (error) {
           console.error("Error fetching profile picture:", error);
@@ -82,10 +80,10 @@ const Navbar = () => {
 
   const handleLogout = () => {
     logout();
+    setProfilePicture(null);
     navigate("/login");
   };
 
-  // Debounce closing to allow cursor transition
   const debounce = (func: () => void, delay: number) => {
     let timer: ReturnType<typeof setTimeout>;
     return () => {
@@ -228,6 +226,13 @@ const Navbar = () => {
                         className="h-8 w-8 sm:h-10 sm:w-10 rounded-full object-cover border-2 border-white"
                         src={profilePicture}
                         alt="User Avatar"
+                        onError={(e) => {
+                          console.error(
+                            "Profile image failed to load:",
+                            profilePicture
+                          );
+                          e.currentTarget.style.display = "none";
+                        }}
                       />
                     ) : (
                       <span className="text-white text-sm sm:text-lg font-semibold">
@@ -296,12 +301,11 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* Invisible spacer on small screens to balance the mobile menu button */}
+          {/* Invisible spacer on small screens */}
           <div className="w-10 sm:hidden flex-shrink-0" />
         </div>
       </div>
 
-      {/* Mobile menu (DisclosurePanel) */}
       <DisclosurePanel className="sm:hidden bg-green-900">
         <div className="space-y-1 px-2 pt-2 pb-3">
           {navigation.map((item) => (
