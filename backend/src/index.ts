@@ -19,7 +19,7 @@ app.use(cors());
 // Middleware to parse JSON bodies
 app.use(express.json());
 
-// Ensures directories exist for static files
+// Ensure directories exist for static files
 const ensureDirectory = (dir: string) => {
   try {
     if (!fs.existsSync(dir)) {
@@ -59,9 +59,23 @@ app.use(
   })
 );
 
-// Root route to avoid "Cannot GET /" error
+// Determine the base URL dynamically
+const BASE_URL =
+  // process.env.BASE_URL || `http://localhost:${process.env.PORT || 5000}`;
+  process.env.BASE_URL ||
+  `https://south-sudan-horizons.onrender.com${process.env.PORT || 5000}`;
+
+// Root route with a user-friendly message and endpoint links
 app.get("/", (req, res) => {
-  res.status(200).json({ message: "Welcome to South Sudan Horizons API" });
+  res.status(200).json({
+    message:
+      "Hello! This is the South Sudan Horizons API. Explore our services using the links below:",
+    endpoints: {
+      authentication: `${BASE_URL}/api/auth`,
+      tours: `${BASE_URL}/api/tours`,
+      bookings: `${BASE_URL}/api/bookings`,
+    },
+  });
 });
 
 // Base API route to avoid "Cannot GET /api" error
