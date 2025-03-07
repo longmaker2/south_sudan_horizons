@@ -45,7 +45,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
     try {
       const response = await axios.post(
-        `${API_BASE_URL}/api/auth/update-profile`,
+        `${API_BASE_URL}/auth/update-profile`,
         formData,
         {
           headers: {

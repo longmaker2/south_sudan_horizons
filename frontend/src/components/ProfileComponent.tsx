@@ -1,7 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { FaUser, FaEdit } from "react-icons/fa";
-import { API_BASE_URL } from "../utils/api";
 
 interface Tourist {
   name: string;
@@ -18,7 +17,6 @@ const ProfileComponent: React.FC<ProfileComponentProps> = ({
   tourist,
   onEditProfile,
 }) => {
-  // Function to get initials from the user's name
   const getInitials = (name: string) => {
     const names = name.split(" ");
     return names
@@ -27,11 +25,9 @@ const ProfileComponent: React.FC<ProfileComponentProps> = ({
       .toUpperCase();
   };
 
-  const imageUrl = tourist.profilePicture
-    ? `${API_BASE_URL}/uploads/${tourist.profilePicture}`
-    : null;
+  const imageUrl = tourist.profilePicture || null;
 
-  console.log("Image URL:", imageUrl);
+  console.log("Profile picture URL:", imageUrl);
 
   return (
     <motion.div
@@ -44,12 +40,15 @@ const ProfileComponent: React.FC<ProfileComponentProps> = ({
         <FaUser className="mr-2" /> Profile
       </h2>
       <div className="flex items-center space-x-4">
-        {/* Display profile picture or initials */}
-        {tourist.profilePicture ? (
+        {imageUrl ? (
           <img
-            src={imageUrl || ""}
+            src={imageUrl}
             alt="Profile"
-            className="w-16 h-16 rounded-full"
+            className="w-16 h-16 rounded-full object-cover"
+            onError={(e) => {
+              console.error("Image failed to load:", imageUrl);
+              e.currentTarget.style.display = "none";
+            }}
           />
         ) : (
           <div className="w-16 h-16 rounded-full bg-green-600 flex items-center justify-center text-white text-2xl font-bold">

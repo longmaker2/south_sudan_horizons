@@ -6,11 +6,10 @@ import jwt from "jsonwebtoken";
 import User from "../models/User";
 import multer from "multer";
 import path from "path";
-import { uploadTour } from "../middleware/upload";
 
 const router = express.Router();
 
-// 📌 Profile Picture Storage
+// Profile Picture Storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/");
@@ -36,6 +35,39 @@ const upload = multer({
   },
 });
 
+// Fetch User Profile (single endpoint)
+router.get("/profile", async (req: Request, res: Response): Promise<void> => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) {
+    res.status(401).json({ message: "No token provided" });
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
+      id: string;
+    };
+    console.log("Profile request - Decoded token:", decoded);
+    const user = await User.findById(decoded.id).select("-password");
+
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    res.status(200).json({
+      id: user._id,
+      fullName: user.fullName,
+      email: user.email,
+      profilePicture: user.profilePicture || null,
+      role: user.role,
+    });
+  } catch (error) {
+    console.error("Error fetching profile:", error);
+    res.status(401).json({ message: "Invalid or expired token" });
+  }
+});
+
 // Update Profile
 router.post(
   "/update-profile",
@@ -51,18 +83,20 @@ router.post(
       const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
         id: string;
       };
-
       const { fullName, email } = req.body;
       const profilePicture = req.file
         ? `/uploads/${req.file.filename}`
         : undefined;
 
-      // Update user profile
       const updatedUser = await User.findByIdAndUpdate(
         decoded.id,
-        { fullName, email, profilePicture },
-        { new: true }
-      );
+        {
+          fullName: fullName || undefined,
+          email: email || undefined,
+          ...(profilePicture && { profilePicture }),
+        },
+        { new: true, runValidators: true }
+      ).select("-password");
 
       if (!updatedUser) {
         res.status(404).json({ message: "User not found" });
@@ -70,9 +104,11 @@ router.post(
       }
 
       res.status(200).json({
+        id: updatedUser._id,
         fullName: updatedUser.fullName,
         email: updatedUser.email,
-        profilePicture: updatedUser.profilePicture,
+        profilePicture: updatedUser.profilePicture || null,
+        role: updatedUser.role,
       });
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -80,36 +116,6 @@ router.post(
     }
   }
 );
-
-// Fetch User Profile
-router.get("/profile", async (req: Request, res: Response): Promise<void> => {
-  const token = req.headers.authorization?.split(" ")[1];
-  if (!token) {
-    res.status(401).json({ message: "No token provided" });
-    return;
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
-      id: string;
-    };
-    const user = await User.findById(decoded.id).select("-password");
-
-    if (!user) {
-      res.status(404).json({ message: "User not found" });
-      return;
-    }
-
-    res.status(200).json({
-      fullName: user.fullName,
-      email: user.email,
-      profilePicture: user.profilePicture || null,
-    });
-  } catch (error) {
-    console.error("Error fetching profile:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-});
 
 // Register Route
 router.post(

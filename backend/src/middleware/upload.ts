@@ -11,7 +11,7 @@ const ensureDirectory = (dir: string) => {
 // 📌 Profile Picture Storage
 const profileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const dir = path.join(__dirname, "../../uploads/");
+    const dir = path.join(process.cwd(), "uploads");
     ensureDirectory(dir);
     cb(null, dir);
   },
@@ -23,7 +23,7 @@ const profileStorage = multer.diskStorage({
 // 📌 Tour Image Storage
 const tourStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const dir = path.join(__dirname, "../../tour_pics/");
+    const dir = path.join(process.cwd(), "tour_pics");
     ensureDirectory(dir);
     cb(null, dir);
   },
@@ -32,5 +32,20 @@ const tourStorage = multer.diskStorage({
   },
 });
 
-export const uploadProfile = multer({ storage: profileStorage });
+export const uploadProfile = multer({
+  storage: profileStorage,
+  fileFilter: (req, file, cb) => {
+    const filetypes = /jpeg|jpg|png|gif/;
+    const extname = filetypes.test(
+      path.extname(file.originalname).toLowerCase()
+    );
+    const mimetype = filetypes.test(file.mimetype);
+    if (extname && mimetype) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only images (jpeg, jpg, png, gif) are allowed"));
+    }
+  },
+});
+
 export const uploadTour = multer({ storage: tourStorage });

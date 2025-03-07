@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const token = localStorage.getItem("token");
       if (token) {
         try {
-          const response = await fetch(`${API_BASE_URL}/api/auth/profile`, {
+          const response = await fetch(`${API_BASE_URL}/auth/profile`, {
             method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           });
 
           if (!response.ok) {
-            throw new Error("Invalid token");
+            throw new Error("Invalid or expired token");
           }
 
           const data = await response.json();
@@ -46,6 +46,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           localStorage.setItem("user", JSON.stringify(restoredUser));
         } catch (error) {
           console.error("Failed to restore session:", error);
+          // Clear invalid token and log out
+          logout();
         }
       }
     };

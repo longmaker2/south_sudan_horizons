@@ -1,8 +1,10 @@
 import { Tour } from "../types/tours";
 import { Booking } from "../types/bookings";
 
-// export const API_BASE_URL = "http://localhost:5000/api";
-export const API_BASE_URL = "https://south-sudan-horizons.onrender.com/api";
+// export const API_BASE_URL = "http://localhost:5000/api"; // For local development
+// export const BASE_URL = "http://localhost:5000"; // For local development
+export const API_BASE_URL = "https://south-sudan-horizons.onrender.com/api"; // For production
+export const BASE_URL = "https://south-sudan-horizons.onrender.com"; // For production
 
 export const fetchTours = async (): Promise<Tour[]> => {
   const response = await fetch(`${API_BASE_URL}/tours`);
@@ -229,4 +231,56 @@ export const cancelBooking = async (
     console.error("Error cancelling booking:", error);
     throw error;
   }
+};
+
+export const fetchUserBookings = async (): Promise<Booking[]> => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("User is not authenticated. Please log in.");
+  }
+
+  const response = await fetch(`${API_BASE_URL}/bookings/user`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || "Failed to fetch booking history");
+  }
+
+  const bookings = await response.json();
+  return bookings.map((booking: Booking) => ({
+    id: booking.id,
+    tourId:
+      typeof booking.tourId === "string"
+        ? booking.tourId
+        : booking.tourId?._id || "",
+    userId: booking.userId,
+    name: booking.name,
+    email: booking.email,
+    guests: booking.guests,
+    date: booking.date,
+    needsGuide: booking.needsGuide,
+    guideId:
+      typeof booking.guideId === "string"
+        ? booking.guideId
+        : booking.guideId?._id,
+    status: booking.status || "pending",
+    title:
+      typeof booking.tourId === "string"
+        ? "Unknown Tour"
+        : booking.tourId?.title || "Unknown Tour",
+    price: typeof booking.tourId === "string" ? 0 : booking.tourId?.price || 0,
+    description:
+      typeof booking.tourId === "string"
+        ? "No description available"
+        : booking.tourId?.description || "No description available",
+    guideName:
+      typeof booking.guideId === "string"
+        ? undefined
+        : booking.guideId?.fullName || undefined,
+  }));
 };

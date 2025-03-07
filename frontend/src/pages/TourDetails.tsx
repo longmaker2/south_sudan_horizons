@@ -11,7 +11,7 @@ import { useAuth } from "../context/AuthContext";
 const TourDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user } = useAuth(); // Get user from AuthContext
+  const { user } = useAuth();
   const [tour, setTour] = useState<Tour | null>(null);
   const [similarTours, setSimilarTours] = useState<Tour[]>([]);
   const [isLoading, setIsLoading] = useState(true);

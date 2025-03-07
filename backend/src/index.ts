@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import path from "path";
 import express from "express";
 import cors from "cors";
-import multer from "multer";
+import fs from "fs";
 import connectDB from "./config/db";
 import authRoutes from "./routes/authRoutes";
 import tourRoutes from "./routes/tourRoutes";
@@ -19,17 +19,13 @@ app.use(cors());
 // Middleware to parse JSON bodies
 app.use(express.json());
 
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  },
-});
-
-const upload = multer({ storage });
+const ensureDirectory = (dir: string) => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+};
+ensureDirectory(path.join(process.cwd(), "uploads"));
+ensureDirectory(path.join(process.cwd(), "tour_pics"));
 
 // Serve static files for profile pictures (uploads folder)
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));

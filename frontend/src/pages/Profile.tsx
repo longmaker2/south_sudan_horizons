@@ -3,7 +3,7 @@ import ProfileComponent from "../components/ProfileComponent";
 import ChangePassword from "../components/ChangePassword";
 import BookingHistory from "../components/BookingHistory";
 import EditProfileModal from "../components/EditProfileModal";
-import { API_BASE_URL } from "../utils/api";
+import { API_BASE_URL, BASE_URL } from "../utils/api";
 import { Booking } from "../types/bookings";
 
 interface Tourist {
@@ -18,21 +18,23 @@ const Profile: React.FC = () => {
     email: "",
     profilePicture: null,
   });
-
   const [bookingHistory, setBookingHistory] = useState<Booking[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingProfile, setLoadingProfile] = useState(true);
+  const [loadingBookings, setLoadingBookings] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
       const token = localStorage.getItem("token");
       if (!token) {
-        console.error("No token found");
+        setError("No authentication token found. Please log in.");
+        setLoadingProfile(false);
         return;
       }
 
       try {
-        const response = await fetch(`${API_BASE_URL}/api/auth/profile`, {
+        const response = await fetch(`${API_BASE_URL}/auth/profile`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -50,30 +52,27 @@ const Profile: React.FC = () => {
           name: data.fullName,
           email: data.email,
           profilePicture: data.profilePicture
-            ? `${API_BASE_URL}${data.profilePicture}`
+            ? `${BASE_URL}${data.profilePicture}`
             : null,
         });
       } catch (error) {
         console.error("Error fetching profile:", error);
+        setError("Failed to load profile data.");
       } finally {
-        setLoading(false);
+        setLoadingProfile(false);
       }
     };
 
-    fetchProfile();
-  }, []);
-
-  useEffect(() => {
     const fetchBookingHistory = async () => {
       const token = localStorage.getItem("token");
       if (!token) {
-        console.error("No token found for booking history");
-        setLoading(false);
+        setError("No authentication token found. Please log in.");
+        setLoadingBookings(false);
         return;
       }
 
       try {
-        const response = await fetch(`${API_BASE_URL}/api/bookings/user`, {
+        const response = await fetch(`${API_BASE_URL}/bookings/user`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -90,16 +89,21 @@ const Profile: React.FC = () => {
         interface BookingResponse {
           _id: string;
           tourId:
-            | { _id: string; title: string; price: number; description: string }
-            | string;
+            | string
+            | {
+                _id: string;
+                title: string;
+                price: number;
+                description: string;
+              };
           userId: string;
           name: string;
           email: string;
           guests: number;
           date: string;
           needsGuide: boolean;
-          guideId?: { _id: string; fullName: string } | string;
-          status?: string;
+          guideId: string | { _id: string; fullName: string };
+          status: string;
         }
 
         const mappedBookings: Booking[] = bookings.map(
@@ -108,7 +112,7 @@ const Profile: React.FC = () => {
             tourId:
               typeof booking.tourId === "string"
                 ? booking.tourId
-                : booking.tourId._id,
+                : booking.tourId?._id || "",
             userId: booking.userId,
             name: booking.name,
             email: booking.email,
@@ -123,15 +127,15 @@ const Profile: React.FC = () => {
             title:
               typeof booking.tourId === "string"
                 ? "Unknown Tour"
-                : booking.tourId.title || "Unknown Tour",
+                : booking.tourId?.title || "Unknown Tour",
             price:
               typeof booking.tourId === "string"
                 ? 0
-                : booking.tourId.price || 0,
+                : booking.tourId?.price || 0,
             description:
               typeof booking.tourId === "string"
                 ? "No description available"
-                : booking.tourId.description || "No description available",
+                : booking.tourId?.description || "No description available",
             guideName:
               typeof booking.guideId === "string"
                 ? undefined
@@ -142,11 +146,13 @@ const Profile: React.FC = () => {
         setBookingHistory(mappedBookings);
       } catch (error) {
         console.error("Error fetching booking history:", error);
+        setError("Failed to load booking history.");
       } finally {
-        setLoading(false);
+        setLoadingBookings(false);
       }
     };
 
+    fetchProfile();
     fetchBookingHistory();
   }, []);
 
@@ -157,14 +163,21 @@ const Profile: React.FC = () => {
         ? `${API_BASE_URL}${updatedTourist.profilePicture}`
         : null,
     });
+    setIsEditingProfile(false);
   };
 
+  if (loadingProfile || loadingBookings) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <div className="min-h-screen bg-gray-100 p-6 mt-15 mt-16">
+    <div className="min-h-screen bg-gray-100 p-6 mt-16">
       <div className="max-w-3xl mx-auto my-16">
         <h1 className="text-3xl font-bold text-green-800 mb-6">
           Tourist Dashboard
         </h1>
+
+        {error && <p className="text-red-500 mb-4">{error}</p>}
 
         <ProfileComponent
           tourist={tourist}
@@ -197,7 +210,10 @@ const Profile: React.FC = () => {
           handlePasswordChange={() => {}}
         />
 
-        <BookingHistory loading={loading} bookingHistory={bookingHistory} />
+        <BookingHistory
+          loading={loadingBookings}
+          bookingHistory={bookingHistory}
+        />
       </div>
     </div>
   );

@@ -50,7 +50,7 @@ const Navbar = () => {
         }
 
         try {
-          const response = await fetch(`${API_BASE_URL}/api/auth/profile`, {
+          const response = await fetch(`${API_BASE_URL}/auth/profile`, {
             method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -62,8 +62,11 @@ const Navbar = () => {
           }
 
           const data = await response.json();
+          console.log("Fetched profile data:", data);
           setProfilePicture(
-            data.profilePicture ? `${API_BASE_URL}${data.profilePicture}` : null
+            data.profilePicture
+              ? `http://localhost:5000${data.profilePicture}`
+              : null
           );
         } catch (error) {
           console.error("Error fetching profile picture:", error);

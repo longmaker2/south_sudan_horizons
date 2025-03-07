@@ -17,9 +17,15 @@ const authenticateUser = (
     return;
   }
 
+  if (!process.env.JWT_SECRET) {
+    console.error("JWT_SECRET is not defined in environment variables.");
+    res.status(500).json({ error: "Server configuration error" });
+    return;
+  }
+
   try {
     console.log("Verifying token:", token);
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET) as {
       id?: string;
       userId?: string;
       _id?: string;
