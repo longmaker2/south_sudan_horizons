@@ -101,18 +101,24 @@ const Navbar = () => {
       as="nav"
       className="bg-green-800 shadow-lg z-[1000] fixed top-0 left-0 w-full will-change-transform"
     >
-      <div className="mx-auto px-2 sm:px-4 lg:px-8">
+      <div className="mx-auto px-2 xxs:px-3 xs:px-4 sm:px-4 lg:px-8">
         <div className="relative flex h-16 items-center justify-center">
-          {/* Mobile menu button with reserved space */}
-          <div className="flex items-center w-10 sm:hidden flex-shrink-0">
-            <Disclosure.Button className="relative inline-flex items-center justify-center rounded-md p-2 text-white hover:bg-green-700 hover:text-gray-200 focus:ring-2 focus:ring-white transition-all duration-200">
+          {/* Mobile menu button */}
+          <div className="flex items-center w-8 xxs:w-10 xs:w-12 sm:hidden flex-shrink-0">
+            <Disclosure.Button className="relative inline-flex items-center justify-center rounded-md p-1.5 xxs:p-2 text-white hover:bg-green-700 hover:text-gray-200 focus:ring-2 focus:ring-white transition-all duration-200">
               {({ open }) => (
                 <>
                   <span className="sr-only">Open main menu</span>
                   {open ? (
-                    <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
+                    <XMarkIcon
+                      className="block h-5 xxs:h-6 w-5 xxs:w-6"
+                      aria-hidden="true"
+                    />
                   ) : (
-                    <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
+                    <Bars3Icon
+                      className="block h-5 xxs:h-6 w-5 xxs:w-6"
+                      aria-hidden="true"
+                    />
                   )}
                 </>
               )}
@@ -120,11 +126,11 @@ const Navbar = () => {
           </div>
 
           {/* Centered content */}
-          <div className="flex items-center justify-center space-x-2 sm:space-x-4 md:space-x-6 lg:space-x-8 xl:space-x-10">
+          <div className="flex items-center justify-center space-x-1 xxs:space-x-2 xs:space-x-3 sm:space-x-6 md:space-x-6 lg:space-x-8 xl:space-x-10 flex-1">
             {/* Logo */}
             <div className="flex-shrink-0">
               <Link to="/" className="flex items-center">
-                <span className="text-white font-extrabold tracking-wide drop-shadow-md text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl whitespace-nowrap">
+                <span className="text-white font-extrabold tracking-wide drop-shadow-md whitespace-nowrap navbar-brand text-xs xxs:text-sm xs:text-base sm:text-lg">
                   South Sudan Horizons
                 </span>
               </Link>
@@ -146,7 +152,6 @@ const Navbar = () => {
                   {item.name}
                 </Link>
               ))}
-              {/* Tours Dropdown */}
               <div
                 className="relative group"
                 onMouseEnter={() => setIsToursOpen(true)}
@@ -201,29 +206,28 @@ const Navbar = () => {
             {/* Right-side buttons */}
             {user ? (
               <>
-                <span className="hidden sm:block text-white text-xs sm:text-sm md:text-base font-medium truncate max-w-[80px] sm:max-w-[100px] lg:max-w-[120px]">
+                <span className="hidden sm:block text-white text-xs sm:text-sm md:text-base font-medium truncate max-w-[80px] sm:max-w-[120px] md:max-w-[120px] lg:max-w-[120px]">
                   {user.fullName}
                 </span>
-                <button className="relative rounded-full bg-green-700 p-1 sm:p-2 text-white hover:bg-green-600 focus:ring-2 focus:ring-white transition-all duration-200">
+                <button className="relative rounded-full bg-green-700 p-1 xxs:p-1.5 xs:p-2 sm:p-2 text-white hover:bg-green-600 focus:ring-2 focus:ring-white transition-all duration-200">
                   <span className="sr-only">View notifications</span>
                   <BellIcon
-                    className="h-4 w-4 sm:h-5 sm:w-5"
+                    className="h-4 w-4 xxs:h-5 xxs:w-5 sm:h-6 sm:w-6"
                     aria-hidden="true"
                   />
                   <span className="absolute -top-1 -right-1 bg-red-500 text-[10px] sm:text-xs text-white rounded-full px-1 py-0.5">
                     3
                   </span>
                 </button>
-                {/* Profile Dropdown */}
                 <div
                   className="relative group"
                   onMouseEnter={() => setIsProfileOpen(true)}
                   onMouseLeave={closeProfile}
                 >
-                  <button className="relative flex rounded-full bg-green-700 text-sm focus:ring-2 focus:ring-white focus:outline-none transition-all duration-200 h-8 w-8 sm:h-10 sm:w-10 items-center justify-center">
+                  <button className="relative flex rounded-full bg-green-700 text-sm focus:ring-2 focus:ring-white focus:outline-none transition-all duration-200 h-7 xxs:h-8 xs:h-9 sm:h-10 w-7 xxs:w-8 xs:w-9 sm:w-10 items-center justify-center">
                     {profilePicture ? (
                       <img
-                        className="h-8 w-8 sm:h-10 sm:w-10 rounded-full object-cover border-2 border-white"
+                        className="h-7 w-7 xxs:h-8 xxs:w-8 xs:h-9 xs:w-9 sm:h-10 sm:w-10 rounded-full object-cover border-2 border-white"
                         src={profilePicture}
                         alt="User Avatar"
                         onError={(e) => {
@@ -235,7 +239,7 @@ const Navbar = () => {
                         }}
                       />
                     ) : (
-                      <span className="text-white text-sm sm:text-lg font-semibold">
+                      <span className="text-white text-xs xxs:text-sm xs:text-base sm:text-lg font-semibold">
                         {getInitials(user.fullName)}
                       </span>
                     )}
@@ -263,27 +267,26 @@ const Navbar = () => {
               <>
                 <Link
                   to="/login"
-                  className="px-2 py-1 sm:px-3 sm:py-1.5 bg-white text-green-800 rounded-lg shadow-md hover:bg-green-50 hover:text-green-900 transition-all duration-200 text-xs sm:text-sm font-medium"
+                  className="px-1.5 xxs:px-2 xs:px-2.5 sm:px-3 sm:py-1.5 bg-white text-green-800 rounded-lg shadow-md hover:bg-green-50 hover:text-green-900 transition-all duration-200 text-[10px] xxs:text-xs xs:text-sm sm:text-sm font-medium"
                 >
                   Login
                 </Link>
                 <Link
                   to="/register"
-                  className="px-3 py-1 sm:px-4 sm:py-1.5 border-2 border-white text-white rounded-lg hover:bg-green-700 hover:border-green-700 transition-all duration-200 text-xs sm:text-sm font-medium"
+                  className="px-1.5 xxs:px-2 xs:px-2.5 sm:px-4 sm:py-1.5 border-2 border-white text-white rounded-lg hover:bg-green-700 hover:border-green-700 transition-all duration-200 text-[10px] xxs:text-xs xs:text-sm sm:text-sm font-medium"
                 >
                   Register
                 </Link>
               </>
             )}
-            {/* Language Dropdown */}
             <div
               className="relative group"
               onMouseEnter={() => setIsLanguageOpen(true)}
               onMouseLeave={closeLanguage}
             >
-              <button className="flex items-center text-white hover:bg-green-700 hover:text-gray-200 rounded-md px-2 py-1 sm:px-3 sm:py-2 text-xs sm:text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white">
+              <button className="flex items-center text-white hover:bg-green-700 hover:text-gray-200 rounded-md px-1.5 xxs:px-2 xs:px-2.5 sm:px-3 sm:py-2 text-[10px] xxs:text-xs xs:text-sm sm:text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white">
                 EN
-                <ChevronDownIcon className="ml-1 h-3 w-3 sm:h-4 sm:w-4" />
+                <ChevronDownIcon className="ml-0.5 xxs:ml-1 h-3 w-3 sm:h-4 sm:w-4" />
               </button>
               {isLanguageOpen && (
                 <div className="absolute right-0 top-full w-24 sm:w-28 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition-all duration-200 z-10">
@@ -302,12 +305,12 @@ const Navbar = () => {
           </div>
 
           {/* Invisible spacer on small screens */}
-          <div className="w-10 sm:hidden flex-shrink-0" />
+          <div className="w-8 xxs:w-10 xs:w-12 sm:hidden flex-shrink-0" />
         </div>
       </div>
 
       <DisclosurePanel className="sm:hidden bg-green-900">
-        <div className="space-y-1 px-2 pt-2 pb-3">
+        <div className="space-y-1 px-2 xxs:px-3 xs:px-4 pt-2 pb-3">
           {navigation.map((item) => (
             <DisclosureButton
               key={item.name}
@@ -317,7 +320,7 @@ const Navbar = () => {
                 item.current
                   ? "bg-green-800 text-white"
                   : "text-white hover:bg-green-700 hover:text-gray-200",
-                "block rounded-md px-3 py-2 text-base font-medium transition-all duration-200"
+                "block rounded-md px-3 py-2 text-xs xxs:text-sm xs:text-base font-medium transition-all duration-200"
               )}
             >
               {item.name}
@@ -327,7 +330,7 @@ const Navbar = () => {
             <DisclosureButton
               as="button"
               onClick={() => setIsToursOpen(!isToursOpen)}
-              className="flex items-center justify-between w-full text-white hover:bg-green-700 hover:text-gray-200 rounded-md px-3 py-2 text-base font-medium transition-all duration-200"
+              className="flex items-center justify-between w-full text-white hover:bg-green-700 hover:text-gray-200 rounded-md px-3 py-2 text-xs xxs:text-sm xs:text-base font-medium transition-all duration-200"
             >
               Tours
               <ChevronDownIcon
@@ -340,31 +343,31 @@ const Navbar = () => {
               <div className="mt-1 space-y-1 bg-green-800 rounded-md">
                 <Link
                   to="/tours/all"
-                  className="block px-4 py-2 text-sm text-gray-200 hover:bg-green-700 hover:text-white"
+                  className="block px-4 py-2 text-xs xxs:text-sm xs:text-base text-gray-200 hover:bg-green-700 hover:text-white"
                 >
                   All Tours
                 </Link>
                 <Link
                   to="/tours/adventure"
-                  className="block px-4 py-2 text-sm text-gray-200 hover:bg-green-700 hover:text-white"
+                  className="block px-4 py-2 text-xs xxs:text-sm xs:text-base text-gray-200 hover:bg-green-700 hover:text-white"
                 >
                   Adventure Tours
                 </Link>
                 <Link
                   to="/tours/cultural"
-                  className="block px-4 py-2 text-sm text-gray-200 hover:bg-green-700 hover:text-white"
+                  className="block px-4 py-2 text-xs xxs:text-sm xs:text-base text-gray-200 hover:bg-green-700 hover:text-white"
                 >
                   Cultural Tours
                 </Link>
                 <Link
                   to="/tours/wildlife"
-                  className="block px-4 py-2 text-sm text-gray-200 hover:bg-green-700 hover:text-white"
+                  className="block px-4 py-2 text-xs xxs:text-sm xs:text-base text-gray-200 hover:bg-green-700 hover:text-white"
                 >
                   Wildlife Tours
                 </Link>
                 <Link
                   to="/tours/nature"
-                  className="block px-4 py-2 text-sm text-gray-200 hover:bg-green-700 hover:text-white"
+                  className="block px-4 py-2 text-xs xxs:text-sm xs:text-base text-gray-200 hover:bg-green-700 hover:text-white"
                 >
                   Nature Tours
                 </Link>

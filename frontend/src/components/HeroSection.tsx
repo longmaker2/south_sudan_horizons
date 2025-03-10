@@ -8,31 +8,38 @@ const HeroSection = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1 }}
-      className="relative flex flex-col items-center justify-center h-[80vh] text-center px-6 bg-cover bg-center text-white"
+      className="relative flex min-h-[80vh] w-full flex-col items-center justify-center bg-cover bg-center px-4 py-12 text-center text-white sm:px-6 md:py-20"
       style={{ backgroundImage: `url(${HeroImage})` }}
     >
-      <div className="absolute inset-0 bg-opacity-50"></div>
-      <div className="relative z-10 bg-green-800 bg-opacity-10 p-6 rounded-lg">
-        <h1 className="text-6xl font-extrabold drop-shadow-lg">
-          Discover South Sudan
-        </h1>
-        <p className="mt-4 text-xl max-w-3xl text-gray-200">
-          Experience the vibrant culture, breathtaking landscapes, and unique
-          adventures in the heart of Africa.
-        </p>
-        <div className="mt-6 flex space-x-4 justify-center">
-          <Link
-            to="/tours/all"
-            className="px-6 py-3 bg-green-600 text-white text-lg font-semibold rounded-lg shadow-md hover:bg-green-700 transition-all duration-300 transform hover:scale-105"
-          >
-            Explore Tours
-          </Link>
-          <Link
-            to="/guides"
-            className="px-6 py-3 border border-white text-white text-lg font-semibold rounded-lg shadow-md hover:bg-green-600 hover:text-white transition-all duration-300 transform hover:scale-105"
-          >
-            Meet Guides
-          </Link>
+      {/* Overlay */}
+      <div className="absolute inset-0  bg-opacity-40"></div>
+
+      {/* Content Container */}
+      <div className="relative z-10 mx-auto w-full max-w-5xl">
+        <div className="rounded-xl bg-green-800 bg-opacity-20 p-6 backdrop-blur-sm sm:p-8 md:p-10">
+          <h1 className="mb-4 font-extrabold drop-shadow-lg text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
+            Discover South Sudan
+          </h1>
+          <p className="mx-auto mb-8 max-w-xl text-base text-gray-100 sm:text-lg md:max-w-2xl md:text-xl lg:max-w-3xl">
+            Experience the vibrant culture, breathtaking landscapes, and unique
+            adventures in the heart of Africa.
+          </p>
+
+          {/* Buttons Container */}
+          <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center sm:gap-6">
+            <Link
+              to="/tours/all"
+              className="w-full rounded-lg bg-green-600 px-6 py-3 text-base font-semibold text-white shadow-md transition-all duration-300 hover:scale-105 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 sm:w-auto sm:text-lg"
+            >
+              Explore Tours
+            </Link>
+            <Link
+              to="/guides"
+              className="w-full rounded-lg border-2 border-white px-6 py-3 text-base font-semibold text-white shadow-md transition-all duration-300 hover:scale-105 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 sm:w-auto sm:text-lg"
+            >
+              Meet Guides
+            </Link>
+          </div>
         </div>
       </div>
     </motion.div>
