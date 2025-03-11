@@ -9,6 +9,7 @@ import { Booking } from "../types/bookings";
 export const API_BASE_URL = "https://south-sudan-horizons.onrender.com/api";
 export const BASE_URL = "https://south-sudan-horizons.onrender.com";
 
+// API functions
 export const fetchTours = async (): Promise<Tour[]> => {
   const response = await fetch(`${API_BASE_URL}/tours`);
   if (!response.ok) {
