@@ -8,8 +8,25 @@ import authRoutes from "./routes/authRoutes";
 import tourRoutes from "./routes/tourRoutes";
 import bookingRoutes from "./routes/bookingRoutes";
 
-// Load environment variables
-dotenv.config({ path: path.resolve(__dirname, ".env") });
+// Debug the .env path and load environment variables
+const envPath = path.resolve(__dirname, ".env");
+console.log("Looking for .env at:", envPath);
+if (!fs.existsSync(envPath)) {
+  console.error(".env file not found at:", envPath);
+  process.exit(1);
+}
+dotenv.config({ path: envPath });
+console.log("Environment variables loaded in index.ts");
+console.log("STRIPE_SECRET_KEY:", process.env.STRIPE_SECRET_KEY || "Not found");
+console.log("MONGO_URI:", process.env.MONGO_URI || "Not found");
+
+// Check critical environment variables
+if (!process.env.STRIPE_SECRET_KEY || !process.env.MONGO_URI) {
+  console.error(
+    "Required environment variables (STRIPE_SECRET_KEY or MONGO_URI) are missing. Check your .env file."
+  );
+  process.exit(1);
+}
 
 const app = express();
 
@@ -74,9 +91,6 @@ app.get("/api", (req, res) => {
   });
 });
 
-// Connect to MongoDB
-connectDB();
-
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/tours", tourRoutes);
@@ -87,18 +101,28 @@ app.use((req, res) => {
   res.status(404).json({ error: "Route not found" });
 });
 
-// Start the server with error handling
+// Start the server with error handling after connecting to MongoDB
 const PORT = process.env.PORT || 5000;
-app
-  .listen(PORT, () => {
-    console.log(`🚀 Server is running on port ${PORT}`);
+connectDB()
+  .then(() => {
+    app
+      .listen(PORT, () => {
+        console.log(`🚀 Server is running on port ${PORT}`);
+      })
+      .on("error", (err: NodeJS.ErrnoException) => {
+        console.error(`Failed to start server on port ${PORT}:`, err);
+        if (err.code === "EADDRINUSE") {
+          console.error(
+            `Port ${PORT} is already in use. Please use a different port.`
+          );
+        }
+        process.exit(1);
+      });
   })
-  .on("error", (err: NodeJS.ErrnoException) => {
-    console.error(`Failed to start server on port ${PORT}:`, err);
-    if (err.code === "EADDRINUSE") {
-      console.error(
-        `Port ${PORT} is already in use. Please use a different port.`
-      );
-    }
+  .catch((err) => {
+    console.error(
+      "Failed to start server due to MongoDB connection error:",
+      err
+    );
     process.exit(1);
   });

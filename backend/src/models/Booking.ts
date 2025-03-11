@@ -18,6 +18,17 @@ const BookingSchema = new mongoose.Schema({
     enum: ["pending", "confirmed", "cancelled"],
     default: "pending",
   },
+  paymentMethod: {
+    type: String,
+    enum: ["stripe", "cash"],
+    required: true,
+  },
+  paymentIntentId: {
+    type: String,
+    required: function (this: any) {
+      return this.paymentMethod === "stripe";
+    },
+  },
   createdAt: { type: Date, default: Date.now },
 });
 

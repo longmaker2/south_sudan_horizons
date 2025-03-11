@@ -2,31 +2,49 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { submitBooking } from "../utils/api";
+import { submitBooking, createPaymentIntent } from "../utils/api";
+import { loadStripe, Stripe } from "@stripe/stripe-js";
+import {
+  Elements,
+  useStripe,
+  useElements,
+  CardNumberElement,
+  CardExpiryElement,
+  CardCvcElement,
+} from "@stripe/react-stripe-js";
+import PaymentMethod from "./PaymentMethod";
 
-// Mock data for available guides
+// Determine the Stripe publishable key using Vite's import.meta.env
+const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+
+if (!stripeKey) {
+  throw new Error(
+    "Stripe publishable key is missing in the environment variables."
+  );
+}
+
+// Log the key for debugging
+console.log("Stripe Publishable Key:", stripeKey);
+
+// Initialize Stripe with the publishable key
+const stripePromise: Promise<Stripe | null> = loadStripe(stripeKey).catch(
+  (error) => {
+    console.error("Failed to initialize Stripe:", error);
+    throw new Error("Stripe initialization failed");
+  }
+);
+
 const availableGuides = [
-  {
-    id: "507f1f77bcf86cd799439011",
-    name: "John Doe",
-    profile: "Experienced guide with 5+ years of expertise in mountain tours.",
-  },
-  {
-    id: "507f1f77bcf86cd799439012",
-    name: "Jane Smith",
-    profile: "Specializes in cultural and historical tours.",
-  },
-  {
-    id: "507f1f77bcf86cd799439013",
-    name: "Alex Johnson",
-    profile: "Adventure guide with a focus on extreme sports.",
-  },
+  { id: "507f1f77bcf86cd799439011", name: "John Doe", profile: "..." },
+  { id: "507f1f77bcf86cd799439012", name: "Jane Smith", profile: "..." },
+  { id: "507f1f77bcf86cd799439013", name: "Alex Johnson", profile: "..." },
 ];
 
 const Booking = ({ tourId }: { tourId: string }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  console.log("Authenticated User:", user);
+  const stripe = useStripe();
+  const elements = useElements();
 
   const [name, setName] = useState(user?.fullName || "");
   const [email, setEmail] = useState(user?.email || "");
@@ -37,6 +55,18 @@ const Booking = ({ tourId }: { tourId: string }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [cardErrors, setCardErrors] = useState({
+    cardNumber: "",
+    expiry: "",
+    cvc: "",
+  });
+  const [cardBrand, setCardBrand] = useState<string | null>(null);
+  const [stripeLoaded, setStripeLoaded] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<"stripe" | "cash">(
+    "stripe"
+  );
+
   interface BookingSummary {
     tourId: string;
     name: string;
@@ -45,43 +75,62 @@ const Booking = ({ tourId }: { tourId: string }) => {
     date: string;
     needsGuide: boolean;
     guide: string | undefined;
+    paymentMethod: "stripe" | "cash";
   }
 
   const [bookingSummary, setBookingSummary] = useState<BookingSummary | null>(
     null
   );
 
-  // Reset success message after 5 seconds
+  // Check if Stripe and Elements are loaded
+  useEffect(() => {
+    if (stripe && elements) {
+      setStripeLoaded(true);
+    } else if (paymentMethod === "stripe") {
+      console.warn("Stripe or Elements not loaded yet");
+      stripePromise.catch((err) => setError(err.message));
+    }
+  }, [stripe, elements, paymentMethod]);
+
   useEffect(() => {
     if (showSuccess) {
       const timer = setTimeout(() => {
         setShowSuccess(false);
         setBookingSummary(null);
-      }, 5000); // 5 seconds
+      }, 5000);
       return () => clearTimeout(timer);
     }
   }, [showSuccess]);
+
+  const handlePaymentSetup = async () => {
+    try {
+      setIsLoading(true);
+      const paymentIntent = await createPaymentIntent({ tourId, guests });
+      setClientSecret(paymentIntent.clientSecret);
+    } catch (err: unknown) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to initialize payment. Please try again."
+      );
+      console.error("Payment setup error:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
 
-    if (!tourId) {
-      setError("Tour ID is missing. Please try again.");
+    if (!tourId || !user?.id) {
+      setError("Missing required booking data.");
       setIsLoading(false);
-      return;
-    }
-
-    if (!user?.id) {
-      setError("User is not authenticated. Please log in.");
-      setIsLoading(false);
-      navigate("/login");
       return;
     }
 
     const token = localStorage.getItem("token");
-    console.log("Token:", token);
     if (!token) {
       setError("No authentication token found. Please log in again.");
       setIsLoading(false);
@@ -91,14 +140,13 @@ const Booking = ({ tourId }: { tourId: string }) => {
 
     const selectedDate = new Date(date);
     const currentDate = new Date();
-
     if (selectedDate <= currentDate) {
       setError("Please select a future date for the tour.");
       setIsLoading(false);
       return;
     }
 
-    const bookingData = {
+    const bookingDataBase = {
       tourId,
       userId: user.id,
       name,
@@ -107,38 +155,113 @@ const Booking = ({ tourId }: { tourId: string }) => {
       date: selectedDate.toISOString(),
       needsGuide,
       guideId: selectedGuide || undefined,
+      paymentMethod,
     };
 
-    console.log("Booking Data:", bookingData);
-
     try {
-      const result = await submitBooking(bookingData);
-      // Update booking summary and show success message
-      setBookingSummary({
-        tourId,
-        name,
-        email,
-        guests,
-        date: selectedDate.toLocaleDateString(),
-        needsGuide,
-        guide: selectedGuide
-          ? availableGuides.find((g) => g.id === selectedGuide)?.name
-          : "None",
-      });
-      setShowSuccess(true);
-      console.log("Booking result:", result);
-    } catch (error) {
-      console.error("Error submitting booking:", error);
-      if (
-        (error as Error).message === "Session expired. Please log in again."
-      ) {
-        navigate("/login");
+      if (paymentMethod === "stripe") {
+        if (!stripe || !elements) {
+          setError("Payment system is not ready. Please wait a moment.");
+          setIsLoading(false);
+          return;
+        }
+
+        if (!clientSecret) {
+          await handlePaymentSetup();
+          return;
+        }
+
+        const cardNumberElement = elements.getElement(CardNumberElement);
+        const cardExpiryElement = elements.getElement(CardExpiryElement);
+        const cardCvcElement = elements.getElement(CardCvcElement);
+
+        if (!cardNumberElement || !cardExpiryElement || !cardCvcElement) {
+          setError("Payment form not loaded correctly.");
+          setIsLoading(false);
+          return;
+        }
+
+        const { paymentIntent, error: paymentError } =
+          await stripe.confirmCardPayment(clientSecret, {
+            payment_method: {
+              card: cardNumberElement,
+              billing_details: { name },
+            },
+          });
+
+        if (paymentError) {
+          setError(paymentError.message || "Payment failed. Please try again.");
+          setIsLoading(false);
+          return;
+        }
+
+        const bookingData = {
+          ...bookingDataBase,
+          paymentIntentId: paymentIntent!.id,
+        };
+
+        await submitBooking(bookingData);
+        setBookingSummary({
+          ...bookingDataBase,
+          guide: selectedGuide
+            ? availableGuides.find((g) => g.id === selectedGuide)?.name
+            : "None",
+          paymentMethod: "stripe",
+        });
+      } else {
+        // Cash payment
+        const bookingData = { ...bookingDataBase };
+        await submitBooking(bookingData);
+        setBookingSummary({
+          ...bookingDataBase,
+          guide: selectedGuide
+            ? availableGuides.find((g) => g.id === selectedGuide)?.name
+            : "None",
+          paymentMethod: "cash",
+        });
       }
-      setError("Failed to submit booking. Please try again.");
+      setShowSuccess(true);
+      setClientSecret(null);
+    } catch (err: unknown) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to submit booking. Please try again."
+      );
+      console.error("Booking submission error:", err);
     } finally {
       setIsLoading(false);
     }
   };
+
+  // Render loading state if Stripe isn't ready and Stripe is selected
+  if (paymentMethod === "stripe" && !stripeLoaded) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <svg
+          className="animate-spin h-8 w-8 text-green-600"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+          />
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8v8h8a8 8 0 01-16 0z"
+          />
+        </svg>
+        <span className="ml-2 text-gray-700">Loading payment system...</span>
+      </div>
+    );
+  }
 
   return (
     <motion.div
@@ -149,12 +272,16 @@ const Booking = ({ tourId }: { tourId: string }) => {
     >
       <div className="sticky top-6 bg-white rounded-lg shadow-lg p-6">
         <h2 className="text-2xl font-bold text-green-800">Book This Tour</h2>
-        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+        <form onSubmit={handleSubmit} className="mt-6 space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-gray-700"
+            >
               Name
             </label>
             <input
+              id="name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -164,10 +291,14 @@ const Booking = ({ tourId }: { tourId: string }) => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
               Email
             </label>
             <input
+              id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -177,10 +308,14 @@ const Booking = ({ tourId }: { tourId: string }) => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="guests"
+              className="block text-sm font-medium text-gray-700"
+            >
               Number of Guests
             </label>
             <input
+              id="guests"
               type="number"
               value={guests}
               onChange={(e) => setGuests(Number(e.target.value))}
@@ -191,17 +326,20 @@ const Booking = ({ tourId }: { tourId: string }) => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="date"
+              className="block text-sm font-medium text-gray-700"
+            >
               Tour Date
             </label>
             <input
+              id="date"
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
               className="w-full px-4 py-2 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-500"
-              placeholder="Select Tour Date"
-              title="Tour Date"
               required
+              placeholder="Select a Date"
             />
           </div>
           <div>
@@ -221,7 +359,7 @@ const Booking = ({ tourId }: { tourId: string }) => {
                   className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-300 ${
                     needsGuide ? "translate-x-6" : "translate-x-0"
                   }`}
-                ></span>
+                />
               </button>
               <span className="ml-2 text-sm text-gray-600">
                 {needsGuide ? "Yes" : "No"}
@@ -230,15 +368,19 @@ const Booking = ({ tourId }: { tourId: string }) => {
           </div>
           {needsGuide && (
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="guide"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Select a Guide
               </label>
               <div className="flex items-center gap-2">
                 <select
-                  title="Select a guide"
+                  id="guide"
                   value={selectedGuide}
                   onChange={(e) => setSelectedGuide(e.target.value)}
                   className="w-full px-4 py-2 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-500"
+                  title="Select a guide"
                 >
                   <option value="">Choose a guide</option>
                   {availableGuides.map((guide) => (
@@ -258,17 +400,60 @@ const Booking = ({ tourId }: { tourId: string }) => {
               </div>
             </div>
           )}
-          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+          <PaymentMethod
+            paymentMethod={paymentMethod}
+            setPaymentMethod={setPaymentMethod}
+            clientSecret={clientSecret}
+            setClientSecret={setClientSecret}
+            cardErrors={cardErrors}
+            setCardErrors={setCardErrors}
+            cardBrand={cardBrand}
+            setCardBrand={setCardBrand}
+            handlePaymentSetup={handlePaymentSetup}
+          />
+          {error && (
+            <p className="text-red-500 text-sm mt-2" role="alert">
+              {error}
+            </p>
+          )}
           <button
             type="submit"
-            disabled={isLoading}
-            className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300 disabled:bg-gray-400"
+            disabled={
+              isLoading ||
+              (paymentMethod === "stripe" && (!stripe || !elements))
+            }
+            className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300 disabled:bg-gray-400 flex items-center justify-center"
           >
-            {isLoading ? "Booking..." : "Book Now"}
+            {isLoading && (
+              <svg
+                className="animate-spin h-5 w-5 mr-2 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8h8a8 8 0 01-16 0z"
+                />
+              </svg>
+            )}
+            {isLoading
+              ? "Processing..."
+              : paymentMethod === "stripe" && clientSecret
+              ? "Confirm Payment"
+              : "Book Now"}
           </button>
         </form>
 
-        {/* Success Message and Summary */}
         {showSuccess && bookingSummary && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -290,6 +475,12 @@ const Booking = ({ tourId }: { tourId: string }) => {
                 Guide:{" "}
                 {bookingSummary.needsGuide ? bookingSummary.guide : "No guide"}
               </li>
+              <li>
+                Payment Method:{" "}
+                {bookingSummary.paymentMethod === "stripe"
+                  ? "Stripe"
+                  : "Cash on Arrival"}
+              </li>
             </ul>
           </motion.div>
         )}
@@ -298,4 +489,10 @@ const Booking = ({ tourId }: { tourId: string }) => {
   );
 };
 
-export default Booking;
+const WrappedBooking = (props: { tourId: string }) => (
+  <Elements stripe={stripePromise}>
+    <Booking {...props} />
+  </Elements>
+);
+
+export default WrappedBooking;

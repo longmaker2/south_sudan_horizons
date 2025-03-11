@@ -101,14 +101,19 @@ export const submitBooking = async (bookingData: {
   date: string;
   needsGuide: boolean;
   guideId?: string;
-}): Promise<{ success: boolean; message: string }> => {
+  paymentMethod: "stripe" | "cash";
+  paymentIntentId?: string;
+}): Promise<{ success: boolean; bookingId: string }> => {
   const token = localStorage.getItem("token");
   if (!token) {
     throw new Error("User is not authenticated. Please log in.");
   }
 
   try {
-    console.log("Request Payload:", JSON.stringify(bookingData));
+    console.log(
+      "Submitting booking with payload:",
+      JSON.stringify(bookingData)
+    );
     console.log("Request Headers:", {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
@@ -130,10 +135,15 @@ export const submitBooking = async (bookingData: {
         localStorage.removeItem("token");
         throw new Error("Session expired. Please log in again.");
       }
-      throw new Error(errorData.error || "Failed to submit booking");
+      throw new Error(
+        errorData.error ||
+          `Failed to submit booking (Status: ${response.status})`
+      );
     }
 
-    return response.json();
+    const data = await response.json();
+    console.log("Booking response:", data);
+    return data;
   } catch (error) {
     console.error("Error submitting booking:", error);
     throw error;
@@ -285,4 +295,34 @@ export const fetchUserBookings = async (): Promise<Booking[]> => {
         ? undefined
         : booking.guideId?.fullName || undefined,
   }));
+};
+
+// Payment Intent API
+export const createPaymentIntent = async (data: {
+  tourId: string;
+  guests: number;
+}): Promise<{ clientSecret: string }> => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("User is not authenticated. Please log in.");
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/bookings/create-payment-intent`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    }
+  );
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || "Failed to create payment intent");
+  }
+
+  return response.json();
 };

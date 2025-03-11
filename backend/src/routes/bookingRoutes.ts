@@ -2,6 +2,13 @@ import express, { Request, Response, Router, NextFunction } from "express";
 import mongoose from "mongoose";
 import Booking from "../models/Booking";
 import authenticateUser from "../middleware/auth";
+import Stripe from "stripe";
+
+// Log at module load time
+console.log(
+  "STRIPE_SECRET_KEY at module load:",
+  process.env.STRIPE_SECRET_KEY || "Not found"
+);
 
 interface AuthenticatedRequest extends Request {
   userId?: string;
@@ -9,18 +16,94 @@ interface AuthenticatedRequest extends Request {
 
 const router: Router = express.Router();
 
-// Create a new booking
+// Create Payment Intent
+router.post(
+  "/create-payment-intent",
+  authenticateUser,
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
+      console.log(
+        "STRIPE_SECRET_KEY in create-payment-intent:",
+        process.env.STRIPE_SECRET_KEY || "Not found"
+      );
+      if (!process.env.STRIPE_SECRET_KEY) {
+        throw new Error(
+          "STRIPE_SECRET_KEY is not defined in environment variables"
+        );
+      }
+
+      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+        apiVersion: "2025-02-24.acacia",
+      });
+
+      const { tourId, guests } = req.body;
+      const userId = req.userId;
+
+      if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+        res.status(400).json({ error: "Invalid userId from token" });
+        return;
+      }
+      if (!mongoose.Types.ObjectId.isValid(tourId)) {
+        res.status(400).json({ error: "Invalid tourId" });
+        return;
+      }
+
+      // Fetch tour price
+      const Tour = mongoose.model("Tour");
+      const tour = await Tour.findById(tourId);
+      if (!tour) {
+        res.status(404).json({ error: "Tour not found" });
+        return;
+      }
+
+      const amount = tour.price * guests * 100; // Convert to cents
+
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount,
+        currency: "usd",
+        payment_method_types: ["card"],
+        metadata: { tourId, userId, guests },
+      });
+
+      res.json({ clientSecret: paymentIntent.client_secret });
+    } catch (err) {
+      console.error("Error creating payment intent:", err);
+      res.status(500).json({ error: "Failed to create payment intent" });
+    }
+  }
+);
+
+// Create a new booking (with optional payment)
 router.post(
   "/",
   authenticateUser,
-  async (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> => {
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     try {
-      const { tourId, name, email, guests, date, needsGuide, guideId } =
-        req.body;
+      console.log(
+        "STRIPE_SECRET_KEY in booking creation:",
+        process.env.STRIPE_SECRET_KEY || "Not found"
+      );
+      if (!process.env.STRIPE_SECRET_KEY) {
+        throw new Error(
+          "STRIPE_SECRET_KEY is not defined in environment variables"
+        );
+      }
+
+      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+        apiVersion: "2025-02-24.acacia",
+      });
+
+      const {
+        tourId,
+        name,
+        email,
+        guests,
+        date,
+        needsGuide,
+        guideId,
+        paymentMethod,
+        paymentIntentId,
+      } = req.body;
       const userId = req.userId;
 
       if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
@@ -35,8 +118,19 @@ router.post(
         res.status(400).json({ error: "Invalid guideId" });
         return;
       }
+      if (!["stripe", "cash"].includes(paymentMethod)) {
+        res.status(400).json({ error: "Invalid payment method" });
+        return;
+      }
+      if (paymentMethod === "stripe" && !paymentIntentId) {
+        res
+          .status(400)
+          .json({ error: "Payment Intent ID is required for Stripe" });
+        return;
+      }
 
-      const newBooking = new Booking({
+      // Base booking data
+      const bookingData: any = {
         tourId,
         userId,
         name,
@@ -45,10 +139,31 @@ router.post(
         date,
         needsGuide,
         guideId: guideId || undefined,
-      });
+        paymentMethod,
+      };
 
+      if (paymentMethod === "stripe") {
+        // Verify payment intent status for Stripe
+        const paymentIntent = await stripe.paymentIntents.retrieve(
+          paymentIntentId
+        );
+        if (paymentIntent.status !== "succeeded") {
+          res.status(400).json({ error: "Payment not completed" });
+          return;
+        }
+        bookingData.paymentIntentId = paymentIntentId;
+        bookingData.status = "confirmed"; // Paid, so confirmed
+      } else {
+        // Cash payment, no payment intent needed
+        bookingData.status = "pending"; // Unpaid, awaiting cash
+      }
+
+      const newBooking = new Booking(bookingData);
       await newBooking.save();
-      res.status(201).json(newBooking);
+      const populatedBooking = await Booking.findById(newBooking._id)
+        .populate("tourId", "title price description")
+        .populate("guideId", "fullName");
+      res.status(201).json(populatedBooking);
     } catch (err) {
       console.error("Error creating booking:", err);
       res.status(500).json({ error: "Failed to create booking" });
