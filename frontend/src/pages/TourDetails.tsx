@@ -6,7 +6,7 @@ import TourDetail from "../components/TourDetail";
 import SimilarTours from "../components/SimilarTours";
 import { Tour } from "../types/tours";
 import { fetchTourDetails, fetchTours, submitReview } from "../utils/api";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 
 const TourDetails = () => {
   const { id } = useParams<{ id: string }>();

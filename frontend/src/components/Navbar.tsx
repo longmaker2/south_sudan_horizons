@@ -11,7 +11,7 @@ import {
   ChevronDownIcon,
 } from "@heroicons/react/24/outline";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 import { API_BASE_URL, BASE_URL } from "../utils/api";
 
 function classNames(...classes: string[]) {

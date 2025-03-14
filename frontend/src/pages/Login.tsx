@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth"; // Adjust the import path
 import { API_BASE_URL } from "../utils/api";
 
 const Login = () => {
@@ -48,6 +48,7 @@ const Login = () => {
         fullName: data.fullName,
         email: data.email,
         role: data.role,
+        profilePicture: data.profilePicture || null, // Ensure profilePicture is handled
       });
 
       navigate("/");

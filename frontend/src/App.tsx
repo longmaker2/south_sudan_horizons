@@ -23,7 +23,8 @@ import TouristDashboard from "./pages/Profile";
 import TourDetails from "./pages/TourDetails";
 import GuideProfile from "./pages/GuideProfile";
 import BackToTopButton from "./components/BackToTopButton";
-import { AuthProvider, useAuth } from "./context/AuthContext";
+import { AuthProvider } from "./context/AuthContext";
+import { useAuth } from "./context/useAuth";
 import WrappedBooking from "./components/Booking";
 import BookingDetails from "./pages/BookingDetails";
 

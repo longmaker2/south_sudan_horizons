@@ -20,7 +20,7 @@ const User_1 = __importDefault(require("../models/User"));
 const multer_1 = __importDefault(require("multer"));
 const path_1 = __importDefault(require("path"));
 const router = express_1.default.Router();
-// 📌 Profile Picture Storage
+// Profile Picture Storage
 const storage = multer_1.default.diskStorage({
     destination: (req, file, cb) => {
         cb(null, "uploads/");
@@ -32,7 +32,7 @@ const storage = multer_1.default.diskStorage({
 const upload = (0, multer_1.default)({
     storage,
     fileFilter: (req, file, cb) => {
-        const filetypes = /jpeg|jpg|png|gif/;
+        const filetypes = /jpeg|jpg|png|webp|svg|gif/;
         const extname = filetypes.test(path_1.default.extname(file.originalname).toLowerCase());
         const mimetype = filetypes.test(file.mimetype);
         if (extname && mimetype) {
@@ -43,38 +43,7 @@ const upload = (0, multer_1.default)({
         }
     },
 });
-// Update Profile
-router.post("/update-profile", upload.single("profilePicture"), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(" ")[1];
-    if (!token) {
-        res.status(401).json({ message: "No token provided" });
-        return;
-    }
-    try {
-        const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
-        const { fullName, email } = req.body;
-        const profilePicture = req.file
-            ? `/uploads/${req.file.filename}`
-            : undefined;
-        // Update user profile
-        const updatedUser = yield User_1.default.findByIdAndUpdate(decoded.id, { fullName, email, profilePicture }, { new: true });
-        if (!updatedUser) {
-            res.status(404).json({ message: "User not found" });
-            return;
-        }
-        res.status(200).json({
-            fullName: updatedUser.fullName,
-            email: updatedUser.email,
-            profilePicture: updatedUser.profilePicture,
-        });
-    }
-    catch (error) {
-        console.error("Error updating profile:", error);
-        res.status(500).json({ message: "Server error" });
-    }
-}));
-// Fetch User Profile
+// Fetch User Profile (single endpoint)
 router.get("/profile", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(" ")[1];
@@ -84,19 +53,56 @@ router.get("/profile", (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
     try {
         const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
+        console.log("Profile request - Decoded token:", decoded);
         const user = yield User_1.default.findById(decoded.id).select("-password");
         if (!user) {
             res.status(404).json({ message: "User not found" });
             return;
         }
         res.status(200).json({
+            id: user._id,
             fullName: user.fullName,
             email: user.email,
             profilePicture: user.profilePicture || null,
+            role: user.role,
         });
     }
     catch (error) {
         console.error("Error fetching profile:", error);
+        res.status(401).json({ message: "Invalid or expired token" });
+    }
+}));
+// Update Profile with Profile Picture Upload
+router.post("/update-profile", upload.single("profilePicture"), // Use the upload middleware here
+(req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(" ")[1];
+    if (!token) {
+        res.status(401).json({ message: "No token provided" });
+        return;
+    }
+    try {
+        const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
+        const { fullName, email } = req.body;
+        // Handle the uploaded file
+        const profilePicture = req.file
+            ? `/uploads/${req.file.filename}`
+            : undefined;
+        const updatedUser = yield User_1.default.findByIdAndUpdate(decoded.id, Object.assign({ fullName: fullName || undefined, email: email || undefined }, (profilePicture && { profilePicture })), { new: true, runValidators: true }).select("-password");
+        if (!updatedUser) {
+            res.status(404).json({ message: "User not found" });
+            return;
+        }
+        res.status(200).json({
+            id: updatedUser._id,
+            fullName: updatedUser.fullName,
+            email: updatedUser.email,
+            profilePicture: updatedUser.profilePicture || null,
+            role: updatedUser.role,
+        });
+    }
+    catch (error) {
+        console.error("Error updating profile:", error);
         res.status(500).json({ message: "Server error" });
     }
 }));
@@ -130,7 +136,8 @@ router.post("/register", [
         }
         user = new User_1.default({ fullName, email, password, role });
         yield user.save();
-        const token = jsonwebtoken_1.default.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
+        const token = jsonwebtoken_1.default.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "7d" } // Extend token expiry to 7 days
+        );
         res.status(201).json({ token });
     }
     catch (error) {
@@ -168,7 +175,8 @@ router.post("/login", [
             res.status(400).json({ message: "Invalid admin key" });
             return;
         }
-        const token = jsonwebtoken_1.default.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
+        const token = jsonwebtoken_1.default.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "7d" } // Extend token expiry to 7 days
+        );
         res.status(200).json({
             token,
             id: user._id,

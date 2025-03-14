@@ -22,7 +22,7 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage,
   fileFilter: (req, file, cb) => {
-    const filetypes = /jpeg|jpg|png|gif/;
+    const filetypes = /jpeg|jpg|png|webp|svg|gif/;
     const extname = filetypes.test(
       path.extname(file.originalname).toLowerCase()
     );
@@ -68,7 +68,7 @@ router.get("/profile", async (req: Request, res: Response): Promise<void> => {
   }
 });
 
-// Update Profile
+// Update Profile with Profile Picture Upload
 router.post(
   "/update-profile",
   upload.single("profilePicture"),
@@ -84,6 +84,8 @@ router.post(
         id: string;
       };
       const { fullName, email } = req.body;
+
+      // Handle the uploaded file
       const profilePicture = req.file
         ? `/uploads/${req.file.filename}`
         : undefined;
@@ -158,7 +160,7 @@ router.post(
       const token = jwt.sign(
         { id: user._id, role: user.role },
         process.env.JWT_SECRET!,
-        { expiresIn: "1h" }
+        { expiresIn: "7d" } // Extend token expiry to 7 days
       );
 
       res.status(201).json({ token });
@@ -210,7 +212,7 @@ router.post(
       const token = jwt.sign(
         { id: user._id, role: user.role },
         process.env.JWT_SECRET!,
-        { expiresIn: "1h" }
+        { expiresIn: "7d" } // Extend token expiry to 7 days
       );
 
       res.status(200).json({

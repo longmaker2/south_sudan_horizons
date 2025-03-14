@@ -96,6 +96,11 @@ app.use("/api/auth", authRoutes);
 app.use("/api/tours", tourRoutes);
 app.use("/api/bookings", bookingRoutes);
 
+// Serve index.html for all unknown routes (for client-side routing)
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "frontend", "build", "index.html"));
+});
+
 // Global error handler for unhandled routes
 app.use((req, res) => {
   res.status(404).json({ error: "Route not found" });

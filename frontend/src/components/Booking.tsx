@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 import { submitBooking, createPaymentIntent } from "../utils/api";
 import { loadStripe, Stripe } from "@stripe/stripe-js";
 import {

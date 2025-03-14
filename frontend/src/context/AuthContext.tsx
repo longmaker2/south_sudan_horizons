@@ -1,14 +1,9 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  ReactNode,
-  useEffect,
-} from "react";
+import { createContext, useState, ReactNode, useEffect } from "react";
 import { User } from "../types/authTypes";
 import { API_BASE_URL } from "../utils/api";
 
-interface AuthContextType {
+// Export the AuthContextType interface
+export interface AuthContextType {
   user: User | null;
   login: (userData: User) => void;
   logout: () => void;
@@ -41,6 +36,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             fullName: data.fullName,
             email: data.email,
             role: data.role,
+            profilePicture: data.profilePicture || null,
           };
           setUser(restoredUser);
           localStorage.setItem("user", JSON.stringify(restoredUser));
@@ -73,14 +69,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
 };
 
 export { AuthContext };
