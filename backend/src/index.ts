@@ -76,6 +76,11 @@ app.use(
   })
 );
 
+// Serve static files for the React app
+const staticDir = path.join(__dirname, "..", "client", "build");
+console.log("Static directory path:", staticDir);
+app.use(express.static(staticDir));
+
 // Root route with a user-friendly message
 app.get("/", (req, res) => {
   res.status(200).json({
@@ -95,6 +100,11 @@ app.get("/api", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/tours", tourRoutes);
 app.use("/api/bookings", bookingRoutes);
+
+// Serve index.html for all unknown routes (for client-side routing)
+app.get("*", (req, res) => {
+  res.sendFile(path.join(staticDir, "index.html"));
+});
 
 // Global error handler for unhandled routes
 app.use((req, res) => {
@@ -126,3 +136,5 @@ connectDB()
     );
     process.exit(1);
   });
+
+console.log("Server started on port", PORT);
