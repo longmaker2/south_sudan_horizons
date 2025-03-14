@@ -8,31 +8,24 @@ import authRoutes from "./routes/authRoutes";
 import tourRoutes from "./routes/tourRoutes";
 import bookingRoutes from "./routes/bookingRoutes";
 
-// Load .env file if it exists (optional), otherwise rely on environment variables
+// Debug the .env path and load environment variables
 const envPath = path.resolve(__dirname, ".env");
 console.log("Looking for .env at:", envPath);
-if (fs.existsSync(envPath)) {
-  dotenv.config({ path: envPath });
-  console.log("Environment variables loaded from .env file");
-} else {
-  console.log(".env file not found, using environment variables from Render");
+if (!fs.existsSync(envPath)) {
+  console.error(".env file not found at:", envPath);
+  process.exit(1);
 }
+dotenv.config({ path: envPath });
+console.log("Environment variables loaded in index.ts");
+console.log("STRIPE_SECRET_KEY:", process.env.STRIPE_SECRET_KEY || "Not found");
+console.log("MONGO_URI:", process.env.MONGO_URI || "Not found");
 
 // Check critical environment variables
 if (!process.env.STRIPE_SECRET_KEY || !process.env.MONGO_URI) {
   console.error(
-    "Required environment variables (STRIPE_SECRET_KEY or MONGO_URI) are missing. Check your Render environment settings."
+    "Required environment variables (STRIPE_SECRET_KEY or MONGO_URI) are missing. Check your .env file."
   );
   process.exit(1);
-}
-
-// Avoid logging sensitive data in production
-if (process.env.NODE_ENV !== "production") {
-  console.log(
-    "STRIPE_SECRET_KEY:",
-    process.env.STRIPE_SECRET_KEY || "Not found"
-  );
-  console.log("MONGO_URI:", process.env.MONGO_URI || "Not found");
 }
 
 const app = express();
@@ -83,11 +76,6 @@ app.use(
   })
 );
 
-// Serve static files for the React app
-const staticDir = path.join(__dirname, "..", "client", "build");
-console.log("Static directory path:", staticDir);
-app.use(express.static(staticDir));
-
 // Root route with a user-friendly message
 app.get("/", (req, res) => {
   res.status(200).json({
@@ -107,11 +95,6 @@ app.get("/api", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/tours", tourRoutes);
 app.use("/api/bookings", bookingRoutes);
-
-// Serve index.html for all unknown routes (for client-side routing)
-app.get("*", (req, res) => {
-  res.sendFile(path.join(staticDir, "index.html"));
-});
 
 // Global error handler for unhandled routes
 app.use((req, res) => {
