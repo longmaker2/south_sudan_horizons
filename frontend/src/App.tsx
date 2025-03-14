@@ -3,9 +3,11 @@ import {
   Routes,
   Route,
   Navigate,
+  useLocation,
 } from "react-router-dom";
-import { JSX } from "react";
+import { JSX, useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
+import { AnimatePresence } from "framer-motion";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Guides from "./pages/Guides";
@@ -27,6 +29,8 @@ import { AuthProvider } from "./context/AuthContext";
 import { useAuth } from "./context/useAuth";
 import WrappedBooking from "./components/Booking";
 import BookingDetails from "./pages/BookingDetails";
+import PageTransition from "./components/PageTransition";
+import LoadingScreen from "./components/LoadingScreen";
 
 // Simple Not Found component
 const NotFound = () => (
@@ -51,6 +55,12 @@ const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
 };
 
 const App = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => setLoading(false), 2000); // Simulate loading effect
+  }, []);
+
   return (
     <AuthProvider>
       <Router>
@@ -61,54 +71,175 @@ const App = () => {
             content="Discover adventure, cultural, wildlife, and nature tours in South Sudan."
           />
         </Helmet>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/guides" element={<Guides />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <TouristDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/tours/adventure" element={<AdventureTours />} />
-          <Route path="/tours/cultural" element={<CulturalTours />} />
-          <Route path="/tours/wildlife" element={<WildlifeTours />} />
-          <Route path="/tours/nature" element={<NatureTours />} />
-          <Route path="/tours/all" element={<AllTours />} />
-          <Route path="/tour-details/:id" element={<TourDetails />} />
-          <Route
-            path="/tours/:tourId/book"
-            element={
-              <ProtectedRoute>
-                <>
-                  <WrappedBooking tourId={""} />{" "}
-                  {/* tourId will be dynamically set via useParams */}
-                </>
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/guides/:guideId" element={<GuideProfile />} />
-          <Route
-            path="/booking-details/:id"
-            element={
-              <ProtectedRoute>
-                <BookingDetails />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        {/* Main container with full screen height and flex layout */}
+        <div className="flex flex-col min-h-screen">
+          <Navbar />
+          {/* This ensures the content grows and pushes the footer to the bottom */}
+          <main className="flex-grow">
+            {loading ? (
+              <LoadingScreen />
+            ) : (
+              <AnimatePresence mode="wait">
+                <RoutesWithTransition />
+              </AnimatePresence>
+            )}
+          </main>
+          <Footer />
+        </div>
         <BackToTopButton />
-        <Footer />
       </Router>
     </AuthProvider>
+  );
+};
+
+// Routes with page transitions
+const RoutesWithTransition = () => {
+  const location = useLocation();
+  return (
+    <Routes location={location} key={location.pathname}>
+      <Route
+        path="/"
+        element={
+          <PageTransition>
+            <Home />
+          </PageTransition>
+        }
+      />
+      <Route
+        path="/guides"
+        element={
+          <PageTransition>
+            <Guides />
+          </PageTransition>
+        }
+      />
+      <Route
+        path="/about"
+        element={
+          <PageTransition>
+            <About />
+          </PageTransition>
+        }
+      />
+      <Route
+        path="/contact"
+        element={
+          <PageTransition>
+            <Contact />
+          </PageTransition>
+        }
+      />
+      <Route
+        path="/login"
+        element={
+          <PageTransition>
+            <Login />
+          </PageTransition>
+        }
+      />
+      <Route
+        path="/register"
+        element={
+          <PageTransition>
+            <Register />
+          </PageTransition>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <PageTransition>
+              <TouristDashboard />
+            </PageTransition>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/tours/adventure"
+        element={
+          <PageTransition>
+            <AdventureTours />
+          </PageTransition>
+        }
+      />
+      <Route
+        path="/tours/cultural"
+        element={
+          <PageTransition>
+            <CulturalTours />
+          </PageTransition>
+        }
+      />
+      <Route
+        path="/tours/wildlife"
+        element={
+          <PageTransition>
+            <WildlifeTours />
+          </PageTransition>
+        }
+      />
+      <Route
+        path="/tours/nature"
+        element={
+          <PageTransition>
+            <NatureTours />
+          </PageTransition>
+        }
+      />
+      <Route
+        path="/tours/all"
+        element={
+          <PageTransition>
+            <AllTours />
+          </PageTransition>
+        }
+      />
+      <Route
+        path="/tour-details/:id"
+        element={
+          <PageTransition>
+            <TourDetails />
+          </PageTransition>
+        }
+      />
+      <Route
+        path="/tours/:tourId/book"
+        element={
+          <ProtectedRoute>
+            <PageTransition>
+              <WrappedBooking tourId={""} />
+            </PageTransition>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/guides/:guideId"
+        element={
+          <PageTransition>
+            <GuideProfile />
+          </PageTransition>
+        }
+      />
+      <Route
+        path="/booking-details/:id"
+        element={
+          <ProtectedRoute>
+            <PageTransition>
+              <BookingDetails />
+            </PageTransition>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="*"
+        element={
+          <PageTransition>
+            <NotFound />
+          </PageTransition>
+        }
+      />
+    </Routes>
   );
 };
 
