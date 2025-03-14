@@ -17,13 +17,20 @@ if (!fs.existsSync(envPath)) {
 }
 dotenv.config({ path: envPath });
 console.log("Environment variables loaded in index.ts");
-console.log("STRIPE_SECRET_KEY:", process.env.STRIPE_SECRET_KEY || "Not found");
-console.log("MONGO_URI:", process.env.MONGO_URI || "Not found");
+
+// Avoid logging sensitive data in production
+if (process.env.NODE_ENV !== "production") {
+  console.log(
+    "STRIPE_SECRET_KEY:",
+    process.env.STRIPE_SECRET_KEY || "Not found"
+  );
+  console.log("MONGO_URI:", process.env.MONGO_URI || "Not found");
+}
 
 // Check critical environment variables
 if (!process.env.STRIPE_SECRET_KEY || !process.env.MONGO_URI) {
   console.error(
-    "Required environment variables (STRIPE_SECRET_KEY or MONGO_URI) are missing. Check your .env file."
+    "Required environment variables (STRIPE_SECRET_KEY or MONGO_URI) are missing. Check your .env file or environment configuration."
   );
   process.exit(1);
 }
@@ -136,5 +143,3 @@ connectDB()
     );
     process.exit(1);
   });
-
-console.log("Server started on port", PORT);
