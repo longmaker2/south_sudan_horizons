@@ -8,14 +8,9 @@ import authRoutes from "./routes/authRoutes";
 import tourRoutes from "./routes/tourRoutes";
 import bookingRoutes from "./routes/bookingRoutes";
 
-// Debug the .env path and load environment variables
-const envPath = path.resolve(__dirname, ".env");
-console.log("Looking for .env at:", envPath);
-if (!fs.existsSync(envPath)) {
-  console.error(".env file not found at:", envPath);
-  process.exit(1);
-}
-dotenv.config({ path: envPath });
+// Load environment variables from Render's environment
+dotenv.config();
+
 console.log("Environment variables loaded in index.ts");
 console.log("STRIPE_SECRET_KEY:", process.env.STRIPE_SECRET_KEY || "Not found");
 console.log("MONGO_URI:", process.env.MONGO_URI || "Not found");
@@ -23,7 +18,7 @@ console.log("MONGO_URI:", process.env.MONGO_URI || "Not found");
 // Check critical environment variables
 if (!process.env.STRIPE_SECRET_KEY || !process.env.MONGO_URI) {
   console.error(
-    "Required environment variables (STRIPE_SECRET_KEY or MONGO_URI) are missing. Check your .env file."
+    "Required environment variables (STRIPE_SECRET_KEY or MONGO_URI) are missing. Check your environment variables."
   );
   process.exit(1);
 }
@@ -131,3 +126,7 @@ connectDB()
     );
     process.exit(1);
   });
+
+console.log("✅ Server started on port", PORT);
+
+export default app;
