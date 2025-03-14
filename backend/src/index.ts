@@ -8,20 +8,20 @@ import authRoutes from "./routes/authRoutes";
 import tourRoutes from "./routes/tourRoutes";
 import bookingRoutes from "./routes/bookingRoutes";
 
-// Load .env file if it exists, otherwise rely on environment variables
+// Load .env file if it exists (optional), otherwise rely on environment variables
 const envPath = path.resolve(__dirname, ".env");
 console.log("Looking for .env at:", envPath);
 if (fs.existsSync(envPath)) {
   dotenv.config({ path: envPath });
   console.log("Environment variables loaded from .env file");
 } else {
-  console.log(".env file not found, relying on environment variables");
+  console.log(".env file not found, using environment variables from Render");
 }
 
 // Check critical environment variables
 if (!process.env.STRIPE_SECRET_KEY || !process.env.MONGO_URI) {
   console.error(
-    "Required environment variables (STRIPE_SECRET_KEY or MONGO_URI) are missing. Check your .env file or Render environment settings."
+    "Required environment variables (STRIPE_SECRET_KEY or MONGO_URI) are missing. Check your Render environment settings."
   );
   process.exit(1);
 }
