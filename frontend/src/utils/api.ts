@@ -2,12 +2,12 @@ import { Tour } from "../types/tours";
 import { Booking } from "../types/bookings";
 
 // For local development (uncomment for local testing)
-export const API_BASE_URL = "http://localhost:5000/api";
-export const BASE_URL = "http://localhost:5000";
+// export const API_BASE_URL = "http://localhost:5000/api";
+// export const BASE_URL = "http://localhost:5000";
 
 // For production
-// export const API_BASE_URL = "https://south-sudan-horizons.onrender.com/api";
-// export const BASE_URL = "https://south-sudan-horizons.onrender.com";
+export const API_BASE_URL = "https://south-sudan-horizons.onrender.com/api";
+export const BASE_URL = "https://south-sudan-horizons.onrender.com";
 
 // API functions
 export const fetchTours = async (): Promise<Tour[]> => {
