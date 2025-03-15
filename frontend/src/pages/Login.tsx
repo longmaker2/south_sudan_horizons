@@ -51,7 +51,21 @@ const Login = () => {
         profilePicture: data.profilePicture || null, // Ensure profilePicture is handled
       });
 
-      navigate("/");
+      // Redirect based on role
+      switch (role) {
+        case "admin":
+          navigate("/admin-dashboard");
+          break;
+        case "guide":
+          navigate("/guide-dashboard");
+          break;
+        case "tourist":
+          navigate("/");
+          break;
+        default:
+          navigate("/"); // Fallback to home page if role is unrecognized
+          break;
+      }
     } catch (error) {
       console.error("Login Error:", error);
       setError("An unexpected error occurred. Please try again.");

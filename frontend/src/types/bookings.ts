@@ -1,5 +1,6 @@
 export interface Booking {
   id: string;
+  _id?: string;
   tourId:
     | string
     | { _id: string; title: string; price: number; description: string };
@@ -15,6 +16,7 @@ export interface Booking {
   price: number;
   description: string;
   guideName?: string;
+  paymentMethod: "stripe" | "cash";
 }
 
 export interface BookingSummary {

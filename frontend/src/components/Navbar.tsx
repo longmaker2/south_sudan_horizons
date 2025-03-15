@@ -96,6 +96,44 @@ const Navbar = () => {
   const closeProfile = debounce(() => setIsProfileOpen(false), 100);
   const closeLanguage = debounce(() => setIsLanguageOpen(false), 100);
 
+  // Determine profile dropdown content based on user role
+  const getProfileDropdownContent = () => {
+    if (!user) return null;
+
+    switch (user.role) {
+      case "admin":
+        return (
+          <Link
+            to="/admin-dashboard"
+            className="block px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-green-50 hover:text-green-800"
+            onClick={() => setIsProfileOpen(false)}
+          >
+            Admin Dashboard
+          </Link>
+        );
+      case "guide":
+        return (
+          <Link
+            to="/guide-dashboard"
+            className="block px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-green-50 hover:text-green-800"
+            onClick={() => setIsProfileOpen(false)}
+          >
+            Guide Dashboard
+          </Link>
+        );
+      default: // tourist or other roles
+        return (
+          <Link
+            to="/profile"
+            className="block px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-green-50 hover:text-green-800"
+            onClick={() => setIsProfileOpen(false)}
+          >
+            Profile & Bookings
+          </Link>
+        );
+    }
+  };
+
   return (
     <Disclosure
       as="nav"
@@ -246,13 +284,7 @@ const Navbar = () => {
                   </button>
                   {isProfileOpen && (
                     <div className="absolute right-0 top-full w-40 sm:w-48 rounded-md bg-white shadow-lg ring-1 ring-green-700 ring-opacity-5 transition-all duration-200 z-10">
-                      <Link
-                        to="/profile"
-                        className="block px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-green-50 hover:text-green-800"
-                        onClick={() => setIsProfileOpen(false)}
-                      >
-                        Profile & Bookings
-                      </Link>
+                      {getProfileDropdownContent()}
                       <button
                         onClick={handleLogout}
                         className="block w-full px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-green-50 hover:text-green-800 text-left"
@@ -374,6 +406,35 @@ const Navbar = () => {
               </div>
             )}
           </div>
+          {/* Mobile profile dropdown */}
+          {user && (
+            <div className="pt-2 border-t border-green-700">
+              <DisclosureButton
+                as={Link}
+                to={
+                  user.role === "admin"
+                    ? "/admin-dashboard"
+                    : user.role === "guide"
+                    ? "/guide-dashboard"
+                    : "/profile"
+                }
+                className="block rounded-md px-3 py-2 text-xs xxs:text-sm xs:text-base text-white hover:bg-green-700 hover:text-gray-200 font-medium transition-all duration-200"
+              >
+                {user.role === "admin"
+                  ? "Admin Dashboard"
+                  : user.role === "guide"
+                  ? "Guide Dashboard"
+                  : "Profile & Bookings"}
+              </DisclosureButton>
+              <DisclosureButton
+                as="button"
+                onClick={handleLogout}
+                className="block w-full text-left rounded-md px-3 py-2 text-xs xxs:text-sm xs:text-base text-white hover:bg-green-700 hover:text-gray-200 font-medium transition-all duration-200"
+              >
+                Sign out
+              </DisclosureButton>
+            </div>
+          )}
         </div>
       </DisclosurePanel>
     </Disclosure>

@@ -22,6 +22,8 @@ import WildlifeTours from "./pages/WildlifeTours";
 import NatureTours from "./pages/NatureTours";
 import AllTours from "./pages/AllTours";
 import TouristDashboard from "./pages/Profile";
+import AdminDashboard from "./pages/AdminDashboard";
+import GuideDashboard from "./pages/GuideDashboard";
 import TourDetails from "./pages/TourDetails";
 import GuideProfile from "./pages/GuideProfile";
 import BackToTopButton from "./components/BackToTopButton";
@@ -48,10 +50,25 @@ const NotFound = () => (
   </div>
 );
 
-// Protected Route component
-const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
+// Protected Route component with role-based access
+const ProtectedRoute = ({
+  children,
+  allowedRoles,
+}: {
+  children: JSX.Element;
+  allowedRoles?: string[];
+}) => {
   const { user } = useAuth();
-  return user ? children : <Navigate to="/login" replace />;
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
 };
 
 const App = () => {
@@ -148,9 +165,29 @@ const RoutesWithTransition = () => {
       <Route
         path="/profile"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={["tourist"]}>
             <PageTransition>
               <TouristDashboard />
+            </PageTransition>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin-dashboard"
+        element={
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <PageTransition>
+              <AdminDashboard />
+            </PageTransition>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/guide-dashboard"
+        element={
+          <ProtectedRoute allowedRoles={["guide"]}>
+            <PageTransition>
+              <GuideDashboard />
             </PageTransition>
           </ProtectedRoute>
         }
@@ -206,7 +243,7 @@ const RoutesWithTransition = () => {
       <Route
         path="/tours/:tourId/book"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={["tourist"]}>
             <PageTransition>
               <WrappedBooking tourId={""} />
             </PageTransition>
@@ -224,7 +261,7 @@ const RoutesWithTransition = () => {
       <Route
         path="/booking-details/:id"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={["tourist"]}>
             <PageTransition>
               <BookingDetails />
             </PageTransition>
