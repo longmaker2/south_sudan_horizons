@@ -7,10 +7,12 @@ import { Link } from "react-router-dom";
 
 const CulturalTours = () => {
   const [culturalTours, setCulturalTours] = useState<Tour[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadTours = async () => {
       try {
+        setIsLoading(true);
         const data = await fetchTours();
         const filteredCulturalTours = data.filter(
           (tour) => tour.type === "Cultural"
@@ -18,6 +20,8 @@ const CulturalTours = () => {
         setCulturalTours(filteredCulturalTours);
       } catch (error) {
         console.error("Failed to fetch tours:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
     loadTours();
@@ -109,47 +113,58 @@ const CulturalTours = () => {
         <h2 className="text-4xl font-bold text-green-800 text-center mb-8">
           Our Cultural Tours
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {culturalTours.map((tour) => (
-            <motion.div
-              key={tour._id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden"
-            >
-              <img
-                src={tour.image}
-                alt={tour.title}
-                className="w-full h-48 object-cover"
-              />
-              <div className="p-6">
-                <h3 className="text-xl font-semibold text-green-800">
-                  {tour.title}
-                </h3>
-                <p className="text-gray-700 mt-2">{tour.description}</p>
-                <div className="mt-4 flex justify-between items-center">
-                  <div className="flex items-center space-x-1">
-                    {renderStars(tour.rating)}
-                    <span className="text-sm text-gray-600">
-                      ({tour.rating})
+        {isLoading ? (
+          <div className="mt-12 text-gray-600">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-green-600 mx-auto"></div>
+            <p className="mt-2">Loading cultural tours...</p>
+          </div>
+        ) : culturalTours.length === 0 ? (
+          <div className="text-center text-gray-700 text-lg font-semibold">
+            No cultural tours available at this time.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {culturalTours.map((tour) => (
+              <motion.div
+                key={tour._id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden"
+              >
+                <img
+                  src={tour.image}
+                  alt={tour.title}
+                  className="w-full h-48 object-cover"
+                />
+                <div className="p-6">
+                  <h3 className="text-xl font-semibold text-green-800">
+                    {tour.title}
+                  </h3>
+                  <p className="text-gray-700 mt-2">{tour.description}</p>
+                  <div className="mt-4 flex justify-between items-center">
+                    <div className="flex items-center space-x-1">
+                      {renderStars(tour.rating)}
+                      <span className="text-sm text-gray-600">
+                        ({tour.rating})
+                      </span>
+                    </div>
+                    <span className="text-green-800 font-bold">
+                      ${tour.price}
                     </span>
                   </div>
-                  <span className="text-green-800 font-bold">
-                    ${tour.price}
-                  </span>
+                  <Link
+                    to={`/tour-details/${tour._id}`}
+                    className="mt-4 block w-full px-4 py-2 bg-green-600 text-white text-center rounded-lg hover:bg-green-700 transition-all duration-300"
+                  >
+                    View Details
+                  </Link>
                 </div>
-                <Link
-                  to={`/tour-details/${tour._id}`}
-                  className="mt-4 block w-full px-4 py-2 bg-green-600 text-white text-center rounded-lg hover:bg-green-700 transition-all duration-300"
-                >
-                  View Details
-                </Link>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
       </motion.div>
     </div>
   );

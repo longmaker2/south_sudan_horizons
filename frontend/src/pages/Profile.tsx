@@ -168,7 +168,14 @@ const Profile: React.FC = () => {
   };
 
   if (loadingProfile || loadingBookings) {
-    return <div>Loading...</div>;
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-center text-gray-600">
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-green-600 mx-auto"></div>
+          <p className="mt-2">Loading profile...</p>
+        </div>
+      </div>
+    );
   }
 
   return (

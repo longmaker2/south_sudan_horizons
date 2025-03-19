@@ -18,16 +18,20 @@ const AllTours = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [tours, setTours] = useState<Tour[]>([]);
   const [filteredTours, setFilteredTours] = useState<Tour[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadTours = async () => {
       try {
+        setIsLoading(true);
         const data = await fetchTours();
         console.log(data);
         setTours(data);
         setFilteredTours(data);
       } catch (error) {
         console.error("Failed to fetch tours:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
     loadTours();
@@ -123,11 +127,16 @@ const AllTours = () => {
 
       {/* Tour List */}
       <div className="py-12 px-4 max-w-6xl mx-auto">
-        {filteredTours.length > 0 ? (
+        {isLoading ? (
+          <div className="mt-12 text-gray-600">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-green-600 mx-auto"></div>
+            <p className="mt-2">Loading all tours...</p>
+          </div>
+        ) : filteredTours.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredTours.map((tour) => (
               <motion.div
-                key={tour._id} // Changed to _id
+                key={tour._id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
