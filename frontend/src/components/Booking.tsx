@@ -392,7 +392,7 @@ const Booking = ({ tourId }: { tourId: string }) => {
                 {selectedGuide && (
                   <Link
                     to={`/guides/${selectedGuide}`}
-                    className="px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300 text-sm"
+                    className="px-4.5 py-1 text-center font-medium font-large bg-green-600 text-white rounded-md hover:bg-green-700 transition-all duration-300 text-xs"
                   >
                     View Profile
                   </Link>
