@@ -126,11 +126,11 @@ const AllTours = () => {
       </div>
 
       {/* Tour List */}
-      <div className="py-12 px-4 max-w-6xl mx-auto">
+      <div className="py-12 px-4 max-w-6xl mx-auto min-h-[50vh] flex items-center justify-center">
         {isLoading ? (
-          <div className="mt-12 text-gray-600">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-green-600 mx-auto"></div>
-            <p className="mt-2">Loading all tours...</p>
+          <div className="flex flex-col items-center justify-center text-gray-600">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-green-600 mb-4"></div>
+            <p className="text-lg font-medium">Loading all tours...</p>
           </div>
         ) : filteredTours.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
