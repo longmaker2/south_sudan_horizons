@@ -35,9 +35,9 @@ const stripePromise: Promise<Stripe | null> = loadStripe(stripeKey).catch(
 );
 
 const availableGuides = [
-  { id: "507f1f77bcf86cd799439011", name: "John Doe", profile: "..." },
-  { id: "507f1f77bcf86cd799439012", name: "Jane Smith", profile: "..." },
-  { id: "507f1f77bcf86cd799439013", name: "Alex Johnson", profile: "..." },
+  { id: "507f1f77bcf86cd799439011", name: "Diana Otieno", profile: "..." },
+  { id: "507f1f77bcf86cd799439012", name: "Daniel Burongu", profile: "..." },
+  { id: "507f1f77bcf86cd799439013", name: "Kayongo Brian", profile: "..." },
 ];
 
 const Booking = ({ tourId }: { tourId: string }) => {

@@ -6,44 +6,44 @@ import Chat from "../components/Chat";
 const availableGuides = [
   {
     id: "507f1f77bcf86cd799439011",
-    name: "John Doe",
+    name: "Diana Otieno",
     profile: "Experienced guide with 5+ years of expertise in mountain tours.",
-    email: "john.doe@example.com",
+    email: "d.otieno@alustudent.com",
     phone: "+123 456 7890",
     testimonials: [
       {
-        text: "John was an amazing guide! He made our trip unforgettable.",
-        author: "Sarah T.",
+        text: "Diana was an amazing guide! He made our trip unforgettable.",
+        author: "Ruth S.",
       },
       {
         text: "Highly recommend John for mountain tours. He's very knowledgeable!",
-        author: "Michael R.",
+        author: "David M.",
       },
     ],
   },
   {
     id: "507f1f77bcf86cd799439012",
-    name: "Jane Smith",
+    name: "Daniel Burongu",
     profile: "Specializes in cultural and historical tours.",
-    email: "jane.smith@example.com",
+    email: "d.burongu@alustudent.com",
     phone: "+123 456 7891",
     testimonials: [
       {
-        text: "Jane is fantastic! Her knowledge of history is unparalleled.",
-        author: "Emily S.",
+        text: "Daniel is fantastic! Her knowledge of history is unparalleled.",
+        author: "Ayuel M.",
       },
     ],
   },
   {
     id: "507f1f77bcf86cd799439013",
-    name: "Alex Johnson",
+    name: "Kayongo Brian",
     profile: "Adventure guide with a focus on extreme sports.",
-    email: "alex.johnson@example.com",
+    email: "b.kayongo@alustudent.com",
     phone: "+123 456 7892",
     testimonials: [
       {
-        text: "Alex made our adventure trip thrilling and safe!",
-        author: "Chris P.",
+        text: "Brian made our adventure trip thrilling and safe!",
+        author: "Chol G.",
       },
     ],
   },

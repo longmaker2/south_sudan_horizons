@@ -6,19 +6,19 @@ import { FaStar } from "react-icons/fa";
 const testimonialsData = [
   {
     id: 1,
-    name: "Sarah Johnson",
+    name: "Diana Otieno",
     country: "USA",
     text: "An unforgettable experience! The landscapes are breathtaking, and the people are incredibly welcoming.",
   },
   {
     id: 2,
-    name: "John Smith",
+    name: "Daniel Burongu",
     country: "UK",
     text: "South Sudan is a hidden gem. The cultural tours were eye-opening, and the guides were very knowledgeable.",
   },
   {
     id: 3,
-    name: "Maria Lopez",
+    name: "Brian Kayongo",
     country: "Spain",
     text: "The wildlife safari was beyond expectations. I got to see elephants, giraffes, and even rare birds!",
   },
@@ -30,13 +30,13 @@ const testimonialsData = [
   },
   {
     id: 5,
-    name: "Emily Carter",
+    name: "Ruth Senior",
     country: "Canada",
     text: "A truly immersive experience! Learning about the cultures and traditions was the highlight of my trip.",
   },
   {
     id: 6,
-    name: "David Kim",
+    name: "David Mazimpaka",
     country: "South Korea",
     text: "Loved the boat safari in the Sudd wetlands! It was peaceful and beautiful beyond words.",
   },
