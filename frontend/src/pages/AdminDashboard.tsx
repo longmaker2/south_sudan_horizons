@@ -398,8 +398,11 @@ const AdminDashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        Loading...
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="flex flex-col items-center justify-center text-gray-600">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-green-600 mb-4"></div>
+          <p className="text-lg font-medium">Loading admin dashboard...</p>
+        </div>
       </div>
     );
   }
@@ -1053,9 +1056,7 @@ const AdminDashboard: React.FC = () => {
                       setShowBookingModal(false);
                       resetBookingForm();
                     }}
-                    className="mr-2 px-4 py-2 text-gray-
-
-600"
+                    className="mr-2 px-4 py-2 text-gray-600"
                   >
                     Cancel
                   </button>
