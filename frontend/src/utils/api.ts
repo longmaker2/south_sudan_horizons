@@ -7,8 +7,15 @@ import mongoose from "mongoose";
 // export const BASE_URL = "http://localhost:5000";
 
 // For production
-export const API_BASE_URL = "https://south-sudan-horizons.onrender.com/api";
-export const BASE_URL = "https://south-sudan-horizons.onrender.com";
+export const API_BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://south-sudan-horizons.onrender.com/api"
+    : "http://localhost:5000/api";
+
+export const BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://south-sudan-horizons.onrender.com"
+    : "http://localhost:5000";
 
 // API functions
 export const fetchTours = async (): Promise<Tour[]> => {

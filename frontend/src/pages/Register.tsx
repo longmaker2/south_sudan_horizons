@@ -7,6 +7,7 @@ import { API_BASE_URL } from "../utils/api";
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState(""); // state for success message
   const [isLoading, setIsLoading] = useState(false);
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("tourist");
@@ -16,6 +17,8 @@ const Register = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
+    setError(""); // Clear previous errors
+    setSuccessMessage(""); // Clear previous success messages
 
     const formData = new FormData(e.currentTarget);
     const fullName = formData.get("fullName") as string;
@@ -55,7 +58,12 @@ const Register = () => {
       const data = await response.json();
       console.log("Registration Success:", data);
 
-      navigate("/login");
+      // Instead of navigating immediately, show a success message
+      setSuccessMessage(
+        data.message ||
+          "Registration successful! Please check your email to verify your account."
+      );
+      setTimeout(() => navigate("/login"), 3000); // Redirect to login after 3 seconds
     } catch (error) {
       console.error("Registration Error:", error);
       setError("An unexpected error occurred. Please try again.");
@@ -221,6 +229,11 @@ const Register = () => {
 
           {error && (
             <div className="mb-4 text-red-600 text-center">{error}</div>
+          )}
+          {successMessage && (
+            <div className=" napr-4 text-green-600 text-center">
+              {successMessage}
+            </div>
           )}
 
           <div className="flex items-center mb-4">

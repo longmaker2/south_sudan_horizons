@@ -3,10 +3,17 @@ import { Request, Response } from "express";
 import { body, validationResult } from "express-validator";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import nodemailer from "nodemailer";
 import User from "../models/User";
 import multer from "multer";
 import path from "path";
 import mongoose from "mongoose";
+import dotenv from "dotenv";
+
+// Load .env from backend/src/.env if it’s there, otherwise fallback to backend/.env
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
+// Another option of keeping .env in backend/src/, I can use the below instead of the above:
+// dotenv.config({ path: path.resolve(__dirname, ".env") });
 
 const router = express.Router();
 
@@ -36,7 +43,83 @@ const upload = multer({
   },
 });
 
-// Middleware to check if user is admin
+// Email transporter setup with explicit settings
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true, // Use SSL/TLS
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+  debug: true, // Enable debug output
+  logger: true, // Log to console
+});
+
+// Log credentials at transporter creation to debug
+console.log("Transporter initialized with:", {
+  user: process.env.EMAIL_USER,
+  pass: process.env.EMAIL_PASS ? "[REDACTED]" : "Not Set",
+});
+
+// Delay verification until after server startup
+setTimeout(() => {
+  transporter.verify((error, success) => {
+    if (error) {
+      console.error("SMTP Transporter Verification Failed:", error);
+    } else {
+      console.log("SMTP Transporter Ready:", success);
+    }
+  });
+}, 2000); // Delay by 2 seconds
+
+// Utility to send verification email
+const sendVerificationEmail = async (email: string, token: string) => {
+  console.log("Sending verification email with credentials:", {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS ? "[REDACTED]" : "Not Set",
+  });
+
+  const verificationUrl =
+    process.env.NODE_ENV === "production"
+      ? `https://south-sudan-horizons.vercel.app/verify-email?token=${token}` // Point to Vercel frontend
+      : `http://localhost:5173/verify-email?token=${token}`; // Local frontend
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: "Verify Your Email - South Sudan Horizons",
+    html: `<p>Please verify your email by clicking <a href="${verificationUrl}">here</a>. This link expires in 1 hour.</p>`,
+  };
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Verification email sent:", info.response);
+    return info;
+  } catch (error) {
+    console.error("Error sending verification email:", error);
+    throw error;
+  }
+};
+
+// Test SMTP route
+router.get("/test-email", async (req: Request, res: Response) => {
+  try {
+    const info = await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: "l.deng@alustudent.com",
+      subject: "Test Email from South Sudan Horizons",
+      text: "This is a test email to verify SMTP configuration.",
+    });
+    console.log("Test email sent:", info.response);
+    res.status(200).json({ message: "Test email sent successfully", info });
+  } catch (error) {
+    console.error("Test email error:", error);
+    res.status(500).json({ message: "Failed to send test email", error });
+  }
+});
+
+// Middleware to check if user is admin (unchanged)
 const isAdmin = (req: Request, res: Response, next: Function) => {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) {
@@ -53,7 +136,6 @@ const isAdmin = (req: Request, res: Response, next: Function) => {
       res.status(403).json({ message: "Access denied. Admin only." });
       return;
     }
-    // Assign userId to req for consistency with other routes
     (req as any).userId = decoded.id;
     next();
   } catch (error) {
@@ -61,7 +143,7 @@ const isAdmin = (req: Request, res: Response, next: Function) => {
   }
 };
 
-// Fetch User Profile (single endpoint for authenticated user)
+// Fetch User Profile (unchanged)
 router.get("/profile", async (req: Request, res: Response): Promise<void> => {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) {
@@ -95,7 +177,7 @@ router.get("/profile", async (req: Request, res: Response): Promise<void> => {
   }
 });
 
-// Update Profile with Profile Picture Upload (for authenticated user)
+// Update Profile with Profile Picture Upload (unchanged)
 router.post(
   "/update-profile",
   upload.single("profilePicture"),
@@ -133,7 +215,7 @@ router.post(
 
       res.status(200).json({
         _id: updatedUser._id,
-        id: updatedUser._id, // Match frontend expectation
+        id: updatedUser._id,
         fullName: updatedUser.fullName,
         email: updatedUser.email,
         profilePicture: updatedUser.profilePicture || null,
@@ -146,7 +228,7 @@ router.post(
   }
 );
 
-// Register Route (public)
+// Register Route (public) with email verification
 router.post(
   "/register",
   [
@@ -181,24 +263,70 @@ router.post(
         return;
       }
 
-      user = new User({ fullName, email, password, role });
+      const verificationToken = jwt.sign({ email }, process.env.JWT_SECRET!, {
+        expiresIn: "1h",
+      });
+      user = new User({
+        fullName,
+        email,
+        password,
+        role,
+        verificationToken,
+        isVerified: false,
+      });
       await user.save();
 
-      const token = jwt.sign(
-        { id: user._id, role: user.role },
-        process.env.JWT_SECRET!,
-        { expiresIn: "7d" }
-      );
+      await sendVerificationEmail(email, verificationToken);
 
-      res.status(201).json({ token });
+      res.status(201).json({
+        message: "Registration successful. Please verify your email.",
+      });
     } catch (error) {
       console.error("Registration error:", error);
-      res.status(500).json({ message: "Server error" });
+      res.status(500).json({ message: "Server error during registration" });
     }
   }
 );
 
-// Login Route (public)
+// Email Verification Route (unchanged)
+router.get("/verify-email", async (req: Request, res: Response) => {
+  const { token } = req.query;
+
+  try {
+    const decoded = jwt.verify(token as string, process.env.JWT_SECRET!) as {
+      email: string;
+    };
+    const user = await User.findOne({
+      email: decoded.email,
+      verificationToken: token,
+    });
+
+    if (!user) {
+      res
+        .status(400)
+        .json({ message: "Invalid or expired verification token" });
+      return;
+    }
+
+    user.isVerified = true;
+    user.verificationToken = undefined;
+    await user.save();
+
+    const authToken = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET!,
+      { expiresIn: "7d" }
+    );
+    res
+      .status(200)
+      .json({ message: "Email verified successfully", token: authToken });
+  } catch (error) {
+    console.error("Verification error:", error);
+    res.status(400).json({ message: "Invalid or expired verification token" });
+  }
+});
+
+// Login Route (unchanged)
 router.post(
   "/login",
   [
@@ -218,6 +346,13 @@ router.post(
       const user = await User.findOne({ email });
       if (!user) {
         res.status(400).json({ message: "Invalid credentials" });
+        return;
+      }
+
+      if (!user.isVerified) {
+        res
+          .status(403)
+          .json({ message: "Please verify your email before logging in." });
         return;
       }
 
@@ -248,7 +383,7 @@ router.post(
   }
 );
 
-// Get all users (admin only)
+// Get all users (admin only) (unchanged)
 router.get(
   "/users",
   isAdmin,
@@ -264,6 +399,7 @@ router.get(
           email: user.email,
           profilePicture: user.profilePicture || null,
           role: user.role,
+          isVerified: user.isVerified,
         }))
       );
     } catch (error) {
@@ -273,7 +409,7 @@ router.get(
   }
 );
 
-// Get a specific user by ID (admin only)
+// Get a specific user by ID (admin only) (unchanged)
 router.get(
   "/users/:id",
   isAdmin,
@@ -298,6 +434,7 @@ router.get(
         email: user.email,
         profilePicture: user.profilePicture || null,
         role: user.role,
+        isVerified: user.isVerified,
       });
     } catch (error) {
       console.error("Error fetching user:", error);
@@ -306,7 +443,7 @@ router.get(
   }
 );
 
-// Create a new user (admin only)
+// Create a new user (admin only) (unchanged)
 router.post(
   "/users",
   isAdmin,
@@ -335,7 +472,7 @@ router.post(
         return;
       }
 
-      user = new User({ fullName, email, password, role });
+      user = new User({ fullName, email, password, role, isVerified: true });
       await user.save();
 
       res.status(201).json({
@@ -344,6 +481,7 @@ router.post(
         fullName: user.fullName,
         email: user.email,
         role: user.role,
+        isVerified: user.isVerified,
       });
     } catch (error) {
       console.error("Error creating user:", error);
@@ -352,7 +490,7 @@ router.post(
   }
 );
 
-// Update a user (admin only)
+// Update a user (admin only) (unchanged)
 router.put(
   "/users/:id",
   isAdmin,
@@ -381,7 +519,7 @@ router.put(
 
       user.fullName = fullName || user.fullName;
       user.email = email || user.email;
-      if (password) user.password = password; // Will be hashed by pre-save hook
+      if (password) user.password = password;
       user.role = role || user.role;
       if (profilePicture) user.profilePicture = profilePicture;
 
@@ -394,6 +532,7 @@ router.put(
         email: updatedUser!.email,
         profilePicture: updatedUser!.profilePicture || null,
         role: updatedUser!.role,
+        isVerified: updatedUser!.isVerified,
       });
     } catch (error) {
       console.error("Error updating user:", error);
@@ -402,7 +541,7 @@ router.put(
   }
 );
 
-// Delete a user (admin only)
+// Delete a user (admin only) (unchanged)
 router.delete(
   "/users/:id",
   isAdmin,
@@ -422,7 +561,7 @@ router.delete(
         return;
       }
 
-      res.status(204).send(); // No content on successful deletion
+      res.status(204).send();
     } catch (error) {
       console.error("Error deleting user:", error);
       res.status(500).json({ error: "Failed to delete user" });

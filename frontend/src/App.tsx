@@ -4,8 +4,9 @@ import {
   Route,
   Navigate,
   useLocation,
+  useNavigate,
 } from "react-router-dom";
-import { JSX, useState, useEffect } from "react";
+import { JSX, useCallback, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { AnimatePresence } from "framer-motion";
 import Navbar from "./components/Navbar";
@@ -32,7 +33,8 @@ import { useAuth } from "./context/useAuth";
 import WrappedBooking from "./components/Booking";
 import BookingDetails from "./pages/BookingDetails";
 import PageTransition from "./components/PageTransition";
-import LoadingScreen from "./components/LoadingScreen";
+import { API_BASE_URL } from "./utils/api";
+import { User } from "./types/authTypes";
 
 // Simple Not Found component
 const NotFound = () => (
@@ -49,6 +51,91 @@ const NotFound = () => (
     </a>
   </div>
 );
+
+// Verify Email component
+const VerifyEmail = () => {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const verifyEmail = async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get("token");
+
+      if (!token) {
+        navigate("/login"); // Redirect to login if no token is provided
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `${API_BASE_URL}/auth/verify-email?token=${token}`,
+          {
+            method: "GET",
+          }
+        );
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("Verification Error:", errorData);
+          navigate("/login"); // Redirect to login on error
+          return;
+        }
+
+        const data = await response.json();
+        console.log("Verification Success:", data);
+
+        // Log the user in using the token from the response
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("role", data.role); // Role is included in the token payload, but we set it explicitly here
+
+        // Decode the token to get user data
+        const decodedToken = JSON.parse(atob(data.token.split(".")[1]));
+        const userData: User = {
+          id: decodedToken.id,
+          fullName: decodedToken.fullName || "",
+          email: decodedToken.email || "",
+          role: decodedToken.role,
+          profilePicture: null,
+        };
+
+        login(userData);
+
+        // Redirect based on role
+        switch (decodedToken.role) {
+          case "admin":
+            navigate("/admin-dashboard");
+            break;
+          case "guide":
+            navigate("/guide-dashboard");
+            break;
+          case "tourist":
+            navigate("/profile");
+            break;
+          default:
+            navigate("/");
+            break;
+        }
+      } catch (error) {
+        console.error("Verification Error:", error);
+        navigate("/login");
+      }
+    };
+
+    verifyEmail();
+  }, [login, navigate]);
+
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+      <h1 className="text-3xl font-bold text-green-800">
+        Verifying Your Email...
+      </h1>
+      <p className="mt-4 text-gray-600">
+        Please wait while we verify your email.
+      </p>
+    </div>
+  );
+};
 
 // Protected Route component with role-based access
 const ProtectedRoute = ({
@@ -72,10 +159,8 @@ const ProtectedRoute = ({
 };
 
 const App = () => {
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    setTimeout(() => setLoading(false), 2000); // Simulate loading effect
+  const scrollToTop = useCallback(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
   return (
@@ -88,18 +173,12 @@ const App = () => {
             content="Discover adventure, cultural, wildlife, and nature tours in South Sudan."
           />
         </Helmet>
-        {/* Main container with full screen height and flex layout */}
         <div className="flex flex-col min-h-screen">
-          <Navbar />
-          {/* This ensures the content grows and pushes the footer to the bottom */}
+          <Navbar scrollToTop={scrollToTop} />
           <main className="flex-grow">
-            {loading ? (
-              <LoadingScreen />
-            ) : (
-              <AnimatePresence mode="wait">
-                <RoutesWithTransition />
-              </AnimatePresence>
-            )}
+            <AnimatePresence mode="wait">
+              <RoutesWithTransition />
+            </AnimatePresence>
           </main>
           <Footer />
         </div>
@@ -112,6 +191,7 @@ const App = () => {
 // Routes with page transitions
 const RoutesWithTransition = () => {
   const location = useLocation();
+
   return (
     <Routes location={location} key={location.pathname}>
       <Route
@@ -159,6 +239,14 @@ const RoutesWithTransition = () => {
         element={
           <PageTransition>
             <Register />
+          </PageTransition>
+        }
+      />
+      <Route
+        path="/verify-email"
+        element={
+          <PageTransition>
+            <VerifyEmail />
           </PageTransition>
         }
       />

@@ -2,21 +2,20 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useAuth } from "../context/useAuth"; // Adjust the import path
+import { useAuth } from "../context/useAuth";
 import { API_BASE_URL } from "../utils/api";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [role, setRole] = useState("tourist");
-  const [key, setKey] = useState("");
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
+    setError(""); // Clear previous errors
 
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
@@ -26,7 +25,7 @@ const Login = () => {
       const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, role, key }),
+        body: JSON.stringify({ email, password }), // Removed role and key from login payload (not needed now)
       });
 
       if (!response.ok) {
@@ -40,7 +39,7 @@ const Login = () => {
       console.log("Login Success:", data);
 
       localStorage.setItem("token", data.token);
-      localStorage.setItem("role", role);
+      localStorage.setItem("role", data.role); // Use role from response, not form
 
       // Set user data in AuthContext (which will also save to localStorage)
       login({
@@ -48,11 +47,11 @@ const Login = () => {
         fullName: data.fullName,
         email: data.email,
         role: data.role,
-        profilePicture: data.profilePicture || null, // Ensure profilePicture is handled
+        profilePicture: data.profilePicture || null, // this ensures profilePicture is handled
       });
 
-      // Redirect based on role
-      switch (role) {
+      // Redirect based on role from response
+      switch (data.role) {
         case "admin":
           navigate("/admin-dashboard");
           break;
@@ -116,39 +115,16 @@ const Login = () => {
             </span>
           </div>
 
-          <div className="mb-4">
-            <label className="block text-gray-700">Role</label>
-            <select
-              title="Role"
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              className="w-full border border-green-400 px-4 py-2 rounded-lg focus:ring-2 focus:ring-green-500 text-gray-700"
-              required
-            >
-              <option value="tourist">Tourist</option>
-              <option value="guide">Guide</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
-
-          {(role === "guide" || role === "admin") && (
-            <div className="mb-4">
-              <label className="block text-gray-700">
-                {role === "guide" ? "Guide Key" : "Admin Key"}
-              </label>
-              <input
-                type="password"
-                value={key}
-                onChange={(e) => setKey(e.target.value)}
-                placeholder={`Enter ${role} key`}
-                className="w-full border border-green-400 px-4 py-2 rounded-lg focus:ring-2 focus:ring-green-500 text-gray-700"
-                required
-              />
-            </div>
-          )}
-
+          {/* Removed role and key inputs from login form */}
           {error && (
-            <div className="mb-4 text-red-600 text-center">{error}</div>
+            <div className="mb-4 text-red-600 text-center">
+              {error}
+              {error === "Please verify your email before logging in." && (
+                <p className="mt-2">
+                  Check your inbox (and spam folder) for a verification email.
+                </p>
+              )}
+            </div>
           )}
 
           <button

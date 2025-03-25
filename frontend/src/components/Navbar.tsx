@@ -25,7 +25,11 @@ const navigation = [
   { name: "Contact", href: "/contact", current: false },
 ];
 
-const Navbar = () => {
+interface NavbarProps {
+  scrollToTop: () => void;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ scrollToTop }) => {
   const [isToursOpen, setIsToursOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -106,7 +110,10 @@ const Navbar = () => {
           <Link
             to="/admin-dashboard"
             className="block px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-green-50 hover:text-green-800"
-            onClick={() => setIsProfileOpen(false)}
+            onClick={() => {
+              setIsProfileOpen(false);
+              scrollToTop();
+            }}
           >
             Admin Dashboard
           </Link>
@@ -116,7 +123,10 @@ const Navbar = () => {
           <Link
             to="/guide-dashboard"
             className="block px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-green-50 hover:text-green-800"
-            onClick={() => setIsProfileOpen(false)}
+            onClick={() => {
+              setIsProfileOpen(false);
+              scrollToTop();
+            }}
           >
             Guide Dashboard
           </Link>
@@ -126,7 +136,10 @@ const Navbar = () => {
           <Link
             to="/profile"
             className="block px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-green-50 hover:text-green-800"
-            onClick={() => setIsProfileOpen(false)}
+            onClick={() => {
+              setIsProfileOpen(false);
+              scrollToTop();
+            }}
           >
             Profile & Bookings
           </Link>
@@ -167,7 +180,7 @@ const Navbar = () => {
           <div className="flex items-center justify-center space-x-1 xxs:space-x-2 xs:space-x-3 sm:space-x-6 md:space-x-6 lg:space-x-8 xl:space-x-10 flex-1">
             {/* Logo */}
             <div className="flex-shrink-0">
-              <Link to="/" className="flex items-center">
+              <Link to="/" className="flex items-center" onClick={scrollToTop}>
                 <span className="text-white font-extrabold tracking-wide drop-shadow-md whitespace-nowrap navbar-brand text-xs xxs:text-sm xs:text-base sm:text-lg">
                   South Sudan Horizons
                 </span>
@@ -186,6 +199,7 @@ const Navbar = () => {
                       : "text-white hover:bg-green-700 hover:text-gray-200",
                     "rounded-md px-2 py-1 sm:px-3 sm:py-2 text-xs sm:text-sm md:text-base font-medium transition-all duration-200"
                   )}
+                  onClick={scrollToTop}
                 >
                   {item.name}
                 </Link>
@@ -204,35 +218,50 @@ const Navbar = () => {
                     <Link
                       to="/tours/all"
                       className="block px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-green-50 hover:text-green-800"
-                      onClick={() => setIsToursOpen(false)}
+                      onClick={() => {
+                        setIsToursOpen(false);
+                        scrollToTop();
+                      }}
                     >
                       All Tours
                     </Link>
                     <Link
                       to="/tours/adventure"
                       className="block px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-green-50 hover:text-green-800"
-                      onClick={() => setIsToursOpen(false)}
+                      onClick={() => {
+                        setIsToursOpen(false);
+                        scrollToTop();
+                      }}
                     >
                       Adventure Tours
                     </Link>
                     <Link
                       to="/tours/cultural"
                       className="block px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-green-50 hover:text-green-800"
-                      onClick={() => setIsToursOpen(false)}
+                      onClick={() => {
+                        setIsToursOpen(false);
+                        scrollToTop();
+                      }}
                     >
                       Cultural Tours
                     </Link>
                     <Link
                       to="/tours/wildlife"
                       className="block px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-green-50 hover:text-green-800"
-                      onClick={() => setIsToursOpen(false)}
+                      onClick={() => {
+                        setIsToursOpen(false);
+                        scrollToTop();
+                      }}
                     >
                       Wildlife Tours
                     </Link>
                     <Link
                       to="/tours/nature"
                       className="block px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-green-50 hover:text-green-800"
-                      onClick={() => setIsToursOpen(false)}
+                      onClick={() => {
+                        setIsToursOpen(false);
+                        scrollToTop();
+                      }}
                     >
                       Nature Tours
                     </Link>
@@ -286,7 +315,10 @@ const Navbar = () => {
                     <div className="absolute right-0 top-full w-40 sm:w-48 rounded-md bg-white shadow-lg ring-1 ring-green-700 ring-opacity-5 transition-all duration-200 z-10">
                       {getProfileDropdownContent()}
                       <button
-                        onClick={handleLogout}
+                        onClick={() => {
+                          handleLogout();
+                          scrollToTop();
+                        }}
                         className="block w-full px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-green-50 hover:text-green-800 text-left"
                       >
                         Sign out
@@ -300,12 +332,14 @@ const Navbar = () => {
                 <Link
                   to="/login"
                   className="px-1.5 xxs:px-2 xs:px-2.5 sm:px-3 sm:py-1.5 bg-white text-green-800 rounded-lg shadow-md hover:bg-green-50 hover:text-green-900 transition-all duration-200 text-[10px] xxs:text-xs xs:text-sm sm:text-sm font-medium"
+                  onClick={scrollToTop}
                 >
                   Login
                 </Link>
                 <Link
                   to="/register"
                   className="px-1.5 xxs:px-2 xs:px-2.5 sm:px-4 sm:py-1.5 border-2 border-white text-white rounded-lg hover:bg-green-700 hover:border-green-700 transition-all duration-200 text-[10px] xxs:text-xs xs:text-sm sm:text-sm font-medium"
+                  onClick={scrollToTop}
                 >
                   Register
                 </Link>
@@ -354,14 +388,17 @@ const Navbar = () => {
                   : "text-white hover:bg-green-700 hover:text-gray-200",
                 "block rounded-md px-3 py-2 text-xs xxs:text-sm xs:text-base font-medium transition-all duration-200"
               )}
+              onClick={scrollToTop}
             >
               {item.name}
             </DisclosureButton>
           ))}
           <div className="relative">
-            <DisclosureButton
-              as="button"
-              onClick={() => setIsToursOpen(!isToursOpen)}
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                setIsToursOpen(!isToursOpen);
+              }}
               className="flex items-center justify-between w-full text-white hover:bg-green-700 hover:text-gray-200 rounded-md px-3 py-2 text-xs xxs:text-sm xs:text-base font-medium transition-all duration-200"
             >
               Tours
@@ -370,36 +407,41 @@ const Navbar = () => {
                   isToursOpen ? "rotate-180" : ""
                 }`}
               />
-            </DisclosureButton>
+            </button>
             {isToursOpen && (
               <div className="mt-1 space-y-1 bg-green-800 rounded-md">
                 <Link
                   to="/tours/all"
                   className="block px-4 py-2 text-xs xxs:text-sm xs:text-base text-gray-200 hover:bg-green-700 hover:text-white"
+                  onClick={scrollToTop}
                 >
                   All Tours
                 </Link>
                 <Link
                   to="/tours/adventure"
                   className="block px-4 py-2 text-xs xxs:text-sm xs:text-base text-gray-200 hover:bg-green-700 hover:text-white"
+                  onClick={scrollToTop}
                 >
                   Adventure Tours
                 </Link>
                 <Link
                   to="/tours/cultural"
                   className="block px-4 py-2 text-xs xxs:text-sm xs:text-base text-gray-200 hover:bg-green-700 hover:text-white"
+                  onClick={scrollToTop}
                 >
                   Cultural Tours
                 </Link>
                 <Link
                   to="/tours/wildlife"
                   className="block px-4 py-2 text-xs xxs:text-sm xs:text-base text-gray-200 hover:bg-green-700 hover:text-white"
+                  onClick={scrollToTop}
                 >
                   Wildlife Tours
                 </Link>
                 <Link
                   to="/tours/nature"
                   className="block px-4 py-2 text-xs xxs:text-sm xs:text-base text-gray-200 hover:bg-green-700 hover:text-white"
+                  onClick={scrollToTop}
                 >
                   Nature Tours
                 </Link>
@@ -419,6 +461,7 @@ const Navbar = () => {
                     : "/profile"
                 }
                 className="block rounded-md px-3 py-2 text-xs xxs:text-sm xs:text-base text-white hover:bg-green-700 hover:text-gray-200 font-medium transition-all duration-200"
+                onClick={scrollToTop}
               >
                 {user.role === "admin"
                   ? "Admin Dashboard"
@@ -428,7 +471,10 @@ const Navbar = () => {
               </DisclosureButton>
               <DisclosureButton
                 as="button"
-                onClick={handleLogout}
+                onClick={() => {
+                  handleLogout();
+                  scrollToTop();
+                }}
                 className="block w-full text-left rounded-md px-3 py-2 text-xs xxs:text-sm xs:text-base text-white hover:bg-green-700 hover:text-gray-200 font-medium transition-all duration-200"
               >
                 Sign out

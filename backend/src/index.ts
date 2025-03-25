@@ -7,6 +7,7 @@ import connectDB from "./config/db";
 import authRoutes from "./routes/authRoutes";
 import tourRoutes from "./routes/tourRoutes";
 import bookingRoutes from "./routes/bookingRoutes";
+import session from "express-session";
 
 // Load .env file from src/ if it exists (optional), otherwise rely on environment variables
 const envPath = path.resolve(__dirname, ".env");
@@ -19,9 +20,15 @@ if (fs.existsSync(envPath)) {
 }
 
 // Check critical environment variables
-if (!process.env.STRIPE_SECRET_KEY || !process.env.MONGO_URI) {
+if (
+  !process.env.STRIPE_SECRET_KEY ||
+  !process.env.MONGO_URI ||
+  !process.env.JWT_SECRET ||
+  !process.env.EMAIL_USER ||
+  !process.env.EMAIL_PASS
+) {
   console.error(
-    "Required environment variables (STRIPE_SECRET_KEY or MONGO_URI) are missing. Set them in your .env file or environment."
+    "Required environment variables (STRIPE_SECRET_KEY, MONGO_URI, JWT_SECRET, EMAIL_USER, EMAIL_PASS) are missing. Set them in your .env file or environment."
   );
   process.exit(1);
 }
@@ -33,15 +40,35 @@ if (process.env.NODE_ENV !== "production") {
     process.env.STRIPE_SECRET_KEY || "Not found"
   );
   console.log("MONGO_URI:", process.env.MONGO_URI || "Not found");
+  console.log("JWT_SECRET:", process.env.JWT_SECRET || "Not found");
+  console.log("EMAIL_USER:", process.env.EMAIL_USER || "Not found");
+  console.log("EMAIL_PASS:", process.env.EMAIL_PASS || "Not found");
 }
 
 const app = express();
 
 // Enable CORS
-app.use(cors());
+app.use(
+  cors({
+    origin:
+      process.env.NODE_ENV === "production"
+        ? "https://south-sudan-horizons.vercel.app"
+        : "http://localhost:5173",
+    credentials: true, // For the use of cookies or sessions later
+  })
+);
 
 // Middleware to parse JSON bodies
 app.use(express.json());
+
+// Session middleware (optional, useful if you add OAuth later)
+app.use(
+  session({
+    secret: process.env.JWT_SECRET!,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
 
 // Ensure directories exist for static files
 const ensureDirectory = (dir: string) => {

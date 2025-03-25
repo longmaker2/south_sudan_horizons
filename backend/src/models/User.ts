@@ -13,6 +13,8 @@ const userSchema = new mongoose.Schema(
       default: "tourist",
     },
     key: { type: String },
+    isVerified: { type: Boolean, default: false },
+    verificationToken: { type: String },
   },
   { timestamps: true }
 );
