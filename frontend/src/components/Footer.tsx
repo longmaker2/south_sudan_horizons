@@ -5,6 +5,7 @@ import {
   FaTwitter,
   FaLinkedinIn,
 } from "react-icons/fa";
+import { Link } from "react-router-dom";
 import StayUpdated from "./StayUpdated";
 
 const Footer = () => {
@@ -24,24 +25,24 @@ const Footer = () => {
           <h3 className="text-lg font-bold">Quick Links</h3>
           <ul className="mt-2 space-y-1">
             <li>
-              <a href="/about" className="hover:text-green-400 transition">
+              <Link to="/about" className="hover:text-green-400 transition">
                 About Us
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="/contact" className="hover:text-green-400 transition">
+              <Link to="/contact" className="hover:text-green-400 transition">
                 Contact
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="/privacy" className="hover:text-green-400 transition">
+              <Link to="/privacy" className="hover:text-green-400 transition">
                 Privacy Policy
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="/terms" className="hover:text-green-400 transition">
+              <Link to="/terms" className="hover:text-green-400 transition">
                 Terms of Service
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
@@ -91,7 +92,7 @@ const Footer = () => {
 
       {/* Copyright */}
       <div className="max-w-6xl mx-auto text-center mt-8 text-gray-300">
-        <p>&copy; 2025 South Sudan Horizons. All rights reserved.</p>
+        <p>© 2025 South Sudan Horizons. All rights reserved.</p>
       </div>
     </footer>
   );

@@ -1,24 +1,25 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { API_BASE_URL } from "../utils/api";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const [successMessage, setSuccessMessage] = useState(""); // state for success message
+  const [successMessage, setSuccessMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("tourist");
   const [key, setKey] = useState("");
+  const [showTerms, setShowTerms] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    setError(""); // Clear previous errors
-    setSuccessMessage(""); // Clear previous success messages
+    setError("");
+    setSuccessMessage("");
 
     const formData = new FormData(e.currentTarget);
     const fullName = formData.get("fullName") as string;
@@ -58,12 +59,11 @@ const Register = () => {
       const data = await response.json();
       console.log("Registration Success:", data);
 
-      // Instead of navigating immediately, show a success message
       setSuccessMessage(
         data.message ||
           "Registration successful! Please check your email to verify your account."
       );
-      setTimeout(() => navigate("/login"), 3000); // Redirect to login after 3 seconds
+      setTimeout(() => navigate("/login"), 3000);
     } catch (error) {
       console.error("Registration Error:", error);
       setError("An unexpected error occurred. Please try again.");
@@ -112,6 +112,82 @@ const Register = () => {
   };
 
   const progressBarStyle = getProgressBarStyle(password);
+
+  // Terms and Conditions content (abbreviated for scrollable box)
+  const termsContent = (
+    <div className="text-gray-700 text-sm">
+      <p>
+        <strong>Last Updated: March 26, 2025</strong>
+      </p>
+      <p className="mt-2">
+        Welcome to South Sudan Horizons. By registering, you agree to these
+        Terms and Conditions.
+      </p>
+      <ol className="list-decimal pl-4 mt-2 space-y-2">
+        <li>
+          <strong>Acceptance of Terms:</strong> You agree to these Terms and our
+          Privacy Policy.
+        </li>
+        <li>
+          <strong>Eligibility:</strong> Must be 18+, provide accurate info, use
+          valid keys for Guide/Admin.
+        </li>
+        <li>
+          <strong>Account Responsibilities:</strong> Keep credentials
+          confidential; report issues to support@southsudanhorizons.com.
+        </li>
+        <li>
+          <strong>Email Verification:</strong> Verify email within 1 hour to
+          activate account.
+        </li>
+        <li>
+          <strong>User Roles:</strong> Tourist, Guide (with key), Admin (with
+          key).
+        </li>
+        <li>
+          <strong>Use of Platform:</strong> Lawful use only; align with
+          sustainable tourism goals.
+        </li>
+        <li>
+          <strong>Payment:</strong> Via Stripe; refunds per tour provider
+          policies.
+        </li>
+        <li>
+          <strong>Intellectual Property:</strong> Content copyrighted;
+          submissions grant us a license.
+        </li>
+        <li>
+          <strong>Privacy:</strong> Data per Privacy Policy; emails for
+          verification/updates.
+        </li>
+        <li>
+          <strong>Termination:</strong> We may suspend for violations; you can
+          delete via support.
+        </li>
+        <li>
+          <strong>Liability:</strong> Not liable for damages; platform “as is.”
+        </li>
+        <li>
+          <strong>Sustainability:</strong> Support eco-friendly tourism.
+        </li>
+        <li>
+          <strong>Changes:</strong> Updates notified; continued use is
+          acceptance.
+        </li>
+        <li>
+          <strong>Governing Law:</strong> South Sudan laws apply.
+        </li>
+        <li>
+          <strong>Contact:</strong> Email support@southsudanhorizons.com.
+        </li>
+      </ol>
+      <p className="mt-2">
+        <Link to="/terms" className="text-green-700 font-bold hover:underline">
+          Read Full Terms and Conditions
+        </Link>
+      </p>
+    </div>
+  );
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 mt-16">
@@ -231,10 +307,38 @@ const Register = () => {
             <div className="mb-4 text-red-600 text-center">{error}</div>
           )}
           {successMessage && (
-            <div className=" napr-4 text-green-600 text-center">
+            <div className="mb-4 text-green-600 text-center">
               {successMessage}
             </div>
           )}
+
+          {/* Terms and Conditions Scrollable Box */}
+          <div className="mb-4">
+            <div
+              className="flex items-center justify-between cursor-pointer bg-green-100 p-2 rounded-lg"
+              onClick={() => setShowTerms(!showTerms)}
+            >
+              <span className="text-green-800 font-semibold">
+                Terms and Conditions
+              </span>
+              {showTerms ? (
+                <FaChevronUp className="text-green-800" />
+              ) : (
+                <FaChevronDown className="text-green-800" />
+              )}
+            </div>
+            {showTerms && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="mt-2 border border-green-400 rounded-lg p-4 max-h-40 overflow-y-auto bg-gray-50"
+              >
+                {termsContent}
+              </motion.div>
+            )}
+          </div>
 
           <div className="flex items-center mb-4">
             <input
@@ -244,13 +348,7 @@ const Register = () => {
               required
             />
             <label htmlFor="terms" className="text-gray-700">
-              I agree to the{" "}
-              <Link
-                to="/terms"
-                className="text-green-700 font-bold hover:underline"
-              >
-                Terms and Conditions
-              </Link>
+              I agree to the Terms and Conditions
             </label>
           </div>
 

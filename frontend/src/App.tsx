@@ -35,6 +35,8 @@ import BookingDetails from "./pages/BookingDetails";
 import PageTransition from "./components/PageTransition";
 import { API_BASE_URL } from "./utils/api";
 import { User } from "./types/authTypes";
+import TermsAndConditions from "./components/TermsAndConditions";
+import PrivacyPolicy from "./components/PrivacyPolicy"; // New import
 
 // Simple Not Found component
 const NotFound = () => (
@@ -63,7 +65,7 @@ const VerifyEmail = () => {
       const token = urlParams.get("token");
 
       if (!token) {
-        navigate("/login"); // Redirect to login if no token is provided
+        navigate("/login");
         return;
       }
 
@@ -78,18 +80,16 @@ const VerifyEmail = () => {
         if (!response.ok) {
           const errorData = await response.json();
           console.error("Verification Error:", errorData);
-          navigate("/login"); // Redirect to login on error
+          navigate("/login");
           return;
         }
 
         const data = await response.json();
         console.log("Verification Success:", data);
 
-        // Log the user in using the token from the response
         localStorage.setItem("token", data.token);
-        localStorage.setItem("role", data.role); // Role is included in the token payload, but we set it explicitly here
+        localStorage.setItem("role", data.role);
 
-        // Decode the token to get user data
         const decodedToken = JSON.parse(atob(data.token.split(".")[1]));
         const userData: User = {
           id: decodedToken.id,
@@ -101,7 +101,6 @@ const VerifyEmail = () => {
 
         login(userData);
 
-        // Redirect based on role
         switch (decodedToken.role) {
           case "admin":
             navigate("/admin-dashboard");
@@ -239,6 +238,22 @@ const RoutesWithTransition = () => {
         element={
           <PageTransition>
             <Register />
+          </PageTransition>
+        }
+      />
+      <Route
+        path="/terms"
+        element={
+          <PageTransition>
+            <TermsAndConditions />
+          </PageTransition>
+        }
+      />
+      <Route
+        path="/privacy"
+        element={
+          <PageTransition>
+            <PrivacyPolicy />
           </PageTransition>
         }
       />
