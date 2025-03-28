@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FaStar } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 // Sample Testimonials Data
 const testimonialsData = [
@@ -8,41 +9,42 @@ const testimonialsData = [
     id: 1,
     name: "Diana Otieno",
     country: "USA",
-    text: "An unforgettable experience! The landscapes are breathtaking, and the people are incredibly welcoming.",
+    text: "testimonials.testimonial1",
   },
   {
     id: 2,
     name: "Daniel Burongu",
     country: "UK",
-    text: "South Sudan is a hidden gem. The cultural tours were eye-opening, and the guides were very knowledgeable.",
+    text: "testimonials.testimonial2",
   },
   {
     id: 3,
     name: "Brian Kayongo",
     country: "Spain",
-    text: "The wildlife safari was beyond expectations. I got to see elephants, giraffes, and even rare birds!",
+    text: "testimonials.testimonial3",
   },
   {
     id: 4,
     name: "James Deng",
     country: "South Sudan",
-    text: "As a local, I was proud to show my friends around. The service and hospitality were world-class.",
+    text: "testimonials.testimonial4",
   },
   {
     id: 5,
     name: "Ruth Senior",
     country: "Canada",
-    text: "A truly immersive experience! Learning about the cultures and traditions was the highlight of my trip.",
+    text: "testimonials.testimonial5",
   },
   {
     id: 6,
     name: "David Mazimpaka",
     country: "South Korea",
-    text: "Loved the boat safari in the Sudd wetlands! It was peaceful and beautiful beyond words.",
+    text: "testimonials.testimonial6",
   },
 ];
 
 const Testimonials = () => {
+  const { t } = useTranslation();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 768);
   const testimonialsPerPage = 3;
@@ -83,7 +85,7 @@ const Testimonials = () => {
   return (
     <div className="py-20 bg-gray-100 text-center overflow-hidden">
       <h2 className="text-4xl font-bold text-green-800">
-        What Our Travelers Say
+        {t("testimonials.title")}
       </h2>
       <div className="mt-8 max-w-6xl mx-auto">
         {/* Container with dynamic height on small screens, fixed on large */}
@@ -102,7 +104,7 @@ const Testimonials = () => {
                 className="bg-white p-6 rounded-lg shadow-md flex flex-col justify-between min-h-[200px]"
               >
                 <p className="text-gray-700 italic mb-4 flex-grow line-clamp-4">
-                  "{testimonial.text}"
+                  "{t(testimonial.text)}"
                 </p>
                 <div>
                   <div className="flex justify-center text-yellow-500 mb-4">
@@ -127,7 +129,7 @@ const Testimonials = () => {
           }).map((_, index) => (
             <button
               key={index}
-              title={`Go to testimonial ${index + 1}`}
+              title={t("testimonials.goToTestimonial", { number: index + 1 })}
               className={`w-3 h-3 rounded-full ${
                 index === currentIndex ? "bg-green-600" : "bg-gray-400"
               }`}

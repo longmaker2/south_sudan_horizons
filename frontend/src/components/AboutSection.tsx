@@ -1,9 +1,12 @@
 import { motion } from "framer-motion";
 import { FaTree, FaMountain, FaUsers } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import FunFactSection from "./FunFactSection";
 
 const AboutSection = () => {
+  const { t } = useTranslation();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
@@ -13,14 +16,9 @@ const AboutSection = () => {
       className="py-20 bg-gray-100 text-center"
     >
       {/* Title */}
-      <h2 className="text-4xl font-bold text-green-800">
-        Why Visit South Sudan?
-      </h2>
+      <h2 className="text-4xl font-bold text-green-800">{t("about.title")}</h2>
       <p className="mt-4 text-lg text-gray-700 max-w-4xl mx-auto">
-        South Sudan is a land of rich cultural diversity, breathtaking
-        landscapes, and hidden treasures waiting to be explored. Whether you're
-        seeking adventure, wildlife, or cultural immersion, this destination has
-        something for everyone.
+        {t("about.description")}
       </p>
 
       {/* Key Highlights Section */}
@@ -31,11 +29,10 @@ const AboutSection = () => {
             <FaMountain />
           </div>
           <h3 className="mt-4 text-xl font-bold text-green-800">
-            Untouched Natural Beauty
+            {t("about.features.naturalBeauty.title")}
           </h3>
           <p className="mt-2 text-gray-700">
-            Explore stunning landscapes, from lush wetlands to towering
-            mountains and vast savannas.
+            {t("about.features.naturalBeauty.description")}
           </p>
         </div>
 
@@ -45,11 +42,10 @@ const AboutSection = () => {
             <FaTree />
           </div>
           <h3 className="mt-4 text-xl font-bold text-green-800">
-            Rich Wildlife
+            {t("about.features.wildlife.title")}
           </h3>
           <p className="mt-2 text-gray-700">
-            Home to Africa's second-largest migration, featuring elephants,
-            antelopes, and rare bird species.
+            {t("about.features.wildlife.description")}
           </p>
         </div>
 
@@ -59,11 +55,10 @@ const AboutSection = () => {
             <FaUsers />
           </div>
           <h3 className="mt-4 text-xl font-bold text-green-800">
-            Diverse Cultures
+            {t("about.features.culture.title")}
           </h3>
           <p className="mt-2 text-gray-700">
-            Experience 60+ ethnic groups, each with unique traditions, dances,
-            and festivals.
+            {t("about.features.culture.description")}
           </p>
         </div>
       </div>
@@ -71,10 +66,10 @@ const AboutSection = () => {
       {/* Call to Action */}
       <div className="mt-10">
         <Link
-          to="/tours/all" //
+          to="/tours/all"
           className="px-6 py-3 bg-green-600 text-white text-lg font-semibold rounded-lg shadow-md hover:bg-green-700 transition-all duration-300"
         >
-          Explore Tours
+          {t("about.cta")}
         </Link>
       </div>
 

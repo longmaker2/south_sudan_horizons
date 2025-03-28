@@ -1,28 +1,31 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const teamMembers = [
   {
     id: 1,
-    name: "James Deng",
-    role: "Founder & CEO",
+    name: "about.team.james.name",
+    role: "about.team.james.role",
     image: "/assets/team/james.jpg",
   },
   {
     id: 2,
-    name: "Sarah Akot",
-    role: "Lead Tour Guide",
+    name: "about.team.sarah.name",
+    role: "about.team.sarah.role",
     image: "/assets/team/sarah.jpg",
   },
   {
     id: 3,
-    name: "David Lado",
-    role: "Cultural Expert",
+    name: "about.team.david.name",
+    role: "about.team.david.role",
     image: "/assets/team/david.jpg",
   },
 ];
 
 const About = () => {
+  const { t } = useTranslation();
+
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
@@ -35,10 +38,11 @@ const About = () => {
       >
         <div className="absolute inset-0 bg-white bg-opacity-70"></div>
         <div className="relative z-10">
-          <h1 className="text-5xl font-extrabold text-green-800">About Us</h1>
+          <h1 className="text-5xl font-extrabold text-green-800">
+            {t("about.hero.title")}
+          </h1>
           <p className="mt-4 text-lg max-w-3xl text-gray-700">
-            Discover the story behind South Sudan Horizons and our passion for
-            showcasing the beauty and culture of South Sudan.
+            {t("about.hero.description")}
           </p>
         </div>
       </motion.div>
@@ -51,11 +55,11 @@ const About = () => {
         transition={{ duration: 1 }}
         className="py-16 px-4 max-w-6xl mx-auto text-center"
       >
-        <h2 className="text-4xl font-bold text-green-800">Our Mission</h2>
+        <h2 className="text-4xl font-bold text-green-800">
+          {t("about.mission.title")}
+        </h2>
         <p className="mt-4 text-lg text-gray-700 max-w-4xl mx-auto">
-          At South Sudan Horizons, our mission is to connect travelers with
-          authentic South Sudanese experiences, guided by local experts who
-          bring history, culture, and adventure to life.
+          {t("about.mission.description")}
         </p>
       </motion.div>
 
@@ -68,33 +72,32 @@ const About = () => {
         className="bg-green-100 py-16 px-4"
       >
         <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-green-800">Why Choose Us?</h2>
+          <h2 className="text-4xl font-bold text-green-800">
+            {t("about.whyChooseUs.title")}
+          </h2>
           <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-white p-6 rounded-lg shadow-md">
               <h3 className="text-xl font-semibold text-green-800">
-                Authentic Experiences
+                {t("about.whyChooseUs.features.0.title")}
               </h3>
               <p className="text-gray-700 mt-2">
-                We bring you real, local experiences with expert guides who know
-                South Sudan best.
+                {t("about.whyChooseUs.features.0.description")}
               </p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md">
               <h3 className="text-xl font-semibold text-green-800">
-                Safety First
+                {t("about.whyChooseUs.features.1.title")}
               </h3>
               <p className="text-gray-700 mt-2">
-                Your safety is our top priority, and we ensure every journey is
-                secure and comfortable.
+                {t("about.whyChooseUs.features.1.description")}
               </p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md">
               <h3 className="text-xl font-semibold text-green-800">
-                Community Impact
+                {t("about.whyChooseUs.features.2.title")}
               </h3>
               <p className="text-gray-700 mt-2">
-                By choosing us, you support local businesses and help preserve
-                South Sudanese culture.
+                {t("about.whyChooseUs.features.2.description")}
               </p>
             </div>
           </div>
@@ -109,7 +112,9 @@ const About = () => {
         transition={{ duration: 1 }}
         className="py-16 px-4 max-w-6xl mx-auto text-center"
       >
-        <h2 className="text-4xl font-bold text-green-800">Meet Our Team</h2>
+        <h2 className="text-4xl font-bold text-green-800">
+          {t("about.team.title")}
+        </h2>
         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-8">
           {teamMembers.map((member) => (
             <motion.div
@@ -122,13 +127,13 @@ const About = () => {
             >
               <img
                 src={member.image}
-                alt={member.name}
+                alt={t(member.name)}
                 className="w-full h-48 object-cover rounded-md"
               />
               <h3 className="mt-4 text-xl font-semibold text-green-800">
-                {member.name}
+                {t(member.name)}
               </h3>
-              <p className="text-gray-700">{member.role}</p>
+              <p className="text-gray-700">{t(member.role)}</p>
             </motion.div>
           ))}
         </div>
@@ -142,17 +147,17 @@ const About = () => {
         transition={{ duration: 1 }}
         className="py-12 bg-white text-white text-center"
       >
-        <h2 className="text-3xl font-bold text-green-800">Join Our Journey</h2>
+        <h2 className="text-3xl font-bold text-green-800">
+          {t("about.cta.title")}
+        </h2>
         <p className="mt-4 text-lg max-w-2xl mx-auto text-gray-700">
-          Whether you're looking for an adventure, cultural immersion, or a
-          local experience, we're here to guide you.
+          {t("about.cta.description")}
           <div className="text-center">
             <Link
               to="/contact"
               className="mt-4 inline-block px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-all duration-300"
-              onClick={() => console.log("Contact Us")}
             >
-              Contact Us
+              {t("about.cta.buttonText")}
             </Link>
           </div>
         </p>

@@ -1,51 +1,48 @@
 import { motion } from "framer-motion";
-
-const services = [
-  {
-    id: 1,
-    icon: "🌍",
-    title: "Guided Tours",
-    description:
-      "Explore South Sudan with our expert guides who will take you to the most breathtaking locations.",
-  },
-  {
-    id: 2,
-    icon: "🏕️",
-    title: "Adventure Camping",
-    description:
-      "Experience the thrill of camping in the wild with our fully equipped adventure camping packages.",
-  },
-  {
-    id: 3,
-    icon: "📸",
-    title: "Photography Tours",
-    description:
-      "Capture the beauty of South Sudan with our photography-focused tours designed for enthusiasts.",
-  },
-  {
-    id: 4,
-    icon: "🛶",
-    title: "Boat Safaris",
-    description:
-      "Discover the Sudd wetlands and its rich biodiversity with our guided boat safaris.",
-  },
-  {
-    id: 5,
-    icon: "🐘",
-    title: "Wildlife Safaris",
-    description:
-      "Get up close with South Sudan's diverse wildlife in its natural habitat.",
-  },
-  {
-    id: 6,
-    icon: "🎭",
-    title: "Cultural Experiences",
-    description:
-      "Immerse yourself in the vibrant traditions and cultures of South Sudan's ethnic groups.",
-  },
-];
+import { useTranslation } from "react-i18next";
 
 const ServicesSection = () => {
+  const { t } = useTranslation();
+
+  const services = [
+    {
+      id: 1,
+      icon: "🌍",
+      title: t("services.guidedTours.title"),
+      description: t("services.guidedTours.description"),
+    },
+    {
+      id: 2,
+      icon: "🏕️",
+      title: t("services.adventureCamping.title"),
+      description: t("services.adventureCamping.description"),
+    },
+    {
+      id: 3,
+      icon: "📸",
+      title: t("services.photographyTours.title"),
+      description: t("services.photographyTours.description"),
+    },
+    {
+      id: 4,
+      icon: "🛶",
+      title: t("services.boatSafaris.title"),
+      description: t("services.boatSafaris.description"),
+    },
+    {
+      id: 5,
+      icon: "🐘",
+      title: t("services.wildlifeSafaris.title"),
+      description: t("services.wildlifeSafaris.description"),
+    },
+    {
+      id: 6,
+      icon: "🎭",
+      title: t("services.culturalExperiences.title"),
+      description: t("services.culturalExperiences.description"),
+    },
+  ];
+
   return (
     <motion.div
       initial={{ opacity: 0, ...(window.innerWidth < 640 ? {} : { y: 40 }) }}
@@ -55,11 +52,10 @@ const ServicesSection = () => {
       className="py-16 sm:py-20 bg-white text-center overflow-hidden"
     >
       <h2 className="text-3xl sm:text-4xl font-bold text-green-800">
-        Our Services
+        {t("services.title")}
       </h2>
       <p className="mt-4 text-base sm:text-lg text-gray-700 max-w-4xl mx-auto">
-        We offer a wide range of services to make your South Sudan adventure
-        unforgettable.
+        {t("services.subtitle")}
       </p>
       <div className="mt-6 sm:mt-8 max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-8 px-4">
         {services.map((service) => (

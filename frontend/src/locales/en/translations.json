@@ -1,0 +1,507 @@
+{
+  "navbar": {
+    "home": "Home",
+    "guides": "Guides",
+    "about": "About",
+    "contact": "Contact",
+    "tours": "Tours",
+    "allTours": "All Tours",
+    "adventureTours": "Adventure Tours",
+    "culturalTours": "Cultural Tours",
+    "wildlifeTours": "Wildlife Tours",
+    "natureTours": "Nature Tours",
+    "login": "Login",
+    "register": "Register",
+    "profile": "Profile",
+    "adminDashboard": "Admin Dashboard",
+    "guideDashboard": "Guide Dashboard",
+    "profileBookings": "Profile & Bookings",
+    "signOut": "Sign out"
+  },
+  "notFound": {
+    "title": "404 - Page Not Found",
+    "message": "The page you're looking for doesn't exist.",
+    "goHome": "Go Home"
+  },
+  "verifyEmail": {
+    "title": "Verifying Your Email...",
+    "message": "Please wait while we verify your email."
+  },
+  "hero": {
+    "title": "Discover South Sudan",
+    "subtitle": "Experience the vibrant culture, breathtaking landscapes, and unique adventures in the heart of Africa.",
+    "exploreTours": "Explore Tours",
+    "meetGuides": "Meet Guides"
+  },
+  "searchTours": {
+    "title": "Search Popular Tours",
+    "placeholder": "Search tours...",
+    "searchLabel": "Search tours",
+    "clearLabel": "Clear search",
+    "searchButton": "Search",
+    "noResults": "No tours found.",
+    "error": "Failed to load tours. Please try again later."
+  },
+  "about": {
+    "title": "Why Visit South Sudan?",
+    "description": "South Sudan is a land of rich cultural diversity, breathtaking landscapes, and hidden treasures waiting to be explored. Whether you're seeking adventure, wildlife, or cultural immersion, this destination has something for everyone.",
+    "features": {
+      "naturalBeauty": {
+        "title": "Untouched Natural Beauty",
+        "description": "Explore stunning landscapes, from lush wetlands to towering mountains and vast savannas."
+      },
+      "wildlife": {
+        "title": "Rich Wildlife",
+        "description": "Home to Africa's second-largest migration, featuring elephants, antelopes, and rare bird species."
+      },
+      "culture": {
+        "title": "Diverse Cultures",
+        "description": "Experience 60+ ethnic groups, each with unique traditions, dances, and festivals."
+      }
+    },
+    "cta": "Explore Tours"
+  },
+  "funFacts": {
+    "label": "Fun Fact",
+    "prevButton": "Previous fact",
+    "nextButton": "Next fact",
+    "goToFact": "Go to fact",
+    "suddWetland": "South Sudan is home to the Sudd, one of the largest wetlands in the world.",
+    "bomaPark": "Boma National Park is larger than some entire countries!",
+    "ethnicGroups": "South Sudan has over 60 different ethnic groups with rich cultural traditions.",
+    "independence": "South Sudan is the youngest country in the world, gaining independence on July 9, 2011.",
+    "whiteNile": "The White Nile, one of the two main tributaries of the Nile River, flows through South Sudan.",
+    "animalMigration": "South Sudan is home to the second-largest animal migration in the world, after the Serengeti."
+  },
+  "services": {
+    "title": "Our Services",
+    "subtitle": "We offer a wide range of services to make your South Sudan adventure unforgettable.",
+    "guidedTours": {
+      "title": "Guided Tours",
+      "description": "Explore South Sudan with our expert guides who will take you to the most breathtaking locations."
+    },
+    "adventureCamping": {
+      "title": "Adventure Camping",
+      "description": "Experience the thrill of camping in the wild with our fully equipped adventure camping packages."
+    },
+    "photographyTours": {
+      "title": "Photography Tours",
+      "description": "Capture the beauty of South Sudan with our photography-focused tours designed for enthusiasts."
+    },
+    "boatSafaris": {
+      "title": "Boat Safaris",
+      "description": "Discover the Sudd wetlands and its rich biodiversity with our guided boat safaris."
+    },
+    "wildlifeSafaris": {
+      "title": "Wildlife Safaris",
+      "description": "Get up close with South Sudan's diverse wildlife in its natural habitat."
+    },
+    "culturalExperiences": {
+      "title": "Cultural Experiences",
+      "description": "Immerse yourself in the vibrant traditions and cultures of South Sudan's ethnic groups."
+    }
+  },
+  "featuredDestinations": {
+    "title": "Featured Destinations",
+    "subtitle": "Discover the most iconic and breathtaking destinations in South Sudan.",
+    "loading": "Loading featured destinations...",
+    "loadError": "Error loading destinations:",
+    "viewDetails": "View Details",
+    "reviews": "{{count}} reviews",
+    "review": "{{count}} review",
+    "review_plural": "{{count}} reviews"
+  },
+  "culturalHighlights": {
+    "title": "Cultural Highlights",
+    "subtitle": "Immerse yourself in the vibrant traditions and rich heritage of South Sudan.",
+    "loading": "Loading cultural highlights...",
+    "loadError": "Error loading cultural highlights:",
+    "viewDetails": "View Details",
+    "reviews": "{{count}} reviews",
+    "review": "{{count}} review",
+    "review_plural": "{{count}} reviews"
+  },
+  "popularTours": {
+    "title": "Popular Tours",
+    "subtitle": "Discover our top-rated tours and experience the best of South Sudan.",
+    "loading": "Loading popular tours...",
+    "loadError": "Error loading popular tours:",
+    "loadErrorMessage": "Failed to load popular tours. Please try again later.",
+    "noToursError": "No tours available in the database",
+    "noToursAvailable": "No popular tours available at the moment.",
+    "viewDetails": "View Details",
+    "reviews": "{{count}} reviews",
+    "review": "{{count}} review",
+    "review_plural": "{{count}} reviews"
+  },
+  "testimonials": {
+    "title": "What Our Travelers Say",
+    "goToTestimonial": "Go to testimonial {{number}}",
+    "testimonial1": "An unforgettable experience! The landscapes are breathtaking, and the people are incredibly welcoming.",
+    "testimonial2": "South Sudan is a hidden gem. The cultural tours were eye-opening, and the guides were very knowledgeable.",
+    "testimonial3": "The wildlife safari was beyond expectations. I got to see elephants, giraffes, and even rare birds!",
+    "testimonial4": "As a local, I was proud to show my friends around. The service and hospitality were world-class.",
+    "testimonial5": "A truly immersive experience! Learning about the cultures and traditions was the highlight of my trip.",
+    "testimonial6": "Loved the boat safari in the Sudd wetlands! It was peaceful and beautiful beyond words."
+  },
+  "travelTips": {
+    "title": "Travel Tips & Blog",
+    "subtitle": "Get the latest travel tips, guides, and stories from South Sudan.",
+    "tip1": {
+      "title": "Top 10 Travel Tips",
+      "description": "Essential tips for traveling to South Sudan."
+    },
+    "tip2": {
+      "title": "Cultural Etiquette",
+      "description": "Learn about the cultural norms and etiquette in South Sudan."
+    },
+    "tip3": {
+      "title": "Wildlife Guide",
+      "description": "A guide to the wildlife you can encounter in South Sudan."
+    }
+  },
+  "gallery": {
+    "title": "Photo Gallery",
+    "subtitle": "Explore the beauty of South Sudan through breathtaking visuals.",
+    "badingilo": "Badingilo National Park wildlife",
+    "boma": "Boma National Park landscape",
+    "nimule": "Nimule National Park scenery",
+    "jubaCulture": "Cultural delights in Juba",
+    "whiteNile": "White Nile river view",
+    "jubaMarkets": "Vibrant markets of Juba"
+  },
+  "mapSection": {
+    "title": "Explore South Sudan",
+    "description": "Discover the key destinations and attractions of South Sudan on our interactive map.",
+    "mapTitle": "South Sudan Interactive Map"
+  },
+  "cta": {
+    "title": "Ready to Explore South Sudan?",
+    "description": "Book your adventure today and experience the beauty of South Sudan.",
+    "buttonText": "Book Now"
+  },
+  "footer": {
+    "discoverTitle": "Discover South Sudan",
+    "discoverDescription": "Your gateway to meet the giants of Africa.",
+    "quickLinksTitle": "Quick Links",
+    "aboutUs": "About Us",
+    "contact": "Contact",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "followUsTitle": "Follow Us",
+    "socialAriaLabels": {
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "twitter": "Twitter",
+      "linkedin": "LinkedIn"
+    },
+    "copyright": "© {{year}} South Sudan Horizons. All rights reserved."
+  },
+  "stayUpdated": {
+    "title": "Stay Updated",
+    "subtitle": "Subscribe for updates.",
+    "emailPlaceholder": "Your email",
+    "emailError": "Please enter a valid email address.",
+    "subscribeButton": "Subscribe",
+    "successMessage": "Thank you for subscribing!"
+  },
+  "register": {
+    "title": "Register",
+    "subtitle": "Create a new account to get started.",
+    "haveAccount": "Have an account?",
+    "login": "Login",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "passwordStrength": "Password strength",
+    "form": {
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "Enter your full name",
+      "email": "Email Address",
+      "emailPlaceholder": "Enter your email",
+      "password": "Password",
+      "passwordPlaceholder": "Create a password",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Confirm your password",
+      "role": "Role",
+      "guideKey": "Guide Key",
+      "guideKeyPlaceholder": "Enter guide key",
+      "adminKey": "Admin Key",
+      "adminKeyPlaceholder": "Enter admin key",
+      "submit": "Register"
+    },
+    "roles": {
+      "tourist": "Tourist",
+      "guide": "Guide",
+      "admin": "Admin"
+    },
+    "errors": {
+      "passwordMismatch": "Passwords do not match.",
+      "registrationFailed": "Registration failed. Please try again.",
+      "unexpectedError": "An unexpected error occurred. Please try again."
+    },
+    "successMessage": "Registration successful! Please check your email to verify your account.",
+    "terms": {
+      "title": "Terms and Conditions",
+      "agree": "I agree to the Terms and Conditions",
+      "lastUpdated": "Last Updated: March 26, 2025",
+      "welcome": "Welcome to South Sudan Horizons. By registering, you agree to these Terms and Conditions.",
+      "readFull": "Read Full Terms and Conditions",
+      "points": {
+        "0": {
+          "title": "Acceptance of Terms",
+          "content": "You agree to these Terms and our Privacy Policy."
+        },
+        "1": {
+          "title": "Eligibility",
+          "content": "Must be 18+, provide accurate info, use valid keys for Guide/Admin."
+        },
+        "2": {
+          "title": "Account Responsibilities",
+          "content": "Keep credentials confidential; report issues to support@southsudanhorizons.com."
+        },
+        "3": {
+          "title": "Email Verification",
+          "content": "Verify email within 1 hour to activate account."
+        },
+        "4": {
+          "title": "User Roles",
+          "content": "Tourist, Guide (with key), Admin (with key)."
+        },
+        "5": {
+          "title": "Use of Platform",
+          "content": "Lawful use only; align with sustainable tourism goals."
+        },
+        "6": {
+          "title": "Payment",
+          "content": "Via Stripe; refunds per tour provider policies."
+        },
+        "7": {
+          "title": "Intellectual Property",
+          "content": "Content copyrighted; submissions grant us a license."
+        },
+        "8": {
+          "title": "Privacy",
+          "content": "Data per Privacy Policy; emails for verification/updates."
+        },
+        "9": {
+          "title": "Termination",
+          "content": "We may suspend for violations; you can delete via support."
+        },
+        "10": {
+          "title": "Liability",
+          "content": "Not liable for damages; platform 'as is'."
+        },
+        "11": {
+          "title": "Sustainability",
+          "content": "Support eco-friendly tourism."
+        },
+        "12": {
+          "title": "Changes",
+          "content": "Updates notified; continued use is acceptance."
+        },
+        "13": {
+          "title": "Governing Law",
+          "content": "South Sudan laws apply."
+        },
+        "14": {
+          "title": "Contact",
+          "content": "Email support@southsudanhorizons.com."
+        }
+      }
+    }
+  },
+  "login": {
+    "title": "Login",
+    "subtitle": "Welcome back! Please log in to continue.",
+    "noAccount": "Don't have an account?",
+    "register": "Register",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "checkInbox": "Check your inbox (and spam folder) for a verification email.",
+    "form": {
+      "email": "Email Address",
+      "emailPlaceholder": "Enter your email",
+      "password": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "submit": "Login"
+    },
+    "errors": {
+      "loginFailed": "Login failed. Please try again.",
+      "unexpectedError": "An unexpected error occurred. Please try again.",
+      "verifyEmail": "Please verify your email before logging in."
+    }
+  },
+  "guideProfile": {
+    "notFound": "Guide not found.",
+    "backButton": "Back to Booking",
+    "rating": "{{score}} ({{count}} reviews)",
+    "viewReviews": "View all reviews",
+    "viewReviewsAlert": "This would show all reviews in a full page view",
+    "specializationsTitle": "Specializations",
+    "specializations": {
+      "mountain": "Mountain Tours",
+      "hiking": "Hiking and Trekking",
+      "cultural": "Cultural Experiences"
+    },
+    "languagesTitle": "Languages Spoken",
+    "certificationsTitle": "Certifications",
+    "certifications": {
+      "mountain": "Certified Mountain Guide",
+      "firstAid": "First Aid Certified",
+      "wilderness": "Wilderness Survival Expert"
+    },
+    "packagesTitle": "Tour Packages",
+    "packages": {
+      "trek": "3-Day Mountain Trek",
+      "heritage": "Cultural Heritage Tour",
+      "sports": "Extreme Sports Adventure"
+    },
+    "contactTitle": "Contact Information",
+    "emailLabel": "Email",
+    "phoneLabel": "Phone",
+    "followTitle": "Follow Me",
+    "social": {
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "twitter": "Twitter",
+      "linkedin": "LinkedIn"
+    },
+    "testimonialsTitle": "Testimonials",
+    "chatButton": "Chat with {{name}}",
+    "guides": {
+      "diana": {
+        "profile": "Experienced guide with 5+ years of expertise in mountain tours.",
+        "testimonials": {
+          "0": {
+            "text": "Diana was an amazing guide! He made our trip unforgettable."
+          },
+          "1": {
+            "text": "Highly recommend John for mountain tours. He's very knowledgeable!"
+          }
+        }
+      }
+    }
+  },
+  "about": {
+    "hero": {
+      "title": "About Us",
+      "description": "Discover the story behind South Sudan Horizons and our passion for showcasing the beauty and culture of South Sudan."
+    },
+    "mission": {
+      "title": "Our Mission",
+      "description": "At South Sudan Horizons, our mission is to connect travelers with authentic South Sudanese experiences, guided by local experts who bring history, culture, and adventure to life."
+    },
+    "whyChooseUs": {
+      "title": "Why Choose Us?",
+      "features": [
+        {
+          "title": "Authentic Experiences",
+          "description": "We bring you real, local experiences with expert guides who know South Sudan best."
+        },
+        {
+          "title": "Safety First",
+          "description": "Your safety is our top priority, and we ensure every journey is secure and comfortable."
+        },
+        {
+          "title": "Community Impact",
+          "description": "By choosing us, you support local businesses and help preserve South Sudanese culture."
+        }
+      ]
+    },
+    "team": {
+      "title": "Meet Our Team",
+      "james": {
+        "name": "James Deng",
+        "role": "Founder & CEO"
+      },
+      "sarah": {
+        "name": "Sarah Akot",
+        "role": "Lead Tour Guide"
+      },
+      "david": {
+        "name": "David Lado",
+        "role": "Cultural Expert"
+      }
+    },
+    "cta": {
+      "title": "Join Our Journey",
+      "description": "Whether you're looking for an adventure, cultural immersion, or a local experience, we're here to guide you.",
+      "buttonText": "Contact Us"
+    }
+  },
+  "guides": {
+    "hero": {
+      "title": "Meet Your Guide",
+      "description": "Explore South Sudan with experienced local guides who bring culture, history, and nature to life."
+    },
+    "sectionTitle": "Our Guides",
+    "searchPlaceholder": "Search guides...",
+    "filterLabel": "Filter by specialty",
+    "allSpecialties": "All Specialties",
+    "specialties": {
+      "wildlife": "Wildlife & Safari",
+      "cultural": "Cultural Heritage",
+      "adventure": "Adventure & Trekking"
+    },
+    "nextAvailable": "Next Available",
+    "topRated": "⭐ Top Rated",
+    "chatButton": "Chat Now",
+    "viewProfile": "View Profile",
+    "noGuides": "No guides found.",
+    "cta": {
+      "title": "Need a Personalized Guide?",
+      "description": "Get a customized tour experience with one of our expert guides.",
+      "buttonText": "Book a Guide"
+    },
+    "list": {
+      "john": {
+        "name": "John Deng",
+        "review": "John made our safari an unforgettable experience!"
+      },
+      "mary": {
+        "name": "Mary Akech",
+        "review": "Mary's knowledge of South Sudanese culture is impressive."
+      },
+      "paul": {
+        "name": "Paul Lado",
+        "review": "Paul took us on an amazing adventure trek!"
+      }
+    }
+  },
+  "contact": {
+    "hero": {
+      "title": "Contact Us",
+      "description": "Have questions? Get in touch with us, and we'll be happy to assist you."
+    },
+    "getInTouch": {
+      "title": "Get in Touch",
+      "description": "Whether you have a question about tours, guides, pricing, or anything else, our team is ready to assist."
+    },
+    "contactMethods": {
+      "phone": {
+        "title": "Call Us",
+        "details": "+254 725 253 330 / +250 791 697 348"
+      },
+      "email": {
+        "title": "Email Us",
+        "details": "info@southsudanhorizons.com"
+      },
+      "location": {
+        "title": "Visit Us",
+        "details": "Juba, South Sudan"
+      }
+    },
+    "form": {
+      "title": "Send Us a Message",
+      "description": "We'll get back to you as soon as possible.",
+      "namePlaceholder": "Full Name",
+      "emailPlaceholder": "Email Address",
+      "messagePlaceholder": "Your Message",
+      "submitButton": "Send Message"
+    },
+    "map": {
+      "title": "Find Us on the Map",
+      "iframeTitle": "Google Maps location of Juba, South Sudan"
+    }
+  }
+}

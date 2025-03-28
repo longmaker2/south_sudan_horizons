@@ -4,8 +4,10 @@ import { useEffect, useState } from "react";
 import { fetchTours } from "../utils/api";
 import { Tour } from "../types/tours";
 import { FaStar } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 const PopularTours = () => {
+  const { t } = useTranslation();
   const [popularTours, setPopularTours] = useState<Tour[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -17,30 +19,27 @@ const PopularTours = () => {
         setError(null);
         let data: Tour[] = [];
 
-        // Fetch all tours and sort by rating
-        console.log("Fetching all tours...");
         const allTours = await fetchTours();
         console.log("fetchTours response:", allTours);
 
         if (allTours.length === 0) {
-          throw new Error("No tours available in the database");
+          throw new Error(t("popularTours.noToursError"));
         }
 
-        // Sort by rating (highest first) and take top 9
         data = allTours
           .sort((a, b) => (b.rating || 0) - (a.rating || 0))
           .slice(0, 9);
 
         setPopularTours(data);
       } catch (error) {
-        console.error("Error loading popular tours:", error);
-        setError("Failed to load popular tours. Please try again later.");
+        console.error(t("popularTours.loadError"), error);
+        setError(t("popularTours.loadErrorMessage"));
       } finally {
         setIsLoading(false);
       }
     };
     loadPopularTours();
-  }, []);
+  }, [t]);
 
   const renderStars = (rating: number) => {
     const stars = [];
@@ -65,20 +64,22 @@ const PopularTours = () => {
       transition={{ duration: 1 }}
       className="py-20 bg-gray-100 text-center"
     >
-      <h2 className="text-4xl font-extrabold text-green-800">Popular Tours</h2>
+      <h2 className="text-4xl font-extrabold text-green-800">
+        {t("popularTours.title")}
+      </h2>
       <p className="mt-4 text-lg text-gray-700 max-w-4xl mx-auto">
-        Discover our top-rated tours and experience the best of South Sudan.
+        {t("popularTours.subtitle")}
       </p>
       {isLoading ? (
         <div className="mt-12 text-gray-600">
           <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-green-600 mx-auto"></div>
-          <p className="mt-2">Loading popular tours...</p>
+          <p className="mt-2">{t("popularTours.loading")}</p>
         </div>
       ) : error ? (
         <div className="mt-12 text-red-600 text-lg font-semibold">{error}</div>
       ) : popularTours.length === 0 ? (
         <div className="mt-12 text-gray-700 text-lg font-semibold">
-          No popular tours available at the moment.
+          {t("popularTours.noToursAvailable")}
         </div>
       ) : (
         <div className="mt-12 max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 px-4">
@@ -113,7 +114,11 @@ const PopularTours = () => {
                   <div className="flex items-center">
                     {renderStars(tour.rating)}
                     <span className="ml-2 text-gray-700 font-medium">
-                      {tour.rating.toFixed(1)} ({tour.reviews.length} reviews)
+                      {tour.rating.toFixed(1)} (
+                      {t("popularTours.reviews", {
+                        count: tour.reviews.length,
+                      })}
+                      )
                     </span>
                   </div>
                 </div>
@@ -121,7 +126,7 @@ const PopularTours = () => {
                   to={`/tour-details/${tour._id}`}
                   className="mt-4 block w-full px-6 py-2 bg-green-600 text-white text-center rounded-lg hover:bg-green-700 transition-all duration-300 shadow-md hover:shadow-lg"
                 >
-                  View Details
+                  {t("popularTours.viewDetails")}
                 </Link>
               </div>
             </motion.div>

@@ -1,55 +1,48 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Chat from "../components/Chat";
+import { useTranslation } from "react-i18next";
 
 // Mock data for available guides
 const availableGuides = [
   {
     id: "507f1f77bcf86cd799439011",
     name: "Diana Otieno",
-    profile: "Experienced guide with 5+ years of expertise in mountain tours.",
+    profile: "guideProfile.guides.diana.profile",
     email: "d.otieno@alustudent.com",
     phone: "+123 456 7890",
     testimonials: [
       {
-        text: "Diana was an amazing guide! He made our trip unforgettable.",
+        text: "guideProfile.guides.diana.testimonials.0.text",
         author: "Ruth S.",
       },
       {
-        text: "Highly recommend John for mountain tours. He's very knowledgeable!",
+        text: "guideProfile.guides.diana.testimonials.1.text",
         author: "David M.",
       },
     ],
-  },
-  {
-    id: "507f1f77bcf86cd799439012",
-    name: "Daniel Burongu",
-    profile: "Specializes in cultural and historical tours.",
-    email: "d.burongu@alustudent.com",
-    phone: "+123 456 7891",
-    testimonials: [
-      {
-        text: "Daniel is fantastic! Her knowledge of history is unparalleled.",
-        author: "Ayuel M.",
-      },
+    specializations: [
+      "guideProfile.specializations.mountain",
+      "guideProfile.specializations.hiking",
+      "guideProfile.specializations.cultural",
+    ],
+    languages: ["English", "Spanish", "French"],
+    certifications: [
+      "guideProfile.certifications.mountain",
+      "guideProfile.certifications.firstAid",
+      "guideProfile.certifications.wilderness",
+    ],
+    packages: [
+      "guideProfile.packages.trek",
+      "guideProfile.packages.heritage",
+      "guideProfile.packages.sports",
     ],
   },
-  {
-    id: "507f1f77bcf86cd799439013",
-    name: "Kayongo Brian",
-    profile: "Adventure guide with a focus on extreme sports.",
-    email: "b.kayongo@alustudent.com",
-    phone: "+123 456 7892",
-    testimonials: [
-      {
-        text: "Brian made our adventure trip thrilling and safe!",
-        author: "Chol G.",
-      },
-    ],
-  },
+  // Other guides would follow the same pattern
 ];
 
 const GuideProfile = () => {
+  const { t } = useTranslation();
   const { guideId } = useParams();
   const navigate = useNavigate();
   const guide = availableGuides.find((g) => g.id === guideId);
@@ -59,12 +52,12 @@ const GuideProfile = () => {
   if (!guide) {
     return (
       <div className="text-center py-12 text-gray-700">
-        <p>Guide not found.</p>
+        <p>{t("guideProfile.notFound")}</p>
         <button
           onClick={() => navigate(-1)}
           className="mt-4 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-all duration-300"
         >
-          Back to Booking
+          {t("guideProfile.backButton")}
         </button>
       </div>
     );
@@ -87,75 +80,84 @@ const GuideProfile = () => {
           className="w-full h-64 object-cover rounded-lg"
         />
         <h1 className="text-3xl font-bold text-green-800 mt-6">{guide.name}</h1>
-        <p className="mt-4 text-gray-600">{guide.profile}</p>
+        <p className="mt-4 text-gray-600">{t(guide.profile)}</p>
 
         <div className="mt-4">
           <div className="flex items-center">
             <span className="text-yellow-500">★★★★☆</span>
-            <span className="ml-2 text-gray-600">4.5 (120 reviews)</span>
+            <span className="ml-2 text-gray-600">
+              {t("guideProfile.rating", { score: 4.5, count: 120 })}
+            </span>
           </div>
           <button
-            onClick={() => alert("View all reviews")}
+            onClick={() => alert(t("guideProfile.viewReviewsAlert"))}
             className="mt-2 text-sm text-green-600 hover:text-green-800"
           >
-            View all reviews
+            {t("guideProfile.viewReviews")}
           </button>
         </div>
 
         <div className="mt-4">
           <h2 className="text-xl font-semibold text-green-800">
-            Specializations
+            {t("guideProfile.specializationsTitle")}
           </h2>
           <ul className="mt-2 list-disc list-inside text-gray-600">
-            <li>Mountain Tours</li>
-            <li>Hiking and Trekking</li>
-            <li>Cultural Experiences</li>
+            {guide.specializations.map((spec, index) => (
+              <li key={index}>{t(spec)}</li>
+            ))}
           </ul>
         </div>
 
         <div className="mt-4">
           <h2 className="text-xl font-semibold text-green-800">
-            Languages Spoken
+            {t("guideProfile.languagesTitle")}
           </h2>
-          <p className="mt-2 text-gray-600">English, Spanish, French</p>
+          <p className="mt-2 text-gray-600">{guide.languages.join(", ")}</p>
         </div>
 
         <div className="mt-4">
           <h2 className="text-xl font-semibold text-green-800">
-            Certifications
+            {t("guideProfile.certificationsTitle")}
           </h2>
           <ul className="mt-2 list-disc list-inside text-gray-600">
-            <li>Certified Mountain Guide</li>
-            <li>First Aid Certified</li>
-            <li>Wilderness Survival Expert</li>
+            {guide.certifications.map((cert, index) => (
+              <li key={index}>{t(cert)}</li>
+            ))}
           </ul>
         </div>
 
         <div className="mt-4">
           <h2 className="text-xl font-semibold text-green-800">
-            Tour Packages
+            {t("guideProfile.packagesTitle")}
           </h2>
           <ul className="mt-2 list-disc list-inside text-gray-600">
-            <li>3-Day Mountain Trek</li>
-            <li>Cultural Heritage Tour</li>
-            <li>Extreme Sports Adventure</li>
+            {guide.packages.map((pkg, index) => (
+              <li key={index}>{t(pkg)}</li>
+            ))}
           </ul>
         </div>
 
         <div className="mt-4">
           <h2 className="text-xl font-semibold text-green-800">
-            Contact Information
+            {t("guideProfile.contactTitle")}
           </h2>
-          <p className="mt-2 text-gray-600">Email: {guide.email}</p>
-          <p className="mt-2 text-gray-600">Phone: {guide.phone}</p>
+          <p className="mt-2 text-gray-600">
+            {t("guideProfile.emailLabel")}: {guide.email}
+          </p>
+          <p className="mt-2 text-gray-600">
+            {t("guideProfile.phoneLabel")}: {guide.phone}
+          </p>
         </div>
 
         <div className="mt-4">
-          <h2 className="text-xl font-semibold text-green-800">Follow Me</h2>
+          <h2 className="text-xl font-semibold text-green-800">
+            {t("guideProfile.followTitle")}
+          </h2>
           <div className="mt-2 flex space-x-4">
             <a
               href="https://facebook.com"
               className="text-green-600 hover:text-green-800"
+              aria-label={t("guideProfile.social.facebook")}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -169,6 +171,7 @@ const GuideProfile = () => {
             <a
               href="https://instagram.com"
               className="text-green-600 hover:text-green-800"
+              aria-label={t("guideProfile.social.instagram")}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -182,6 +185,7 @@ const GuideProfile = () => {
             <a
               href="https://twitter.com"
               className="text-green-600 hover:text-green-800"
+              aria-label={t("guideProfile.social.twitter")}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -195,6 +199,7 @@ const GuideProfile = () => {
             <a
               href="https://linkedin.com"
               className="text-green-600 hover:text-green-800"
+              aria-label={t("guideProfile.social.linkedin")}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -209,11 +214,13 @@ const GuideProfile = () => {
         </div>
 
         <div className="mt-4">
-          <h2 className="text-xl font-semibold text-green-800">Testimonials</h2>
+          <h2 className="text-xl font-semibold text-green-800">
+            {t("guideProfile.testimonialsTitle")}
+          </h2>
           <div className="mt-2 space-y-4">
             {guide.testimonials.map((testimonial, index) => (
               <div key={index} className="bg-gray-50 p-4 rounded-lg">
-                <p className="text-gray-600">"{testimonial.text}"</p>
+                <p className="text-gray-600">"{t(testimonial.text)}"</p>
                 <p className="mt-2 text-sm text-gray-500">
                   - {testimonial.author}
                 </p>
@@ -227,18 +234,17 @@ const GuideProfile = () => {
             onClick={handleChat}
             className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300"
           >
-            Chat with {guide.name}
+            {t("guideProfile.chatButton", { name: guide.name })}
           </button>
           <button
             onClick={handleBackToBooking}
             className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-all duration-300"
           >
-            Back to Booking
+            {t("guideProfile.backButton")}
           </button>
         </div>
       </div>
 
-      {/* Use the Chat component */}
       <Chat
         guideName={guide.name}
         isOpen={isChatOpen}

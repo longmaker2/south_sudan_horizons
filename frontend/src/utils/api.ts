@@ -96,14 +96,22 @@ export const submitReview = async (
   id: string,
   review: { author: string; comment: string; rating: number }
 ): Promise<Tour> => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    console.error("No token found in localStorage");
+    throw new Error("User is not authenticated. Please log in.");
+  }
+
   if (!mongoose.Types.ObjectId.isValid(id)) {
     console.error("Invalid tour ID format:", id);
     throw new Error("Invalid tour ID format");
   }
+
   const response = await fetch(`${API_BASE_URL}/tours/${id}/reviews`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(review),
   });
@@ -111,6 +119,13 @@ export const submitReview = async (
   if (!response.ok) {
     const errorData = await response.json();
     console.error("API Error Response:", errorData);
+    if (
+      response.status === 401 &&
+      errorData.error === "Invalid or expired token"
+    ) {
+      localStorage.removeItem("token");
+      throw new Error("Session expired. Please log in again.");
+    }
     throw new Error(errorData.error || "Failed to submit review");
   }
 

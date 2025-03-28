@@ -3,8 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaEye, FaEyeSlash, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { API_BASE_URL } from "../utils/api";
+import { useTranslation } from "react-i18next";
 
 const Register = () => {
+  const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -27,17 +29,8 @@ const Register = () => {
     const password = formData.get("password") as string;
     const confirmPassword = formData.get("confirmPassword") as string;
 
-    console.log("Registration Form Data:", {
-      fullName,
-      email,
-      password,
-      confirmPassword,
-      role,
-      key,
-    });
-
     if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError(t("register.errors.passwordMismatch"));
       setIsLoading(false);
       return;
     }
@@ -51,22 +44,15 @@ const Register = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error("Error Response:", errorData);
-        setError(errorData.message || "Registration failed. Please try again.");
+        setError(errorData.message || t("register.errors.registrationFailed"));
         return;
       }
 
       const data = await response.json();
-      console.log("Registration Success:", data);
-
-      setSuccessMessage(
-        data.message ||
-          "Registration successful! Please check your email to verify your account."
-      );
+      setSuccessMessage(data.message || t("register.successMessage"));
       setTimeout(() => navigate("/login"), 3000);
-    } catch (error) {
-      console.error("Registration Error:", error);
-      setError("An unexpected error occurred. Please try again.");
+    } catch {
+      setError(t("register.errors.unexpectedError"));
     } finally {
       setIsLoading(false);
     }
@@ -113,77 +99,23 @@ const Register = () => {
 
   const progressBarStyle = getProgressBarStyle(password);
 
-  // Terms and Conditions content (abbreviated for scrollable box)
   const termsContent = (
     <div className="text-gray-700 text-sm">
       <p>
-        <strong>Last Updated: March 26, 2025</strong>
+        <strong>{t("register.terms.lastUpdated")}</strong>
       </p>
-      <p className="mt-2">
-        Welcome to South Sudan Horizons. By registering, you agree to these
-        Terms and Conditions.
-      </p>
+      <p className="mt-2">{t("register.terms.welcome")}</p>
       <ol className="list-decimal pl-4 mt-2 space-y-2">
-        <li>
-          <strong>Acceptance of Terms:</strong> You agree to these Terms and our
-          Privacy Policy.
-        </li>
-        <li>
-          <strong>Eligibility:</strong> Must be 18+, provide accurate info, use
-          valid keys for Guide/Admin.
-        </li>
-        <li>
-          <strong>Account Responsibilities:</strong> Keep credentials
-          confidential; report issues to support@southsudanhorizons.com.
-        </li>
-        <li>
-          <strong>Email Verification:</strong> Verify email within 1 hour to
-          activate account.
-        </li>
-        <li>
-          <strong>User Roles:</strong> Tourist, Guide (with key), Admin (with
-          key).
-        </li>
-        <li>
-          <strong>Use of Platform:</strong> Lawful use only; align with
-          sustainable tourism goals.
-        </li>
-        <li>
-          <strong>Payment:</strong> Via Stripe; refunds per tour provider
-          policies.
-        </li>
-        <li>
-          <strong>Intellectual Property:</strong> Content copyrighted;
-          submissions grant us a license.
-        </li>
-        <li>
-          <strong>Privacy:</strong> Data per Privacy Policy; emails for
-          verification/updates.
-        </li>
-        <li>
-          <strong>Termination:</strong> We may suspend for violations; you can
-          delete via support.
-        </li>
-        <li>
-          <strong>Liability:</strong> Not liable for damages; platform “as is.”
-        </li>
-        <li>
-          <strong>Sustainability:</strong> Support eco-friendly tourism.
-        </li>
-        <li>
-          <strong>Changes:</strong> Updates notified; continued use is
-          acceptance.
-        </li>
-        <li>
-          <strong>Governing Law:</strong> South Sudan laws apply.
-        </li>
-        <li>
-          <strong>Contact:</strong> Email support@southsudanhorizons.com.
-        </li>
+        {[...Array(15)].map((_, i) => (
+          <li key={i}>
+            <strong>{t(`register.terms.points.${i}.title`)}:</strong>{" "}
+            {t(`register.terms.points.${i}.content`)}
+          </li>
+        ))}
       </ol>
       <p className="mt-2">
         <Link to="/terms" className="text-green-700 font-bold hover:underline">
-          Read Full Terms and Conditions
+          {t("register.terms.readFull")}
         </Link>
       </p>
     </div>
@@ -198,41 +130,47 @@ const Register = () => {
         className="bg-white p-8 rounded-lg shadow-lg w-96 my-16"
       >
         <h2 className="text-3xl font-bold text-green-800 text-center">
-          Register
+          {t("register.title")}
         </h2>
         <p className="text-gray-600 text-center mt-2">
-          Create a new account to get started.
+          {t("register.subtitle")}
         </p>
 
         <form className="mt-6" onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-700">Full Name</label>
+            <label className="block text-gray-700">
+              {t("register.form.fullName")}
+            </label>
             <input
               type="text"
               name="fullName"
-              placeholder="Enter your full name"
+              placeholder={t("register.form.fullNamePlaceholder")}
               className="w-full border border-green-400 px-4 py-2 rounded-lg focus:ring-2 focus:ring-green-500 text-gray-700"
               required
             />
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700">Email Address</label>
+            <label className="block text-gray-700">
+              {t("register.form.email")}
+            </label>
             <input
               type="email"
               name="email"
-              placeholder="Enter your email"
+              placeholder={t("register.form.emailPlaceholder")}
               className="w-full border border-green-400 px-4 py-2 rounded-lg focus:ring-2 focus:ring-green-500 text-gray-700"
               required
             />
           </div>
 
           <div className="mb-4 relative">
-            <label className="block text-gray-700">Password</label>
+            <label className="block text-gray-700">
+              {t("register.form.password")}
+            </label>
             <input
               type={showPassword ? "text" : "password"}
               name="password"
-              placeholder="Create a password"
+              placeholder={t("register.form.passwordPlaceholder")}
               className="w-full border border-green-400 px-4 py-2 rounded-lg focus:ring-2 focus:ring-green-500 text-gray-700"
               required
               value={password}
@@ -241,6 +179,11 @@ const Register = () => {
             <span
               className="absolute top-10 right-3 cursor-pointer text-gray-600"
               onClick={() => setShowPassword(!showPassword)}
+              aria-label={
+                showPassword
+                  ? t("register.hidePassword")
+                  : t("register.showPassword")
+              }
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </span>
@@ -251,52 +194,68 @@ const Register = () => {
               ></div>
             </div>
             <p className="text-sm text-gray-600 mt-1">
-              Password strength: {calculatePasswordStrength(password)}/4
+              {t("register.passwordStrength")}:{" "}
+              {calculatePasswordStrength(password)}/4
             </p>
           </div>
 
           <div className="mb-4 relative">
-            <label className="block text-gray-700">Confirm Password</label>
+            <label className="block text-gray-700">
+              {t("register.form.confirmPassword")}
+            </label>
             <input
               type={showPassword ? "text" : "password"}
               name="confirmPassword"
-              placeholder="Confirm your password"
+              placeholder={t("register.form.confirmPasswordPlaceholder")}
               className="w-full border border-green-400 px-4 py-2 rounded-lg focus:ring-2 focus:ring-green-500 text-gray-700"
               required
             />
             <span
               className="absolute top-10 right-3 cursor-pointer text-gray-600"
               onClick={() => setShowPassword(!showPassword)}
+              aria-label={
+                showPassword
+                  ? t("register.hidePassword")
+                  : t("register.showPassword")
+              }
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </span>
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700">Role</label>
+            <label className="block text-gray-700">
+              {t("register.form.role")}
+            </label>
             <select
-              title="Role"
+              title={t("register.form.role")}
               value={role}
               onChange={(e) => setRole(e.target.value)}
               className="w-full border border-green-400 px-4 py-2 rounded-lg focus:ring-2 focus:ring-green-500 text-gray-700"
               required
             >
-              <option value="tourist">Tourist</option>
-              <option value="guide">Guide</option>
-              <option value="admin">Admin</option>
+              <option value="tourist">{t("register.roles.tourist")}</option>
+              <option value="guide">{t("register.roles.guide")}</option>
+              <option value="admin">{t("register.roles.admin")}</option>
             </select>
           </div>
 
           {(role === "guide" || role === "admin") && (
             <div className="mb-4">
               <label className="block text-gray-700">
-                {role === "guide" ? "Guide Key" : "Admin Key"}
+                {role === "guide"
+                  ? t("register.form.guideKey")
+                  : t("register.form.adminKey")}
               </label>
               <input
                 type="password"
                 value={key}
                 onChange={(e) => setKey(e.target.value)}
-                placeholder={`Enter ${role} key`}
+                placeholder={
+                  role === "guide"
+                    ? t("register.form.guideKeyPlaceholder")
+                    : t("register.form.adminKeyPlaceholder")
+                }
                 className="w-full border border-green-400 px-4 py-2 rounded-lg focus:ring-2 focus:ring-green-500 text-gray-700"
                 required
               />
@@ -312,14 +271,13 @@ const Register = () => {
             </div>
           )}
 
-          {/* Terms and Conditions Scrollable Box */}
           <div className="mb-4">
             <div
               className="flex items-center justify-between cursor-pointer bg-green-100 p-2 rounded-lg"
               onClick={() => setShowTerms(!showTerms)}
             >
               <span className="text-green-800 font-semibold">
-                Terms and Conditions
+                {t("register.terms.title")}
               </span>
               {showTerms ? (
                 <FaChevronUp className="text-green-800" />
@@ -348,7 +306,7 @@ const Register = () => {
               required
             />
             <label htmlFor="terms" className="text-gray-700">
-              I agree to the Terms and Conditions
+              {t("register.terms.agree")}
             </label>
           </div>
 
@@ -360,18 +318,18 @@ const Register = () => {
             {isLoading ? (
               <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
             ) : (
-              "Register"
+              t("register.form.submit")
             )}
           </button>
         </form>
 
         <p className="text-center text-gray-600 mt-4">
-          Have an account?{" "}
+          {t("register.haveAccount")}{" "}
           <Link
             to="/login"
             className="text-green-700 font-bold hover:underline"
           >
-            Login
+            {t("register.login")}
           </Link>
         </p>
       </motion.div>

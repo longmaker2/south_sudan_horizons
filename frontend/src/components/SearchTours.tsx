@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { FaSearch, FaTimes, FaSpinner } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
+import i18n from "i18next";
 import { fetchTours } from "../utils/api";
 import { Tour } from "../types/tours";
 
@@ -15,6 +17,7 @@ const debounce = (func: (...args: unknown[]) => void, delay: number) => {
 };
 
 const SearchTours = () => {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [showResults, setShowResults] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -32,14 +35,14 @@ const SearchTours = () => {
         setTours(fetchedTours);
         setFilteredTours(fetchedTours);
       } catch (err) {
-        setError("Failed to load tours. Please try again later.");
+        setError(t("searchTours.error"));
         console.error("Error fetching tours:", err);
       } finally {
         setIsLoading(false);
       }
     };
     loadTours();
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     if (searchTerm) {
@@ -114,36 +117,37 @@ const SearchTours = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 pt-20">
       <h2 className="text-2xl sm:text-3xl font-bold text-green-800 text-center mb-6">
-        Search Popular Tours
+        {t("searchTours.title")}
       </h2>
       <div className="relative flex items-center justify-center">
         <div className="relative w-full max-w-md sm:max-w-lg md:max-w-2xl">
           <div className="relative flex items-center">
             <input
               type="text"
-              placeholder="Search tours..."
+              placeholder={t("searchTours.placeholder")}
               className="w-full border-2 border-green-400 px-4 py-2 sm:py-3 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-green-900 placeholder-green-500 transition-all duration-300 outline-none pr-20 sm:pr-24"
               value={searchTerm}
               onChange={handleSearchChange}
               onFocus={() => setShowResults(true)}
               onBlur={() => setTimeout(() => setShowResults(false), 150)}
               onKeyDown={handleKeyDown}
-              aria-label="Search tours"
+              aria-label={t("searchTours.searchLabel")}
+              dir={i18n.language === "ar" ? "rtl" : "ltr"}
             />
             {searchTerm && (
               <button
                 onClick={handleClearSearch}
                 className="absolute right-12 sm:right-14 top-1/2 -translate-y-1/2 text-green-600 hover:text-green-800 transition"
-                aria-label="Clear search"
+                aria-label={t("searchTours.clearLabel")}
               >
                 <FaTimes className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             )}
             <button
               onClick={handleSearchSubmit}
-              title="Search"
+              title={t("searchTours.searchButton")}
               className="absolute right-2 top-1/2 -translate-y-1/2 px-2 sm:px-3 py-1 sm:py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300"
-              aria-label="Search"
+              aria-label={t("searchTours.searchButton")}
             >
               {isLoading ? (
                 <FaSpinner className="animate-spin w-4 h-4 sm:w-5 sm:h-5" />
@@ -191,7 +195,7 @@ const SearchTours = () => {
                     {isLoading ? (
                       <FaSpinner className="animate-spin mx-auto w-5 h-5" />
                     ) : (
-                      "No tours found."
+                      t("searchTours.noResults")
                     )}
                   </p>
                 )}

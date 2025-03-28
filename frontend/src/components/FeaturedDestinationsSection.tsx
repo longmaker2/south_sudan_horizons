@@ -1,11 +1,13 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { fetchTours } from "../utils/api";
 import { Tour } from "../types/tours";
 import { FaStar } from "react-icons/fa";
 
 const FeaturedDestinationsSection = () => {
+  const { t } = useTranslation();
   const [destinations, setDestinations] = useState<Tour[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -16,13 +18,13 @@ const FeaturedDestinationsSection = () => {
         const data = await fetchTours();
         setDestinations(data.slice(0, 9));
       } catch (error) {
-        console.error("Error loading destinations:", error);
+        console.error(t("featuredDestinations.loadError"), error);
       } finally {
         setIsLoading(false);
       }
     };
     loadDestinations();
-  }, []);
+  }, [t]);
 
   const renderStars = (rating: number) => {
     const stars = [];
@@ -48,15 +50,15 @@ const FeaturedDestinationsSection = () => {
       className="py-20 bg-gradient-to-br from-green-50 to-green-100 text-center"
     >
       <h2 className="text-4xl font-extrabold text-green-800">
-        Featured Destinations
+        {t("featuredDestinations.title")}
       </h2>
       <p className="mt-4 text-lg text-gray-700 max-w-4xl mx-auto">
-        Discover the most iconic and breathtaking destinations in South Sudan.
+        {t("featuredDestinations.subtitle")}
       </p>
       {isLoading ? (
         <div className="mt-12 text-gray-600">
           <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-green-600 mx-auto"></div>
-          <p className="mt-2">Loading featured destinations...</p>
+          <p className="mt-2">{t("featuredDestinations.loading")}</p>
         </div>
       ) : (
         <div className="mt-12 max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 px-4">
@@ -92,7 +94,10 @@ const FeaturedDestinationsSection = () => {
                     {renderStars(destination.rating)}
                     <span className="ml-2 text-gray-700 font-medium">
                       {destination.rating.toFixed(1)} (
-                      {destination.reviews.length} reviews)
+                      {t("featuredDestinations.reviews", {
+                        count: destination.reviews.length,
+                      })}
+                      )
                     </span>
                   </div>
                 </div>
@@ -100,7 +105,7 @@ const FeaturedDestinationsSection = () => {
                   to={`/tour-details/${destination._id}`}
                   className="mt-4 block w-full px-6 py-2 bg-green-600 text-white text-center rounded-lg hover:bg-green-700 transition-all duration-300 shadow-md hover:shadow-lg"
                 >
-                  View Details
+                  {t("featuredDestinations.viewDetails")}
                 </Link>
               </div>
             </motion.div>

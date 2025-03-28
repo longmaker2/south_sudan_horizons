@@ -12,18 +12,12 @@ import {
 } from "@heroicons/react/24/outline";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
+import { useTranslation } from "react-i18next";
 import { API_BASE_URL, BASE_URL } from "../utils/api";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
-
-const navigation = [
-  { name: "Home", href: "/", current: true },
-  { name: "Guides", href: "/guides", current: false },
-  { name: "About", href: "/about", current: false },
-  { name: "Contact", href: "/contact", current: false },
-];
 
 interface NavbarProps {
   scrollToTop: () => void;
@@ -36,6 +30,15 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToTop }) => {
   const { user, logout } = useAuth();
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
+
+  // Navigation items with translations
+  const navigation = [
+    { name: t("navbar.home"), href: "/", current: true },
+    { name: t("navbar.guides"), href: "/guides", current: false },
+    { name: t("navbar.about"), href: "/about", current: false },
+    { name: t("navbar.contact"), href: "/contact", current: false },
+  ];
 
   const getInitials = (name: string): string => {
     const names = name.split(" ");
@@ -100,6 +103,12 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToTop }) => {
   const closeProfile = debounce(() => setIsProfileOpen(false), 100);
   const closeLanguage = debounce(() => setIsLanguageOpen(false), 100);
 
+  const handleLanguageChange = (lng: string) => {
+    i18n.changeLanguage(lng);
+    setIsLanguageOpen(false);
+    scrollToTop();
+  };
+
   // Determine profile dropdown content based on user role
   const getProfileDropdownContent = () => {
     if (!user) return null;
@@ -115,7 +124,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToTop }) => {
               scrollToTop();
             }}
           >
-            Admin Dashboard
+            {t("navbar.adminDashboard")}
           </Link>
         );
       case "guide":
@@ -128,7 +137,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToTop }) => {
               scrollToTop();
             }}
           >
-            Guide Dashboard
+            {t("navbar.guideDashboard")}
           </Link>
         );
       default: // tourist or other roles
@@ -141,10 +150,15 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToTop }) => {
               scrollToTop();
             }}
           >
-            Profile & Bookings
+            {t("navbar.profileBookings")}
           </Link>
         );
     }
+  };
+
+  // Get current language code for display
+  const getCurrentLanguageCode = () => {
+    return i18n.language.toUpperCase();
   };
 
   return (
@@ -159,7 +173,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToTop }) => {
             <Disclosure.Button className="relative inline-flex items-center justify-center rounded-md p-1.5 xxs:p-2 text-white hover:bg-green-700 hover:text-gray-200 focus:ring-2 focus:ring-white transition-all duration-200">
               {({ open }) => (
                 <>
-                  <span className="sr-only">Open main menu</span>
+                  <span className="sr-only">{t("navbar.openMenu")}</span>
                   {open ? (
                     <XMarkIcon
                       className="block h-5 xxs:h-6 w-5 xxs:w-6"
@@ -210,7 +224,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToTop }) => {
                 onMouseLeave={closeTours}
               >
                 <button className="flex items-center text-white hover:bg-green-700 hover:text-gray-200 rounded-md px-2 py-1 sm:px-3 sm:py-2 text-xs sm:text-sm md:text-base font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white">
-                  Tours
+                  {t("navbar.tours")}
                   <ChevronDownIcon className="ml-1 h-3 w-3 sm:h-4 sm:w-4" />
                 </button>
                 {isToursOpen && (
@@ -223,7 +237,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToTop }) => {
                         scrollToTop();
                       }}
                     >
-                      All Tours
+                      {t("navbar.allTours")}
                     </Link>
                     <Link
                       to="/tours/adventure"
@@ -233,7 +247,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToTop }) => {
                         scrollToTop();
                       }}
                     >
-                      Adventure Tours
+                      {t("navbar.adventureTours")}
                     </Link>
                     <Link
                       to="/tours/cultural"
@@ -243,7 +257,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToTop }) => {
                         scrollToTop();
                       }}
                     >
-                      Cultural Tours
+                      {t("navbar.culturalTours")}
                     </Link>
                     <Link
                       to="/tours/wildlife"
@@ -253,7 +267,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToTop }) => {
                         scrollToTop();
                       }}
                     >
-                      Wildlife Tours
+                      {t("navbar.wildlifeTours")}
                     </Link>
                     <Link
                       to="/tours/nature"
@@ -263,7 +277,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToTop }) => {
                         scrollToTop();
                       }}
                     >
-                      Nature Tours
+                      {t("navbar.natureTours")}
                     </Link>
                   </div>
                 )}
@@ -277,7 +291,9 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToTop }) => {
                   {user.fullName}
                 </span>
                 <button className="relative rounded-full bg-green-700 p-1 xxs:p-1.5 xs:p-2 sm:p-2 text-white hover:bg-green-600 focus:ring-2 focus:ring-white transition-all duration-200">
-                  <span className="sr-only">View notifications</span>
+                  <span className="sr-only">
+                    {t("navbar.viewNotifications")}
+                  </span>
                   <BellIcon
                     className="h-4 w-4 xxs:h-5 xxs:w-5 sm:h-6 sm:w-6"
                     aria-hidden="true"
@@ -296,7 +312,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToTop }) => {
                       <img
                         className="h-7 w-7 xxs:h-8 xxs:w-8 xs:h-9 xs:w-9 sm:h-10 sm:w-10 rounded-full object-cover border-2 border-white"
                         src={profilePicture}
-                        alt="User Avatar"
+                        alt={t("navbar.userAvatar")}
                         onError={(e) => {
                           console.error(
                             "Profile image failed to load:",
@@ -321,7 +337,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToTop }) => {
                         }}
                         className="block w-full px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-green-50 hover:text-green-800 text-left"
                       >
-                        Sign out
+                        {t("navbar.signOut")}
                       </button>
                     </div>
                   )}
@@ -334,14 +350,14 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToTop }) => {
                   className="px-1.5 xxs:px-2 xs:px-2.5 sm:px-3 sm:py-1.5 bg-white text-green-800 rounded-lg shadow-md hover:bg-green-50 hover:text-green-900 transition-all duration-200 text-[10px] xxs:text-xs xs:text-sm sm:text-sm font-medium"
                   onClick={scrollToTop}
                 >
-                  Login
+                  {t("navbar.login")}
                 </Link>
                 <Link
                   to="/register"
                   className="px-1.5 xxs:px-2 xs:px-2.5 sm:px-4 sm:py-1.5 border-2 border-white text-white rounded-lg hover:bg-green-700 hover:border-green-700 transition-all duration-200 text-[10px] xxs:text-xs xs:text-sm sm:text-sm font-medium"
                   onClick={scrollToTop}
                 >
-                  Register
+                  {t("navbar.register")}
                 </Link>
               </>
             )}
@@ -351,19 +367,29 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToTop }) => {
               onMouseLeave={closeLanguage}
             >
               <button className="flex items-center text-white hover:bg-green-700 hover:text-gray-200 rounded-md px-1.5 xxs:px-2 xs:px-2.5 sm:px-3 sm:py-2 text-[10px] xxs:text-xs xs:text-sm sm:text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white">
-                EN
+                {getCurrentLanguageCode()}
                 <ChevronDownIcon className="ml-0.5 xxs:ml-1 h-3 w-3 sm:h-4 sm:w-4" />
               </button>
               {isLanguageOpen && (
                 <div className="absolute right-0 top-full w-24 sm:w-28 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition-all duration-200 z-10">
-                  <button className="block w-full px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-green-50 hover:text-green-800">
+                  <button
+                    onClick={() => handleLanguageChange("en")}
+                    className="block w-full px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-green-50 hover:text-green-800 text-left"
+                  >
                     English
                   </button>
-                  <button className="block w-full px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-green-50 hover:text-green-800">
-                    Arabic
+                  <button
+                    onClick={() => handleLanguageChange("ar")}
+                    className="block w-full px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-green-50 hover:text-green-800 text-right font-arabic"
+                    dir="rtl"
+                  >
+                    العربية
                   </button>
-                  <button className="block w-full px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-green-50 hover:text-green-800">
-                    French
+                  <button
+                    onClick={() => handleLanguageChange("fr")}
+                    className="block w-full px-4 py-2 text-xs sm:text-sm text-gray-700 hover:bg-green-50 hover:text-green-800 text-left"
+                  >
+                    Français
                   </button>
                 </div>
               )}
@@ -401,7 +427,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToTop }) => {
               }}
               className="flex items-center justify-between w-full text-white hover:bg-green-700 hover:text-gray-200 rounded-md px-3 py-2 text-xs xxs:text-sm xs:text-base font-medium transition-all duration-200"
             >
-              Tours
+              {t("navbar.tours")}
               <ChevronDownIcon
                 className={`h-5 w-5 transition-transform ${
                   isToursOpen ? "rotate-180" : ""
@@ -415,35 +441,35 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToTop }) => {
                   className="block px-4 py-2 text-xs xxs:text-sm xs:text-base text-gray-200 hover:bg-green-700 hover:text-white"
                   onClick={scrollToTop}
                 >
-                  All Tours
+                  {t("navbar.allTours")}
                 </Link>
                 <Link
                   to="/tours/adventure"
                   className="block px-4 py-2 text-xs xxs:text-sm xs:text-base text-gray-200 hover:bg-green-700 hover:text-white"
                   onClick={scrollToTop}
                 >
-                  Adventure Tours
+                  {t("navbar.adventureTours")}
                 </Link>
                 <Link
                   to="/tours/cultural"
                   className="block px-4 py-2 text-xs xxs:text-sm xs:text-base text-gray-200 hover:bg-green-700 hover:text-white"
                   onClick={scrollToTop}
                 >
-                  Cultural Tours
+                  {t("navbar.culturalTours")}
                 </Link>
                 <Link
                   to="/tours/wildlife"
                   className="block px-4 py-2 text-xs xxs:text-sm xs:text-base text-gray-200 hover:bg-green-700 hover:text-white"
                   onClick={scrollToTop}
                 >
-                  Wildlife Tours
+                  {t("navbar.wildlifeTours")}
                 </Link>
                 <Link
                   to="/tours/nature"
                   className="block px-4 py-2 text-xs xxs:text-sm xs:text-base text-gray-200 hover:bg-green-700 hover:text-white"
                   onClick={scrollToTop}
                 >
-                  Nature Tours
+                  {t("navbar.natureTours")}
                 </Link>
               </div>
             )}
@@ -464,10 +490,10 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToTop }) => {
                 onClick={scrollToTop}
               >
                 {user.role === "admin"
-                  ? "Admin Dashboard"
+                  ? t("navbar.adminDashboard")
                   : user.role === "guide"
-                  ? "Guide Dashboard"
-                  : "Profile & Bookings"}
+                  ? t("navbar.guideDashboard")
+                  : t("navbar.profileBookings")}
               </DisclosureButton>
               <DisclosureButton
                 as="button"
@@ -477,7 +503,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToTop }) => {
                 }}
                 className="block w-full text-left rounded-md px-3 py-2 text-xs xxs:text-sm xs:text-base text-white hover:bg-green-700 hover:text-gray-200 font-medium transition-all duration-200"
               >
-                Sign out
+                {t("navbar.signOut")}
               </DisclosureButton>
             </div>
           )}

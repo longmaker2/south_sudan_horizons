@@ -2,29 +2,32 @@ import { motion } from "framer-motion";
 import travelTipsImage from "../assets/travelling_tips/Travel-Tips1.webp";
 import travelTipsImage2 from "../assets/travelling_tips/safetyfirst-1.webp";
 import travelTipsImage3 from "../assets/travelling_tips/tip1.jpg";
-
-const travelTips = [
-  {
-    id: 1,
-    title: "Top 10 Travel Tips",
-    image: travelTipsImage,
-    description: "Essential tips for traveling to South Sudan.",
-  },
-  {
-    id: 2,
-    title: "Cultural Etiquette",
-    image: travelTipsImage2,
-    description: "Learn about the cultural norms and etiquette in South Sudan.",
-  },
-  {
-    id: 3,
-    title: "Wildlife Guide",
-    image: travelTipsImage3,
-    description: "A guide to the wildlife you can encounter in South Sudan.",
-  },
-];
+import { useTranslation } from "react-i18next";
 
 const TravelTipsSection = () => {
+  const { t } = useTranslation();
+
+  const travelTips = [
+    {
+      id: 1,
+      title: t("travelTips.tip1.title"),
+      image: travelTipsImage,
+      description: t("travelTips.tip1.description"),
+    },
+    {
+      id: 2,
+      title: t("travelTips.tip2.title"),
+      image: travelTipsImage2,
+      description: t("travelTips.tip2.description"),
+    },
+    {
+      id: 3,
+      title: t("travelTips.tip3.title"),
+      image: travelTipsImage3,
+      description: t("travelTips.tip3.description"),
+    },
+  ];
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
@@ -33,9 +36,11 @@ const TravelTipsSection = () => {
       transition={{ duration: 1 }}
       className="py-20 bg-green-50 text-center"
     >
-      <h2 className="text-4xl font-bold text-green-800">Travel Tips & Blog</h2>
+      <h2 className="text-4xl font-bold text-green-800">
+        {t("travelTips.title")}
+      </h2>
       <p className="mt-4 text-lg text-gray-700 max-w-4xl mx-auto">
-        Get the latest travel tips, guides, and stories from South Sudan.
+        {t("travelTips.subtitle")}
       </p>
       <div className="mt-8 max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
         {travelTips.map((tip) => (

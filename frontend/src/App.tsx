@@ -9,6 +9,9 @@ import {
 import { JSX, useCallback, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { AnimatePresence } from "framer-motion";
+import { I18nextProvider } from "react-i18next";
+import { useTranslation } from "react-i18next";
+import i18n from "./i18n";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Guides from "./pages/Guides";
@@ -36,28 +39,32 @@ import PageTransition from "./components/PageTransition";
 import { API_BASE_URL } from "./utils/api";
 import { User } from "./types/authTypes";
 import TermsAndConditions from "./components/TermsAndConditions";
-import PrivacyPolicy from "./components/PrivacyPolicy"; // New import
+import PrivacyPolicy from "./components/PrivacyPolicy";
 
 // Simple Not Found component
-const NotFound = () => (
-  <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-    <h1 className="text-4xl font-bold text-gray-800">404 - Page Not Found</h1>
-    <p className="mt-4 text-gray-600">
-      The page you're looking for doesn't exist.
-    </p>
-    <a
-      href="/"
-      className="mt-6 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-    >
-      Go Home
-    </a>
-  </div>
-);
+const NotFound = () => {
+  const { t } = useTranslation();
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+      <h1 className="text-4xl font-bold text-gray-800">
+        {t("notFound.title")}
+      </h1>
+      <p className="mt-4 text-gray-600">{t("notFound.message")}</p>
+      <a
+        href="/"
+        className="mt-6 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+      >
+        {t("notFound.goHome")}
+      </a>
+    </div>
+  );
+};
 
 // Verify Email component
 const VerifyEmail = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const verifyEmail = async () => {
@@ -127,11 +134,9 @@ const VerifyEmail = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
       <h1 className="text-3xl font-bold text-green-800">
-        Verifying Your Email...
+        {t("verifyEmail.title")}
       </h1>
-      <p className="mt-4 text-gray-600">
-        Please wait while we verify your email.
-      </p>
+      <p className="mt-4 text-gray-600">{t("verifyEmail.message")}</p>
     </div>
   );
 };
@@ -163,33 +168,51 @@ const App = () => {
   }, []);
 
   return (
-    <AuthProvider>
-      <Router>
-        <Helmet>
-          <title>South Sudan Horizons - Explore the Heart of Africa</title>
-          <meta
-            name="description"
-            content="Discover adventure, cultural, wildlife, and nature tours in South Sudan."
-          />
-        </Helmet>
-        <div className="flex flex-col min-h-screen">
-          <Navbar scrollToTop={scrollToTop} />
-          <main className="flex-grow">
-            <AnimatePresence mode="wait">
-              <RoutesWithTransition />
-            </AnimatePresence>
-          </main>
-          <Footer />
-        </div>
-        <BackToTopButton />
-      </Router>
-    </AuthProvider>
+    <I18nextProvider i18n={i18n}>
+      <AuthProvider>
+        <Router>
+          <Helmet>
+            <title>South Sudan Horizons - Explore the Heart of Africa</title>
+            <meta
+              name="description"
+              content="Discover adventure, cultural, wildlife, and nature tours in South Sudan."
+            />
+          </Helmet>
+          <div className="flex flex-col min-h-screen">
+            <Navbar scrollToTop={scrollToTop} />
+            <main className="flex-grow">
+              <AnimatePresence mode="wait">
+                <RoutesWithTransition />
+              </AnimatePresence>
+            </main>
+            <Footer />
+          </div>
+          <BackToTopButton />
+        </Router>
+      </AuthProvider>
+    </I18nextProvider>
   );
 };
 
 // Routes with page transitions
 const RoutesWithTransition = () => {
   const location = useLocation();
+  const { i18n } = useTranslation();
+
+  useEffect(() => {
+    // Set document direction and language attributes
+    document.body.dir = i18n.dir();
+    document.documentElement.lang = i18n.language;
+
+    // Add RTL class for Arabic
+    if (i18n.language === "ar") {
+      document.body.classList.add("rtl");
+      document.body.classList.add("font-arabic");
+    } else {
+      document.body.classList.remove("rtl");
+      document.body.classList.remove("font-arabic");
+    }
+  }, [i18n, i18n.language]);
 
   return (
     <Routes location={location} key={location.pathname}>

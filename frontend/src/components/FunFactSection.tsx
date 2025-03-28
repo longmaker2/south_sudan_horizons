@@ -1,42 +1,44 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-
-const facts = [
-  {
-    text: "South Sudan is home to the Sudd, one of the largest wetlands in the world.",
-    icon: "🌍",
-    bgColor: "bg-green-100",
-  },
-  {
-    text: "Boma National Park is larger than some entire countries!",
-    icon: "🐘",
-    bgColor: "bg-blue-100",
-  },
-  {
-    text: "South Sudan has over 60 different ethnic groups with rich cultural traditions.",
-    icon: "🎭",
-    bgColor: "bg-yellow-100",
-  },
-  {
-    text: "South Sudan is the youngest country in the world, gaining independence on July 9, 2011.",
-    icon: "🎉",
-    bgColor: "bg-red-100",
-  },
-  {
-    text: "The White Nile, one of the two main tributaries of the Nile River, flows through South Sudan.",
-    icon: "🌊",
-    bgColor: "bg-blue-100",
-  },
-  {
-    text: "South Sudan is home to the second-largest animal migration in the world, after the Serengeti.",
-    icon: "🦒",
-    bgColor: "bg-yellow-100",
-  },
-];
+import { useTranslation } from "react-i18next";
 
 const FunFactSection = () => {
+  const { t } = useTranslation();
   const [factIndex, setFactIndex] = useState(0);
   const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 768);
+
+  const facts = [
+    {
+      text: t("funFacts.suddWetland"),
+      icon: "🌍",
+      bgColor: "bg-green-100",
+    },
+    {
+      text: t("funFacts.bomaPark"),
+      icon: "🐘",
+      bgColor: "bg-blue-100",
+    },
+    {
+      text: t("funFacts.ethnicGroups"),
+      icon: "🎭",
+      bgColor: "bg-yellow-100",
+    },
+    {
+      text: t("funFacts.independence"),
+      icon: "🎉",
+      bgColor: "bg-red-100",
+    },
+    {
+      text: t("funFacts.whiteNile"),
+      icon: "🌊",
+      bgColor: "bg-blue-100",
+    },
+    {
+      text: t("funFacts.animalMigration"),
+      icon: "🦒",
+      bgColor: "bg-yellow-100",
+    },
+  ];
 
   // Update isLargeScreen on window resize
   useEffect(() => {
@@ -55,7 +57,7 @@ const FunFactSection = () => {
       }, 5000);
       return () => clearInterval(interval);
     }
-  }, [isLargeScreen]);
+  }, [isLargeScreen, facts.length]);
 
   const handleNextFact = () => {
     setFactIndex((prevIndex) => (prevIndex + 1) % facts.length);
@@ -92,25 +94,25 @@ const FunFactSection = () => {
                     {facts[factIndex].icon}
                   </span>
                   <span className="text-center">
-                    Fun Fact: {facts[factIndex].text}
+                    {t("funFacts.label")}: {facts[factIndex].text}
                   </span>
                 </div>
               </motion.div>
             </AnimatePresence>
 
-            {/* Navigation Buttons (closer to the card on large screens) */}
+            {/* Navigation Buttons */}
             <div className="absolute inset-y-0 flex justify-between w-full px-2 sm:px-4 md:flex hidden">
               <button
                 onClick={handlePrevFact}
                 className="p-1 sm:p-2 bg-white rounded-full shadow-md hover:bg-gray-100 transition self-center"
-                aria-label="Previous fact"
+                aria-label={t("funFacts.prevButton")}
               >
                 ←
               </button>
               <button
                 onClick={handleNextFact}
                 className="p-1 sm:p-2 bg-white rounded-full shadow-md hover:bg-gray-100 transition self-center"
-                aria-label="Next fact"
+                aria-label={t("funFacts.nextButton")}
               >
                 →
               </button>
@@ -118,14 +120,16 @@ const FunFactSection = () => {
           </div>
         ) : (
           <div className="space-y-4">
-            {facts.map((fact) => (
+            {facts.map((fact, index) => (
               <div
-                key={fact.text}
+                key={index}
                 className={`${fact.bgColor} px-4 py-3 rounded-lg shadow-md`}
               >
                 <div className="text-base font-medium text-green-800 flex items-center justify-center space-x-2">
                   <span className="text-xl">{fact.icon}</span>
-                  <span className="text-center">Fun Fact: {fact.text}</span>
+                  <span className="text-center">
+                    {t("funFacts.label")}: {fact.text}
+                  </span>
                 </div>
               </div>
             ))}
@@ -143,7 +147,7 @@ const FunFactSection = () => {
               className={`w-3 h-3 rounded-full ${
                 factIndex === index ? "bg-green-600" : "bg-gray-400"
               }`}
-              aria-label={`Go to fact ${index + 1}`}
+              aria-label={`${t("funFacts.goToFact")} ${index + 1}`}
             />
           ))}
         </div>
