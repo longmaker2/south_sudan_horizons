@@ -4,15 +4,19 @@ import { fetchTours } from "../utils/api";
 import { Tour } from "../types/tours";
 import { FaStar } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const CulturalTours = () => {
+  const { t } = useTranslation();
   const [culturalTours, setCulturalTours] = useState<Tour[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadTours = async () => {
       try {
         setIsLoading(true);
+        setError(null);
         const data = await fetchTours();
         const filteredCulturalTours = data.filter(
           (tour) => tour.type === "Cultural"
@@ -20,14 +24,14 @@ const CulturalTours = () => {
         setCulturalTours(filteredCulturalTours);
       } catch (error) {
         console.error("Failed to fetch tours:", error);
+        setError(t("culturalTours.errorMessage"));
       } finally {
         setIsLoading(false);
       }
     };
     loadTours();
-  }, []);
+  }, [t]);
 
-  // Function to render star ratings
   const renderStars = (rating: number) => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
@@ -57,10 +61,10 @@ const CulturalTours = () => {
         <div className="absolute inset-0 bg-white bg-opacity-40"></div>
         <div className="relative z-10">
           <h1 className="text-5xl font-extrabold text-green-800">
-            Cultural Tours
+            {t("culturalTours.title")}
           </h1>
           <p className="mt-4 text-lg max-w-3xl text-gray-700">
-            Immerse yourself in the rich cultural heritage of South Sudan.
+            {t("culturalTours.subtitle")}
           </p>
         </div>
       </motion.div>
@@ -73,30 +77,32 @@ const CulturalTours = () => {
         transition={{ duration: 1 }}
         className="py-16 px-4 max-w-6xl mx-auto text-center"
       >
-        <h2 className="text-4xl font-bold text-green-800">Tour Highlights</h2>
+        <h2 className="text-4xl font-bold text-green-800">
+          {t("culturalTours.highlightsTitle")}
+        </h2>
         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
             <h3 className="text-xl font-semibold text-green-800">
-              Local Communities
+              {t("culturalTours.communitiesTitle")}
             </h3>
             <p className="text-gray-700 mt-2">
-              Visit traditional villages and learn about local customs.
+              {t("culturalTours.communitiesDescription")}
             </p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
             <h3 className="text-xl font-semibold text-green-800">
-              Traditional Ceremonies
+              {t("culturalTours.ceremoniesTitle")}
             </h3>
             <p className="text-gray-700 mt-2">
-              Witness vibrant cultural performances and rituals.
+              {t("culturalTours.ceremoniesDescription")}
             </p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
             <h3 className="text-xl font-semibold text-green-800">
-              Historical Sites
+              {t("culturalTours.sitesTitle")}
             </h3>
             <p className="text-gray-700 mt-2">
-              Explore ancient ruins and historical landmarks.
+              {t("culturalTours.sitesDescription")}
             </p>
           </div>
         </div>
@@ -111,16 +117,20 @@ const CulturalTours = () => {
         className="py-16 px-4 max-w-6xl mx-auto"
       >
         <h2 className="text-4xl font-bold text-green-800 text-center mb-8">
-          Our Cultural Tours
+          {t("culturalTours.ourToursTitle")}
         </h2>
         {isLoading ? (
           <div className="mt-12 text-gray-600">
             <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-green-600 mx-auto"></div>
-            <p className="mt-2">Loading cultural tours...</p>
+            <p className="mt-2">{t("culturalTours.loadingMessage")}</p>
+          </div>
+        ) : error ? (
+          <div className="text-center text-red-600 text-lg font-semibold">
+            {error}
           </div>
         ) : culturalTours.length === 0 ? (
           <div className="text-center text-gray-700 text-lg font-semibold">
-            No cultural tours available at this time.
+            {t("culturalTours.noToursMessage")}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -147,7 +157,8 @@ const CulturalTours = () => {
                     <div className="flex items-center space-x-1">
                       {renderStars(tour.rating)}
                       <span className="text-sm text-gray-600">
-                        ({tour.rating})
+                        {tour.rating.toFixed(1)} ({tour.reviews.length}{" "}
+                        {t("tours.reviews")})
                       </span>
                     </div>
                     <span className="text-green-800 font-bold">
@@ -158,7 +169,7 @@ const CulturalTours = () => {
                     to={`/tour-details/${tour._id}`}
                     className="mt-4 block w-full px-4 py-2 bg-green-600 text-white text-center rounded-lg hover:bg-green-700 transition-all duration-300"
                   >
-                    View Details
+                    {t("tours.viewDetails")}
                   </Link>
                 </div>
               </motion.div>

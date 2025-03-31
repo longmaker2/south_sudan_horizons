@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { FaLock } from "react-icons/fa";
 import PasswordInput from "./PasswordInput";
 import PasswordStrengthMeter from "./PasswordStrengthMeter";
+import { useTranslation } from "react-i18next";
 
 interface ChangePasswordProps {
   currentPassword: string;
@@ -39,6 +40,8 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
   success,
   handlePasswordChange,
 }) => {
+  const { t } = useTranslation(); // Hook to access translations
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -47,12 +50,12 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
       className="bg-white p-6 rounded-lg shadow-md mb-6"
     >
       <h2 className="text-xl font-bold text-green-800 mb-4 flex items-center">
-        <FaLock className="mr-2" /> Change Password
+        <FaLock className="mr-2" /> {t("changePassword.title")}
       </h2>
       <form onSubmit={handlePasswordChange} className="space-y-4">
         {/* Current Password */}
         <PasswordInput
-          label="Current Password"
+          label={t("changePassword.currentPasswordLabel")}
           value={currentPassword}
           onChange={setCurrentPassword}
           showPassword={showCurrentPassword}
@@ -63,7 +66,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
 
         {/* New Password */}
         <PasswordInput
-          label="New Password"
+          label={t("changePassword.newPasswordLabel")}
           value={newPassword}
           onChange={setNewPassword}
           showPassword={showNewPassword}
@@ -73,7 +76,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
 
         {/* Confirm New Password */}
         <PasswordInput
-          label="Confirm New Password"
+          label={t("changePassword.confirmPasswordLabel")}
           value={confirmPassword}
           onChange={setConfirmPassword}
           showPassword={showConfirmPassword}
@@ -90,7 +93,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({
           type="submit"
           className="w-small px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300"
         >
-          Change Password
+          {t("changePassword.submitButton")}
         </button>
       </form>
     </motion.div>

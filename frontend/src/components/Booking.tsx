@@ -13,6 +13,7 @@ import {
   CardCvcElement,
 } from "@stripe/react-stripe-js";
 import PaymentMethod from "./PaymentMethod";
+import { useTranslation } from "react-i18next";
 
 // Determine the Stripe publishable key using Vite's import.meta.env
 const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
@@ -45,6 +46,7 @@ const Booking = ({ tourId }: { tourId: string }) => {
   const navigate = useNavigate();
   const stripe = useStripe();
   const elements = useElements();
+  const { t } = useTranslation(); // Hook to access translations
 
   const [name, setName] = useState(user?.fullName || "");
   const [email, setEmail] = useState(user?.email || "");
@@ -109,9 +111,7 @@ const Booking = ({ tourId }: { tourId: string }) => {
       setClientSecret(paymentIntent.clientSecret);
     } catch (err: unknown) {
       setError(
-        err instanceof Error
-          ? err.message
-          : "Failed to initialize payment. Please try again."
+        err instanceof Error ? err.message : t("booking.paymentSetupError")
       );
       console.error("Payment setup error:", err);
     } finally {
@@ -125,14 +125,14 @@ const Booking = ({ tourId }: { tourId: string }) => {
     setError(null);
 
     if (!tourId || !user?.id) {
-      setError("Missing required booking data.");
+      setError(t("booking.missingDataError"));
       setIsLoading(false);
       return;
     }
 
     const token = localStorage.getItem("token");
     if (!token) {
-      setError("No authentication token found. Please log in again.");
+      setError(t("booking.noTokenError"));
       setIsLoading(false);
       navigate("/login");
       return;
@@ -141,7 +141,7 @@ const Booking = ({ tourId }: { tourId: string }) => {
     const selectedDate = new Date(date);
     const currentDate = new Date();
     if (selectedDate <= currentDate) {
-      setError("Please select a future date for the tour.");
+      setError(t("booking.futureDateError"));
       setIsLoading(false);
       return;
     }
@@ -161,7 +161,7 @@ const Booking = ({ tourId }: { tourId: string }) => {
     try {
       if (paymentMethod === "stripe") {
         if (!stripe || !elements) {
-          setError("Payment system is not ready. Please wait a moment.");
+          setError(t("booking.paymentNotReadyError"));
           setIsLoading(false);
           return;
         }
@@ -176,7 +176,7 @@ const Booking = ({ tourId }: { tourId: string }) => {
         const cardCvcElement = elements.getElement(CardCvcElement);
 
         if (!cardNumberElement || !cardExpiryElement || !cardCvcElement) {
-          setError("Payment form not loaded correctly.");
+          setError(t("booking.paymentFormError"));
           setIsLoading(false);
           return;
         }
@@ -190,7 +190,7 @@ const Booking = ({ tourId }: { tourId: string }) => {
           });
 
         if (paymentError) {
-          setError(paymentError.message || "Payment failed. Please try again.");
+          setError(paymentError.message || t("booking.paymentFailedError"));
           setIsLoading(false);
           return;
         }
@@ -223,11 +223,7 @@ const Booking = ({ tourId }: { tourId: string }) => {
       setShowSuccess(true);
       setClientSecret(null);
     } catch (err: unknown) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Failed to submit booking. Please try again."
-      );
+      setError(err instanceof Error ? err.message : t("booking.submitError"));
       console.error("Booking submission error:", err);
     } finally {
       setIsLoading(false);
@@ -258,7 +254,9 @@ const Booking = ({ tourId }: { tourId: string }) => {
             d="M4 12a8 8 0 018-8v8h8a8 8 0 01-16 0z"
           />
         </svg>
-        <span className="ml-2 text-gray-700">Loading payment system...</span>
+        <span className="ml-2 text-gray-700">
+          {t("booking.loadingPaymentSystem")}
+        </span>
       </div>
     );
   }
@@ -271,14 +269,16 @@ const Booking = ({ tourId }: { tourId: string }) => {
       className="lg:col-span-1"
     >
       <div className="sticky top-6 bg-white rounded-lg shadow-lg p-6">
-        <h2 className="text-2xl font-bold text-green-800">Book This Tour</h2>
+        <h2 className="text-2xl font-bold text-green-800">
+          {t("booking.title")}
+        </h2>
         <form onSubmit={handleSubmit} className="mt-6 space-y-6">
           <div>
             <label
               htmlFor="name"
               className="block text-sm font-medium text-gray-700"
             >
-              Name
+              {t("booking.nameLabel")}
             </label>
             <input
               id="name"
@@ -286,7 +286,7 @@ const Booking = ({ tourId }: { tourId: string }) => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full px-4 py-2 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-500"
-              placeholder="Enter Your Name"
+              placeholder={t("booking.namePlaceholder")}
               required
             />
           </div>
@@ -295,7 +295,7 @@ const Booking = ({ tourId }: { tourId: string }) => {
               htmlFor="email"
               className="block text-sm font-medium text-gray-700"
             >
-              Email
+              {t("booking.emailLabel")}
             </label>
             <input
               id="email"
@@ -303,7 +303,7 @@ const Booking = ({ tourId }: { tourId: string }) => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-2 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-500"
-              placeholder="Enter Your Email"
+              placeholder={t("booking.emailPlaceholder")}
               required
             />
           </div>
@@ -312,7 +312,7 @@ const Booking = ({ tourId }: { tourId: string }) => {
               htmlFor="guests"
               className="block text-sm font-medium text-gray-700"
             >
-              Number of Guests
+              {t("booking.guestsLabel")}
             </label>
             <input
               id="guests"
@@ -320,8 +320,8 @@ const Booking = ({ tourId }: { tourId: string }) => {
               value={guests}
               onChange={(e) => setGuests(Number(e.target.value))}
               className="w-full px-4 py-2 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-500"
-              placeholder="Number of Guests"
-              title="Number of Guests"
+              placeholder={t("booking.guestsPlaceholder")}
+              title={t("booking.guestsTitle")}
               required
             />
           </div>
@@ -330,7 +330,7 @@ const Booking = ({ tourId }: { tourId: string }) => {
               htmlFor="date"
               className="block text-sm font-medium text-gray-700"
             >
-              Tour Date
+              {t("booking.dateLabel")}
             </label>
             <input
               id="date"
@@ -339,12 +339,12 @@ const Booking = ({ tourId }: { tourId: string }) => {
               onChange={(e) => setDate(e.target.value)}
               className="w-full px-4 py-2 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-500"
               required
-              placeholder="Select a Date"
+              placeholder={t("booking.datePlaceholder")}
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Do you need a guide?
+              {t("booking.needsGuideLabel")}
             </label>
             <div className="flex items-center mt-2">
               <button
@@ -353,7 +353,11 @@ const Booking = ({ tourId }: { tourId: string }) => {
                 className={`relative w-12 h-6 rounded-full transition-all duration-300 ${
                   needsGuide ? "bg-green-600" : "bg-gray-300"
                 }`}
-                title={needsGuide ? "Disable guide" : "Enable guide"}
+                title={
+                  needsGuide
+                    ? t("booking.disableGuideTitle")
+                    : t("booking.enableGuideTitle")
+                }
               >
                 <span
                   className={`absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform duration-300 ${
@@ -362,7 +366,7 @@ const Booking = ({ tourId }: { tourId: string }) => {
                 />
               </button>
               <span className="ml-2 text-sm text-gray-600">
-                {needsGuide ? "Yes" : "No"}
+                {needsGuide ? t("booking.yes") : t("booking.no")}
               </span>
             </div>
           </div>
@@ -372,7 +376,7 @@ const Booking = ({ tourId }: { tourId: string }) => {
                 htmlFor="guide"
                 className="block text-sm font-medium text-gray-700"
               >
-                Select a Guide
+                {t("booking.guideLabel")}
               </label>
               <div className="flex items-center gap-2">
                 <select
@@ -380,9 +384,9 @@ const Booking = ({ tourId }: { tourId: string }) => {
                   value={selectedGuide}
                   onChange={(e) => setSelectedGuide(e.target.value)}
                   className="w-full px-4 py-2 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-500"
-                  title="Select a guide"
+                  title={t("booking.guideTitle")}
                 >
-                  <option value="">Choose a guide</option>
+                  <option value="">{t("booking.chooseGuide")}</option>
                   {availableGuides.map((guide) => (
                     <option key={guide.id} value={guide.id}>
                       {guide.name}
@@ -394,7 +398,7 @@ const Booking = ({ tourId }: { tourId: string }) => {
                     to={`/guides/${selectedGuide}`}
                     className="px-4.5 py-1 text-center font-medium font-large bg-green-600 text-white rounded-md hover:bg-green-700 transition-all duration-300 text-xs"
                   >
-                    View Profile
+                    {t("booking.viewProfile")}
                   </Link>
                 )}
               </div>
@@ -447,10 +451,10 @@ const Booking = ({ tourId }: { tourId: string }) => {
               </svg>
             )}
             {isLoading
-              ? "Processing..."
+              ? t("booking.processing")
               : paymentMethod === "stripe" && clientSecret
-              ? "Confirm Payment"
-              : "Book Now"}
+              ? t("booking.confirmPayment")
+              : t("booking.bookNow")}
           </button>
         </form>
 
@@ -463,23 +467,35 @@ const Booking = ({ tourId }: { tourId: string }) => {
             className="mt-4 p-4 bg-green-100 border border-green-400 rounded-lg"
           >
             <h3 className="text-lg font-semibold text-green-800">
-              Booking Successful!
+              {t("booking.successTitle")}
             </h3>
-            <p className="text-sm text-gray-700 mt-2">Booking Summary:</p>
+            <p className="text-sm text-gray-700 mt-2">
+              {t("booking.summaryTitle")}
+            </p>
             <ul className="text-sm text-gray-600 list-disc list-inside">
-              <li>Name: {bookingSummary.name}</li>
-              <li>Email: {bookingSummary.email}</li>
-              <li>Guests: {bookingSummary.guests}</li>
-              <li>Date: {bookingSummary.date}</li>
               <li>
-                Guide:{" "}
-                {bookingSummary.needsGuide ? bookingSummary.guide : "No guide"}
+                {t("booking.summaryName")}: {bookingSummary.name}
               </li>
               <li>
-                Payment Method:{" "}
+                {t("booking.summaryEmail")}: {bookingSummary.email}
+              </li>
+              <li>
+                {t("booking.summaryGuests")}: {bookingSummary.guests}
+              </li>
+              <li>
+                {t("booking.summaryDate")}: {bookingSummary.date}
+              </li>
+              <li>
+                {t("booking.summaryGuide")}:{" "}
+                {bookingSummary.needsGuide
+                  ? bookingSummary.guide
+                  : t("booking.noGuide")}
+              </li>
+              <li>
+                {t("booking.summaryPaymentMethod")}:{" "}
                 {bookingSummary.paymentMethod === "stripe"
-                  ? "Stripe"
-                  : "Cash on Arrival"}
+                  ? t("booking.paymentStripe")
+                  : t("booking.paymentCash")}
               </li>
             </ul>
           </motion.div>

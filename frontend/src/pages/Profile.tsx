@@ -5,6 +5,7 @@ import BookingHistory from "../components/BookingHistory";
 import EditProfileModal from "../components/EditProfileModal";
 import { API_BASE_URL, BASE_URL } from "../utils/api";
 import { Booking } from "../types/bookings";
+import { useTranslation } from "react-i18next";
 
 interface Tourist {
   name: string;
@@ -23,11 +24,12 @@ const Profile: React.FC = () => {
   const [loadingBookings, setLoadingBookings] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const { t } = useTranslation(); // Hook to access translations
 
-  const fetchProfile = async () => {
+  const fetchProfile = React.useCallback(async () => {
     const token = localStorage.getItem("token");
     if (!token) {
-      setError("No authentication token found. Please log in.");
+      setError(t("profile.noTokenError"));
       setLoadingProfile(false);
       return;
     }
@@ -56,17 +58,17 @@ const Profile: React.FC = () => {
       });
     } catch (error) {
       console.error("Error fetching profile:", error);
-      setError("Failed to load profile data.");
+      setError(t("profile.fetchProfileError"));
     } finally {
       setLoadingProfile(false);
     }
-  };
+  }, [t]);
 
   useEffect(() => {
     const fetchBookingHistory = async () => {
       const token = localStorage.getItem("token");
       if (!token) {
-        setError("No authentication token found. Please log in.");
+        setError(t("profile.noTokenError"));
         setLoadingBookings(false);
         return;
       }
@@ -126,16 +128,16 @@ const Profile: React.FC = () => {
             status: booking.status || "pending",
             title:
               typeof booking.tourId === "string"
-                ? "Unknown Tour"
-                : booking.tourId?.title || "Unknown Tour",
+                ? t("profile.unknownTour")
+                : booking.tourId?.title || t("profile.unknownTour"),
             price:
               typeof booking.tourId === "string"
                 ? 0
                 : booking.tourId?.price || 0,
             description:
               typeof booking.tourId === "string"
-                ? "No description available"
-                : booking.tourId?.description || "No description available",
+                ? t("profile.noDescription")
+                : booking.tourId?.description || t("profile.noDescription"),
             guideName:
               typeof booking.guideId === "string"
                 ? undefined
@@ -146,7 +148,7 @@ const Profile: React.FC = () => {
         setBookingHistory(mappedBookings);
       } catch (error) {
         console.error("Error fetching booking history:", error);
-        setError("Failed to load booking history.");
+        setError(t("profile.fetchBookingError"));
       } finally {
         setLoadingBookings(false);
       }
@@ -154,7 +156,7 @@ const Profile: React.FC = () => {
 
     fetchProfile();
     fetchBookingHistory();
-  }, []);
+  }, [t, fetchProfile]);
 
   const handleSaveProfile = (updatedTourist: Tourist) => {
     setTourist({
@@ -172,7 +174,7 @@ const Profile: React.FC = () => {
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
         <div className="text-center text-gray-600">
           <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-green-600 mx-auto"></div>
-          <p className="mt-2">Loading profile...</p>
+          <p className="mt-2">{t("profile.loadingMessage")}</p>
         </div>
       </div>
     );
@@ -182,7 +184,7 @@ const Profile: React.FC = () => {
     <div className="min-h-screen bg-gray-100 p-6 mt-16">
       <div className="max-w-3xl mx-auto my-16">
         <h1 className="text-3xl font-bold text-green-800 mb-6">
-          Tourist Dashboard
+          {t("profile.title")}
         </h1>
 
         {error && <p className="text-red-500 mb-4">{error}</p>}

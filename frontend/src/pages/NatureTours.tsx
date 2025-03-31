@@ -4,11 +4,13 @@ import { fetchTours } from "../utils/api";
 import { Tour } from "../types/tours";
 import { FaStar } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const NatureTours = () => {
   const [natureTours, setNatureTours] = useState<Tour[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useTranslation(); // Hook to access translations
 
   useEffect(() => {
     const loadTours = async () => {
@@ -22,13 +24,13 @@ const NatureTours = () => {
         setNatureTours(filteredNatureTours);
       } catch (error) {
         console.error("Failed to fetch tours:", error);
-        setError("Failed to load nature tours. Please try again later.");
+        setError(t("natureTours.errorMessage")); // Translated error message
       } finally {
         setIsLoading(false);
       }
     };
     loadTours();
-  }, []);
+  }, [t]); // Add t to dependency array to re-fetch if language changes
 
   const renderStars = (rating: number) => {
     const stars = [];
@@ -58,10 +60,10 @@ const NatureTours = () => {
         <div className="absolute inset-0 bg-white bg-opacity-40"></div>
         <div className="relative z-10">
           <h1 className="text-5xl md:text-6xl font-extrabold text-green-800 drop-shadow-md">
-            Nature Tours
+            {t("natureTours.title")}
           </h1>
           <p className="mt-4 text-lg md:text-xl text-gray-700 max-w-3xl mx-auto">
-            Experience the serene beauty of South Sudan’s natural landscapes.
+            {t("natureTours.subtitle")}
           </p>
         </div>
       </motion.div>
@@ -75,34 +77,34 @@ const NatureTours = () => {
         className="py-16 px-4 max-w-6xl mx-auto text-center"
       >
         <h2 className="text-4xl font-extrabold text-green-800">
-          Tour Highlights
+          {t("natureTours.highlightsTitle")}
         </h2>
         <p className="mt-2 text-lg text-gray-700">
-          Reconnect with nature in South Sudan’s pristine environments.
+          {t("natureTours.highlightsSubtitle")}
         </p>
         <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
             <h3 className="text-xl font-semibold text-green-800">
-              Scenic Landscapes
+              {t("natureTours.scenicLandscapesTitle")}
             </h3>
             <p className="text-gray-700 mt-2">
-              Wander through lush forests, rolling hills, and tranquil lakes.
+              {t("natureTours.scenicLandscapesDescription")}
             </p>
           </div>
           <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
             <h3 className="text-xl font-semibold text-green-800">
-              Eco-Tourism
+              {t("natureTours.ecoTourismTitle")}
             </h3>
             <p className="text-gray-700 mt-2">
-              Enjoy sustainable travel that preserves our natural wonders.
+              {t("natureTours.ecoTourismDescription")}
             </p>
           </div>
           <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
             <h3 className="text-xl font-semibold text-green-800">
-              Nature Retreats
+              {t("natureTours.natureRetreatsTitle")}
             </h3>
             <p className="text-gray-700 mt-2">
-              Escape to peaceful sanctuaries amid stunning scenery.
+              {t("natureTours.natureRetreatsDescription")}
             </p>
           </div>
         </div>
@@ -117,12 +119,12 @@ const NatureTours = () => {
         className="py-16 px-4 max-w-6xl mx-auto"
       >
         <h2 className="text-4xl font-extrabold text-green-800 text-center mb-8">
-          Our Nature Tours
+          {t("natureTours.ourToursTitle")}
         </h2>
         {isLoading ? (
           <div className="text-center text-gray-600">
             <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-green-600 mx-auto"></div>
-            <p className="mt-2 text-lg">Loading nature tours...</p>
+            <p className="mt-2 text-lg">{t("natureTours.loadingMessage")}</p>
           </div>
         ) : error ? (
           <div className="text-center text-red-600 text-lg font-semibold">
@@ -130,7 +132,7 @@ const NatureTours = () => {
           </div>
         ) : natureTours.length === 0 ? (
           <div className="text-center text-gray-700 text-lg font-semibold">
-            No nature tours available at this time.
+            {t("natureTours.noToursMessage")}
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -145,7 +147,7 @@ const NatureTours = () => {
               >
                 <img
                   src={tour.image}
-                  alt={tour.title}
+                  alt={tour.title} // Assuming title is in the user's language or needs translation
                   className="w-full h-48 object-cover"
                   onError={(e) => {
                     (e.target as HTMLImageElement).src = "/fallback-image.jpg";
@@ -153,16 +155,21 @@ const NatureTours = () => {
                 />
                 <div className="p-6">
                   <h3 className="text-xl font-bold text-green-800">
-                    {tour.title}
+                    {tour.title} {/* Assuming title is fetched translated */}
                   </h3>
                   <p className="mt-2 text-gray-700 line-clamp-2">
-                    {tour.description}
+                    {tour.description}{" "}
+                    {/* Assuming description is fetched translated */}
                   </p>
                   <div className="mt-4 flex justify-between items-center">
                     <div className="flex items-center">
                       {renderStars(tour.rating)}
                       <span className="ml-2 text-gray-700 font-medium">
-                        {tour.rating.toFixed(1)} ({tour.reviews.length} reviews)
+                        {tour.rating.toFixed(1)} (
+                        {t("natureTours.reviews", {
+                          count: tour.reviews.length,
+                        })}
+                        )
                       </span>
                     </div>
                     <span className="text-green-800 font-bold">
@@ -173,7 +180,7 @@ const NatureTours = () => {
                     to={`/tour-details/${tour._id}`}
                     className="mt-4 block w-full px-6 py-2 bg-green-600 text-white text-center rounded-lg hover:bg-green-700 transition-all duration-300 shadow-md hover:shadow-lg"
                   >
-                    View Details
+                    {t("natureTours.viewDetails")}
                   </Link>
                 </div>
               </motion.div>

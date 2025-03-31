@@ -4,8 +4,10 @@ import { fetchTours } from "../utils/api";
 import { Tour } from "../types/tours";
 import { FaStar } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const AdventureTours = () => {
+  const { t } = useTranslation();
   const [adventureTours, setAdventureTours] = useState<Tour[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -22,13 +24,13 @@ const AdventureTours = () => {
         setAdventureTours(filteredAdventureTours);
       } catch (error) {
         console.error("Failed to fetch tours:", error);
-        setError("Failed to load adventure tours. Please try again later.");
+        setError(t("adventureTours.errorMessage"));
       } finally {
         setIsLoading(false);
       }
     };
     loadTours();
-  }, []);
+  }, [t]);
 
   const renderStars = (rating: number) => {
     const stars = [];
@@ -58,11 +60,10 @@ const AdventureTours = () => {
         <div className="absolute inset-0 bg-white bg-opacity-40"></div>
         <div className="relative z-10">
           <h1 className="text-5xl md:text-6xl font-extrabold text-green-800 drop-shadow-md">
-            Adventure Tours
+            {t("adventureTours.title")}
           </h1>
           <p className="mt-4 text-lg md:text-xl text-gray-700 max-w-3xl mx-auto">
-            Embark on thrilling adventures across South Sudan’s stunning
-            landscapes.
+            {t("adventureTours.subtitle")}
           </p>
         </div>
       </motion.div>
@@ -76,34 +77,34 @@ const AdventureTours = () => {
         className="py-16 px-4 max-w-6xl mx-auto text-center"
       >
         <h2 className="text-4xl font-extrabold text-green-800">
-          Tour Highlights
+          {t("adventureTours.highlightsTitle")}
         </h2>
         <p className="mt-2 text-lg text-gray-700">
-          Experience the adrenaline of South Sudan’s wild side.
+          {t("adventureTours.highlightsSubtitle")}
         </p>
         <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
             <h3 className="text-xl font-semibold text-green-800">
-              Hiking & Trekking
+              {t("adventureTours.hikingTitle")}
             </h3>
             <p className="text-gray-700 mt-2">
-              Conquer rugged terrains and enjoy breathtaking mountain views.
+              {t("adventureTours.hikingDescription")}
             </p>
           </div>
           <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
             <h3 className="text-xl font-semibold text-green-800">
-              River Rafting
+              {t("adventureTours.raftingTitle")}
             </h3>
             <p className="text-gray-700 mt-2">
-              Tackle the exhilarating rapids of the White Nile.
+              {t("adventureTours.raftingDescription")}
             </p>
           </div>
           <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
             <h3 className="text-xl font-semibold text-green-800">
-              Desert Safaris
+              {t("adventureTours.safariTitle")}
             </h3>
             <p className="text-gray-700 mt-2">
-              Traverse the vast deserts and uncover hidden oases.
+              {t("adventureTours.safariDescription")}
             </p>
           </div>
         </div>
@@ -118,12 +119,12 @@ const AdventureTours = () => {
         className="py-16 px-4 max-w-6xl mx-auto"
       >
         <h2 className="text-4xl font-extrabold text-green-800 text-center mb-8">
-          Our Adventure Tours
+          {t("adventureTours.ourToursTitle")}
         </h2>
         {isLoading ? (
           <div className="text-center text-gray-600">
             <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-green-600 mx-auto"></div>
-            <p className="mt-2 text-lg">Loading adventure tours...</p>
+            <p className="mt-2 text-lg">{t("adventureTours.loadingMessage")}</p>
           </div>
         ) : error ? (
           <div className="text-center text-red-600 text-lg font-semibold">
@@ -131,7 +132,7 @@ const AdventureTours = () => {
           </div>
         ) : adventureTours.length === 0 ? (
           <div className="text-center text-gray-700 text-lg font-semibold">
-            No adventure tours available at this time.
+            {t("adventureTours.noToursMessage")}
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -163,7 +164,8 @@ const AdventureTours = () => {
                     <div className="flex items-center">
                       {renderStars(tour.rating)}
                       <span className="ml-2 text-gray-700 font-medium">
-                        {tour.rating.toFixed(1)} ({tour.reviews.length} reviews)
+                        {tour.rating.toFixed(1)} ({tour.reviews.length}{" "}
+                        {t("tours.reviews")})
                       </span>
                     </div>
                     <span className="text-green-800 font-bold">
@@ -174,7 +176,7 @@ const AdventureTours = () => {
                     to={`/tour-details/${tour._id}`}
                     className="mt-4 block w-full px-6 py-2 bg-green-600 text-white text-center rounded-lg hover:bg-green-700 transition-all duration-300 shadow-md hover:shadow-lg"
                   >
-                    View Details
+                    {t("tours.viewDetails")}
                   </Link>
                 </div>
               </motion.div>

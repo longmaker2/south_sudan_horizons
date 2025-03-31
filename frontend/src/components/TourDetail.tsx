@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Tour } from "../types/tours";
 import { FaStar } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 interface TourDetailProps {
   tour: Tour;
@@ -23,6 +24,8 @@ const TourDetail = ({
   reviewError,
   reviewSuccess,
 }: TourDetailProps) => {
+  const { t } = useTranslation(); // Hook to access translations
+
   const averageRating = tour.reviews?.length
     ? tour.reviews.reduce((sum, review) => sum + review.rating, 0) /
       tour.reviews.length
@@ -53,7 +56,7 @@ const TourDetail = ({
     >
       <img
         src={tour.image}
-        alt={tour.title}
+        alt={t("tourDetail.imageAlt", { title: tour.title })}
         className="w-full h-64 object-cover rounded-lg"
         onError={(e) => (e.currentTarget.src = "/fallback-image.jpg")}
       />
@@ -67,8 +70,12 @@ const TourDetail = ({
           transition={{ delay: 0.6, duration: 0.5 }}
           className="mt-6"
         >
-          <h2 className="text-xl font-semibold text-green-800">Price</h2>
-          <p className="mt-2 text-gray-600">${tour.price} per person</p>
+          <h2 className="text-xl font-semibold text-green-800">
+            {t("tourDetail.priceTitle")}
+          </h2>
+          <p className="mt-2 text-gray-600">
+            {t("tourDetail.price", { price: tour.price })}
+          </p>
         </motion.div>
       )}
 
@@ -79,7 +86,9 @@ const TourDetail = ({
           transition={{ delay: 0.8, duration: 0.5 }}
           className="mt-6"
         >
-          <h2 className="text-xl font-semibold text-green-800">Duration</h2>
+          <h2 className="text-xl font-semibold text-green-800">
+            {t("tourDetail.durationTitle")}
+          </h2>
           <p className="mt-2 text-gray-600">{tour.duration}</p>
         </motion.div>
       )}
@@ -91,13 +100,15 @@ const TourDetail = ({
           transition={{ delay: 1.4, duration: 0.5 }}
           className="mt-6"
         >
-          <h2 className="text-xl font-semibold text-green-800">Gallery</h2>
+          <h2 className="text-xl font-semibold text-green-800">
+            {t("tourDetail.galleryTitle")}
+          </h2>
           <div className="mt-2 grid grid-cols-2 md:grid-cols-3 gap-4">
             {tour.gallery.map((image, index) => (
               <img
                 key={index}
                 src={image}
-                alt={`Tour Image ${index + 1}`}
+                alt={t("tourDetail.galleryImageAlt", { index: index + 1 })}
                 className="w-full h-32 object-cover rounded-lg"
               />
             ))}
@@ -111,7 +122,9 @@ const TourDetail = ({
         transition={{ delay: 1.6, duration: 0.5 }}
         className="mt-6"
       >
-        <h2 className="text-xl font-semibold text-green-800">Average Rating</h2>
+        <h2 className="text-xl font-semibold text-green-800">
+          {t("tourDetail.averageRatingTitle")}
+        </h2>
         <div className="flex items-center mt-2">
           {renderStars(averageRating)}
           <p className="ml-2 text-gray-600">{averageRating.toFixed(1)} / 5</p>
@@ -125,7 +138,9 @@ const TourDetail = ({
           transition={{ delay: 1.8, duration: 0.5 }}
           className="mt-6"
         >
-          <h2 className="text-xl font-semibold text-green-800">Reviews</h2>
+          <h2 className="text-xl font-semibold text-green-800">
+            {t("tourDetail.reviewsTitle")}
+          </h2>
           <div className="mt-2 space-y-4">
             {tour.reviews.map((review, index) => (
               <div
@@ -149,9 +164,7 @@ const TourDetail = ({
           </div>
         </motion.div>
       ) : (
-        <p className="mt-6 text-gray-600">
-          No reviews yet. Be the first to share your experience!
-        </p>
+        <p className="mt-6 text-gray-600">{t("tourDetail.noReviews")}</p>
       )}
 
       {tour.included?.length ? (
@@ -162,7 +175,7 @@ const TourDetail = ({
           className="mt-6"
         >
           <h2 className="text-xl font-semibold text-green-800">
-            What's Included
+            {t("tourDetail.includedTitle")}
           </h2>
           <ul className="mt-2 list-disc list-inside text-gray-600">
             {tour.included.map((item, index) => (
@@ -180,7 +193,7 @@ const TourDetail = ({
           className="mt-6"
         >
           <h2 className="text-xl font-semibold text-green-800">
-            What to Bring
+            {t("tourDetail.toBringTitle")}
           </h2>
           <ul className="mt-2 list-disc list-inside text-gray-600">
             {tour.toBring.map((item, index) => (
@@ -197,12 +210,12 @@ const TourDetail = ({
         className="mt-6"
       >
         <h2 className="text-xl font-semibold text-green-800">
-          Submit Your Review
+          {t("tourDetail.submitReviewTitle")}
         </h2>
         <form onSubmit={handleReviewSubmit} className="mt-4 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Your Name
+              {t("tourDetail.nameLabel")}
             </label>
             <input
               type="text"
@@ -211,13 +224,13 @@ const TourDetail = ({
                 setNewReview({ ...newReview, author: e.target.value })
               }
               className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-700 cursor-not-allowed"
-              readOnly // Make it read-only since it's auto-filled
-              title="Your Name"
+              readOnly
+              title={t("tourDetail.nameTitle")}
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Your Review
+              {t("tourDetail.reviewLabel")}
             </label>
             <textarea
               value={newReview.comment}
@@ -225,17 +238,17 @@ const TourDetail = ({
                 setNewReview({ ...newReview, comment: e.target.value })
               }
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 bg-white shadow-sm"
-              placeholder="Share your experience..."
+              placeholder={t("tourDetail.reviewPlaceholder")}
               rows={4}
               required
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Rating
+              {t("tourDetail.ratingLabel")}
             </label>
             <select
-              title="Rating"
+              title={t("tourDetail.ratingTitle")}
               value={newReview.rating}
               onChange={(e) =>
                 setNewReview({ ...newReview, rating: parseInt(e.target.value) })
@@ -243,19 +256,19 @@ const TourDetail = ({
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 bg-white shadow-sm"
               required
             >
-              <option value="0">Select Rating</option>
-              <option value="1">1 - Poor</option>
-              <option value="2">2 - Fair</option>
-              <option value="3">3 - Good</option>
-              <option value="4">4 - Very Good</option>
-              <option value="5">5 - Excellent</option>
+              <option value="0">{t("tourDetail.selectRating")}</option>
+              <option value="1">{t("tourDetail.rating1")}</option>
+              <option value="2">{t("tourDetail.rating2")}</option>
+              <option value="3">{t("tourDetail.rating3")}</option>
+              <option value="4">{t("tourDetail.rating4")}</option>
+              <option value="5">{t("tourDetail.rating5")}</option>
             </select>
           </div>
           <button
             type="submit"
-            className="w-small px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 "
+            className="w-small px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
           >
-            Submit Review
+            {t("tourDetail.submitButton")}
           </button>
         </form>
         {reviewSuccess && (

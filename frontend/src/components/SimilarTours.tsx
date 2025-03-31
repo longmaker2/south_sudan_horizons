@@ -2,12 +2,15 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Tour } from "../types/tours";
 import { FaStar } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 interface SimilarToursProps {
   similarTours: Tour[];
 }
 
 const SimilarTours = ({ similarTours }: SimilarToursProps) => {
+  const { t } = useTranslation(); // Hook to access translations
+
   const renderStars = (rating: number) => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
@@ -31,10 +34,10 @@ const SimilarTours = ({ similarTours }: SimilarToursProps) => {
       className="mt-12 py-8 bg-gray-50 rounded-xl"
     >
       <h2 className="text-3xl font-extrabold text-green-800 text-center mb-6">
-        Explore Similar Tours
+        {t("similarTours.title")}
       </h2>
       <p className="text-lg text-gray-700 text-center max-w-3xl mx-auto mb-8">
-        Check out more adventures like this one in South Sudan.
+        {t("similarTours.subtitle")}
       </p>
       <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-4">
         {similarTours.length > 0 ? (
@@ -48,7 +51,7 @@ const SimilarTours = ({ similarTours }: SimilarToursProps) => {
             >
               <img
                 src={similarTour.image}
-                alt={similarTour.title}
+                alt={t("similarTours.imageAlt", { title: similarTour.title })}
                 className="w-full h-48 object-cover"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = "/fallback-image.jpg";
@@ -69,7 +72,10 @@ const SimilarTours = ({ similarTours }: SimilarToursProps) => {
                     {renderStars(similarTour.rating)}
                     <span className="ml-2 text-gray-700 font-medium">
                       {similarTour.rating.toFixed(1)} (
-                      {similarTour.reviews.length} reviews)
+                      {t("similarTours.reviewsCount", {
+                        count: similarTour.reviews.length,
+                      })}
+                      )
                     </span>
                   </div>
                 </div>
@@ -77,14 +83,14 @@ const SimilarTours = ({ similarTours }: SimilarToursProps) => {
                   to={`/tour-details/${similarTour._id}`}
                   className="mt-4 block w-full px-6 py-2 bg-green-600 text-white text-center rounded-lg hover:bg-green-700 transition-all duration-300 shadow-md hover:shadow-lg"
                 >
-                  View Details
+                  {t("similarTours.viewDetails")}
                 </Link>
               </div>
             </motion.div>
           ))
         ) : (
           <p className="text-center text-gray-700 text-lg font-semibold">
-            No similar tours available at this time.
+            {t("similarTours.noTours")}
           </p>
         )}
       </div>

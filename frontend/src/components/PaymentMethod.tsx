@@ -18,6 +18,7 @@ import {
   FaCcAmex,
   FaCcDiscover,
 } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 // Common Stripe Element options
 const elementOptions = {
@@ -66,6 +67,7 @@ const PaymentMethod: React.FC<PaymentMethodProps> = ({
   setCardBrand,
   handlePaymentSetup,
 }) => {
+  const { t } = useTranslation(); // Hook to access translations
   const stripe = useStripe();
   const elements = useElements();
 
@@ -126,7 +128,7 @@ const PaymentMethod: React.FC<PaymentMethodProps> = ({
                 : "opacity-50 scale-100"
             }`}
             style={{ color: cardBrand === card.brand ? card.color : "#9CA3AF" }}
-            title={card.brand.charAt(0).toUpperCase() + card.brand.slice(1)}
+            title={t(`paymentMethod.cardBrands.${card.brand}`)}
           >
             {card.icon}
           </span>
@@ -138,7 +140,7 @@ const PaymentMethod: React.FC<PaymentMethodProps> = ({
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-semibold text-gray-800">
-        Choose Your Payment Method
+        {t("paymentMethod.title")}
       </h3>
       <div className="bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-lg shadow-md border border-green-200 space-y-4">
         <label
@@ -162,9 +164,11 @@ const PaymentMethod: React.FC<PaymentMethodProps> = ({
           <FaCreditCard className="text-green-600 text-xl" />
           <div>
             <span className="text-sm font-medium text-gray-800">
-              Pay with Stripe
+              {t("paymentMethod.stripeTitle")}
             </span>
-            <p className="text-xs text-gray-500">Secure online payment</p>
+            <p className="text-xs text-gray-500">
+              {t("paymentMethod.stripeDescription")}
+            </p>
           </div>
         </label>
         <label
@@ -188,9 +192,11 @@ const PaymentMethod: React.FC<PaymentMethodProps> = ({
           <FaMoneyBillWave className="text-green-600 text-xl" />
           <div>
             <span className="text-sm font-medium text-gray-800">
-              Pay Cash on Arrival
+              {t("paymentMethod.cashTitle")}
             </span>
-            <p className="text-xs text-gray-500">Pay when you arrive</p>
+            <p className="text-xs text-gray-500">
+              {t("paymentMethod.cashDescription")}
+            </p>
           </div>
         </label>
       </div>
@@ -198,14 +204,14 @@ const PaymentMethod: React.FC<PaymentMethodProps> = ({
       {paymentMethod === "stripe" && stripe && elements && (
         <div className="space-y-4 mt-4">
           <h4 className="text-md font-medium text-gray-700">
-            Card Information
+            {t("paymentMethod.cardInfoTitle")}
           </h4>
           <div>
             <label
               htmlFor="cardNumber"
               className="block text-sm font-medium text-gray-700"
             >
-              Card Number
+              {t("paymentMethod.cardNumberLabel")}
             </label>
             <CardNumberElement
               id="cardNumber"
@@ -226,7 +232,7 @@ const PaymentMethod: React.FC<PaymentMethodProps> = ({
                 htmlFor="cardExpiry"
                 className="block text-sm font-medium text-gray-700"
               >
-                Expiration Date
+                {t("paymentMethod.expiryLabel")}
               </label>
               <CardExpiryElement
                 id="cardExpiry"
@@ -243,7 +249,7 @@ const PaymentMethod: React.FC<PaymentMethodProps> = ({
                 htmlFor="cardCvc"
                 className="block text-sm font-medium text-gray-700"
               >
-                CVC
+                {t("paymentMethod.cvcLabel")}
               </label>
               <CardCvcElement
                 id="cardCvc"

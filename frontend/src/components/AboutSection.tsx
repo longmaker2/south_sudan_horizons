@@ -16,9 +16,11 @@ const AboutSection = () => {
       className="py-20 bg-gray-100 text-center"
     >
       {/* Title */}
-      <h2 className="text-4xl font-bold text-green-800">{t("about.title")}</h2>
+      <h2 className="text-4xl font-bold text-green-800">
+        {t("aboutsection.title")}
+      </h2>
       <p className="mt-4 text-lg text-gray-700 max-w-4xl mx-auto">
-        {t("about.description")}
+        {t("aboutsection.description")}
       </p>
 
       {/* Key Highlights Section */}
@@ -29,10 +31,10 @@ const AboutSection = () => {
             <FaMountain />
           </div>
           <h3 className="mt-4 text-xl font-bold text-green-800">
-            {t("about.features.naturalBeauty.title")}
+            {t("aboutsection.features.naturalBeauty.title")}
           </h3>
           <p className="mt-2 text-gray-700">
-            {t("about.features.naturalBeauty.description")}
+            {t("aboutsection.features.naturalBeauty.description")}
           </p>
         </div>
 
@@ -42,10 +44,10 @@ const AboutSection = () => {
             <FaTree />
           </div>
           <h3 className="mt-4 text-xl font-bold text-green-800">
-            {t("about.features.wildlife.title")}
+            {t("aboutsection.features.wildlife.title")}
           </h3>
           <p className="mt-2 text-gray-700">
-            {t("about.features.wildlife.description")}
+            {t("aboutsection.features.wildlife.description")}
           </p>
         </div>
 
@@ -55,10 +57,10 @@ const AboutSection = () => {
             <FaUsers />
           </div>
           <h3 className="mt-4 text-xl font-bold text-green-800">
-            {t("about.features.culture.title")}
+            {t("aboutsection.features.culture.title")}
           </h3>
           <p className="mt-2 text-gray-700">
-            {t("about.features.culture.description")}
+            {t("aboutsection.features.culture.description")}
           </p>
         </div>
       </div>
@@ -69,7 +71,7 @@ const AboutSection = () => {
           to="/tours/all"
           className="px-6 py-3 bg-green-600 text-white text-lg font-semibold rounded-lg shadow-md hover:bg-green-700 transition-all duration-300"
         >
-          {t("about.cta")}
+          {t("aboutsection.cta")}
         </Link>
       </div>
 

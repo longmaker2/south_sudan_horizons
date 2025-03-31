@@ -7,11 +7,13 @@ import SimilarTours from "../components/SimilarTours";
 import { Tour } from "../types/tours";
 import { fetchTourDetails, fetchTours, submitReview } from "../utils/api";
 import { useAuth } from "../context/useAuth";
+import { useTranslation } from "react-i18next";
 
 const TourDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t } = useTranslation(); // Hook to access translations
   const [tour, setTour] = useState<Tour | null>(null);
   const [similarTours, setSimilarTours] = useState<Tour[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -32,7 +34,7 @@ const TourDetails = () => {
         setError(null);
 
         if (!id) {
-          throw new Error("Tour ID is missing.");
+          throw new Error(t("tourDetails.missingTourId"));
         }
 
         if (!user) {
@@ -44,7 +46,7 @@ const TourDetails = () => {
         console.log("Fetched tour data:", tourData);
 
         if (!tourData) {
-          throw new Error("Tour not found.");
+          throw new Error(t("tourDetails.tourNotFound"));
         }
         setTour(tourData);
 
@@ -54,27 +56,26 @@ const TourDetails = () => {
           .slice(0, 3);
         setSimilarTours(similar);
 
-        // Update author if user changes after initial load
         setNewReview((prev) => ({
           ...prev,
           author: user?.fullName || "",
         }));
       } catch (error) {
         console.error("Failed to fetch tour details:", error);
-        setError("Failed to load tour details. Please try again later.");
+        setError(t("tourDetails.fetchError"));
       } finally {
         setIsLoading(false);
       }
     };
 
     loadTourDetails();
-  }, [id, user, navigate]);
+  }, [id, user, navigate, t]); // Add t to dependencies for language changes
 
   const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!newReview.author || !newReview.comment || newReview.rating <= 0) {
-      setReviewError("Please provide a comment and a rating.");
+      setReviewError(t("tourDetails.reviewValidationError"));
       return;
     }
 
@@ -82,16 +83,14 @@ const TourDetails = () => {
       const updatedTour = await submitReview(id!, newReview);
       setTour(updatedTour);
       setNewReview({ author: user?.fullName || "", comment: "", rating: 0 });
-      setReviewSuccess("Your review has been submitted successfully!");
+      setReviewSuccess(t("tourDetails.reviewSuccess"));
       setReviewError(null);
       setTimeout(() => setReviewSuccess(null), 5000);
     } catch (error) {
       if (error instanceof Error) {
-        setReviewError(
-          error.message || "Failed to submit review. Please try again."
-        );
+        setReviewError(error.message || t("tourDetails.reviewSubmitError"));
       } else {
-        setReviewError("Failed to submit review. Please try again.");
+        setReviewError(t("tourDetails.reviewSubmitError"));
       }
     }
   };
@@ -108,7 +107,7 @@ const TourDetails = () => {
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-green-600 mx-auto"></div>
           <p className="mt-4 text-lg font-medium text-gray-700">
-            Loading tour details...
+            {t("tourDetails.loadingMessage")}
           </p>
         </div>
       </div>
@@ -124,7 +123,7 @@ const TourDetails = () => {
             onClick={() => navigate(-1)}
             className="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300"
           >
-            Go Back
+            {t("tourDetails.goBackButton")}
           </button>
         </div>
       </div>
@@ -136,16 +135,16 @@ const TourDetails = () => {
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="bg-white p-6 rounded-lg shadow-lg text-center">
           <h2 className="text-2xl font-semibold text-red-600">
-            Tour not found
+            {t("tourDetails.tourNotFoundTitle")}
           </h2>
           <p className="mt-2 text-gray-700">
-            Please go back and select a valid tour.
+            {t("tourDetails.tourNotFoundMessage")}
           </p>
           <button
             onClick={() => navigate(-1)}
             className="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300"
           >
-            Go Back
+            {t("tourDetails.goBackButton")}
           </button>
         </div>
       </div>
@@ -167,7 +166,7 @@ const TourDetails = () => {
           onClick={() => navigate(-1)}
           className="mb-6 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300"
         >
-          ← Back to Tours
+          {t("tourDetails.backToToursButton")}
         </motion.button>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

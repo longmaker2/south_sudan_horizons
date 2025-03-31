@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { FaTimes, FaSpinner } from "react-icons/fa";
 import axios from "axios";
 import { API_BASE_URL } from "../utils/api";
+import { useTranslation } from "react-i18next";
 
 interface Tourist {
   name: string;
@@ -27,6 +28,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const { t } = useTranslation(); // Hook to access translations
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -60,9 +62,9 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
         email: response.data.email,
         profilePicture: response.data.profilePicture,
       });
-      setSuccess("Profile updated successfully!");
+      setSuccess(t("editProfileModal.successMessage"));
     } catch {
-      setError("Failed to update profile");
+      setError(t("editProfileModal.errorMessage"));
     } finally {
       setLoading(false);
     }
@@ -77,11 +79,13 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
         className="bg-white p-6 rounded-lg shadow-md w-full max-w-md"
       >
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-green-800">Edit Profile</h2>
+          <h2 className="text-xl font-bold text-green-800">
+            {t("editProfileModal.title")}
+          </h2>
           <button
             onClick={onClose}
             className="text-gray-600 hover:text-gray-800"
-            title="Close"
+            title={t("editProfileModal.closeButtonTitle")}
           >
             <FaTimes className="w-6 h-6" />
           </button>
@@ -89,7 +93,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
         <form onSubmit={handleSave} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Name
+              {t("editProfileModal.nameLabel")}
             </label>
             <input
               type="text"
@@ -97,12 +101,12 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
               onChange={(e) => setEditedName(e.target.value)}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
               required
-              aria-label="Full Name"
+              aria-label={t("editProfileModal.nameLabel")}
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Email
+              {t("editProfileModal.emailLabel")}
             </label>
             <input
               type="email"
@@ -110,20 +114,20 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
               onChange={(e) => setEditedEmail(e.target.value)}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
               required
-              aria-label="Email"
+              aria-label={t("editProfileModal.emailLabel")}
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Profile Picture
+              {t("editProfileModal.profilePictureLabel")}
             </label>
             <input
               type="file"
               accept="image/*"
               onChange={(e) => setFile(e.target.files?.[0] || null)}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
-              title="Choose a profile picture"
-              placeholder="Choose a profile picture"
+              title={t("editProfileModal.profilePictureTitle")}
+              placeholder={t("editProfileModal.profilePicturePlaceholder")}
             />
           </div>
           {error && <p className="text-sm text-red-600">{error}</p>}
@@ -134,7 +138,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
               onClick={onClose}
               className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-all duration-300"
             >
-              Cancel
+              {t("editProfileModal.cancelButton")}
             </button>
             <button
               type="submit"
@@ -144,7 +148,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
               {loading ? (
                 <FaSpinner className="animate-spin mr-2" />
               ) : (
-                "Save Changes"
+                t("editProfileModal.saveButton")
               )}
             </button>
           </div>

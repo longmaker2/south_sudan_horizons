@@ -4,28 +4,30 @@ import { motion } from "framer-motion";
 import { FaSearch, FaStar } from "react-icons/fa";
 import { Tour } from "../types/tours";
 import { fetchTours } from "../utils/api";
-
-const categories: string[] = [
-  "All",
-  "Adventure",
-  "Cultural",
-  "Wildlife",
-  "Nature",
-];
+import { useTranslation } from "react-i18next";
 
 const AllTours = () => {
+  const { t } = useTranslation();
   const [selectedType, setSelectedType] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [tours, setTours] = useState<Tour[]>([]);
   const [filteredTours, setFilteredTours] = useState<Tour[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Translated categories
+  const categories = [
+    { value: "All", label: t("tours.allTours") },
+    { value: "Adventure", label: t("tours.adventureTours") },
+    { value: "Cultural", label: t("tours.culturalTours") },
+    { value: "Wildlife", label: t("tours.wildlifeTours") },
+    { value: "Nature", label: t("tours.natureTours") },
+  ];
+
   useEffect(() => {
     const loadTours = async () => {
       try {
         setIsLoading(true);
         const data = await fetchTours();
-        console.log(data);
         setTours(data);
         setFilteredTours(data);
       } catch (error) {
@@ -83,11 +85,10 @@ const AllTours = () => {
         <div className="absolute inset-0 bg-gray-100 bg-opacity-50"></div>
         <div className="relative z-10">
           <h1 className="text-5xl font-extrabold text-green-800">
-            All Tours in South Sudan
+            {t("tours.allToursTitle")}
           </h1>
           <p className="mt-4 text-lg max-w-3xl text-gray-700">
-            Explore adventure, cultural, wildlife, and nature tours in South
-            Sudan.
+            {t("tours.allToursSubtitle")}
           </p>
         </div>
       </motion.div>
@@ -100,7 +101,7 @@ const AllTours = () => {
             <FaSearch className="absolute left-3 top-3 text-green-600" />
             <input
               type="text"
-              placeholder="Search tours..."
+              placeholder={t("tours.searchPlaceholder")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-green-400 rounded-lg focus:ring-2 focus:ring-green-500 text-gray-700 shadow-sm"
@@ -110,15 +111,15 @@ const AllTours = () => {
           <div className="flex flex-wrap justify-center md:justify-end space-x-2">
             {categories.map((category) => (
               <button
-                key={category}
-                onClick={() => setSelectedType(category)}
+                key={category.value}
+                onClick={() => setSelectedType(category.value)}
                 className={`px-4 py-2 rounded-lg transition-all duration-300 text-sm md:text-base ${
-                  selectedType === category
+                  selectedType === category.value
                     ? "bg-green-600 text-white shadow-md"
                     : "bg-white text-green-800 hover:bg-green-200 border border-green-400"
                 }`}
               >
-                {category === "All" ? "All Tours" : `${category} Tours`}
+                {category.label}
               </button>
             ))}
           </div>
@@ -130,7 +131,7 @@ const AllTours = () => {
         {isLoading ? (
           <div className="flex flex-col items-center justify-center text-gray-600">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-green-600 mb-4"></div>
-            <p className="text-lg font-medium">Loading all tours...</p>
+            <p className="text-lg font-medium">{t("tours.loadingMessage")}</p>
           </div>
         ) : filteredTours.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -156,16 +157,19 @@ const AllTours = () => {
                     <div className="flex items-center space-x-1">
                       {renderStars(tour.rating)}
                       <span className="text-sm text-gray-600">
-                        ({tour.rating.toFixed(1)})
+                        {tour.rating.toFixed(1)} ({tour.reviews.length}{" "}
+                        {t("tours.reviews")})
                       </span>
                     </div>
+                    <span className="text-green-800 font-bold">
+                      ${tour.price}
+                    </span>
                   </div>
                   <Link
                     to={`/tour-details/${tour._id}`}
                     className="mt-4 block w-full px-4 py-2 bg-green-600 text-white text-center rounded-lg hover:bg-green-700 transition-all duration-300"
-                    onClick={() => console.log("Tour _id:", tour._id)}
                   >
-                    View Details
+                    {t("tours.viewDetails")}
                   </Link>
                 </div>
               </motion.div>
@@ -173,12 +177,8 @@ const AllTours = () => {
           </div>
         ) : (
           <div className="text-center py-12 text-gray-700">
-            <p className="text-xl font-semibold">
-              No tours match your search criteria.
-            </p>
-            <p className="mt-2 text-lg">
-              Try a different search or explore another category.
-            </p>
+            <p className="text-xl font-semibold">{t("tours.noResultsTitle")}</p>
+            <p className="mt-2 text-lg">{t("tours.noResultsSubtitle")}</p>
           </div>
         )}
       </div>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface ChatProps {
   guideName: string;
@@ -7,6 +8,7 @@ interface ChatProps {
 }
 
 const Chat = ({ guideName, isOpen, onClose }: ChatProps) => {
+  const { t } = useTranslation(); // Hook to access translations
   const [buttonPosition, setButtonPosition] = useState({ x: 200, y: "50%" });
 
   const handleDrag = (
@@ -45,11 +47,11 @@ const Chat = ({ guideName, isOpen, onClose }: ChatProps) => {
           left: `${buttonPosition.x}px`,
           transform: "translateY(-50%)",
         }}
-        onClick={onClose} // Toggle the modal
+        onClick={onClose} // Toggle the modal (Note: This should likely toggle isOpen, but keeping as per original)
         onMouseDown={(e) => handleDrag(e, setButtonPosition)}
         className="bg-green-600 text-white p-4 rounded-full shadow-lg hover:bg-green-700 transition-all duration-300 cursor-move hover:scale-110"
-        title={`Chat with ${guideName}`}
-        aria-label="Chat with guide"
+        title={t("chat.buttonTitle", { name: guideName })}
+        aria-label={t("chat.buttonAriaLabel")}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -81,12 +83,12 @@ const Chat = ({ guideName, isOpen, onClose }: ChatProps) => {
         >
           <div className="flex justify-between items-center p-4 bg-green-600 rounded-t-lg">
             <h2 className="text-lg font-semibold text-white">
-              Chat with {guideName}
+              {t("chat.title", { name: guideName })}
             </h2>
             <button
               onClick={onClose}
               className="text-white hover:text-gray-200"
-              aria-label="Close chat"
+              aria-label={t("chat.closeAriaLabel")}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -105,19 +107,21 @@ const Chat = ({ guideName, isOpen, onClose }: ChatProps) => {
             </button>
           </div>
           <div className="p-4">
-            <p className="text-gray-600">Start chatting with {guideName}!</p>
+            <p className="text-gray-600">
+              {t("chat.startMessage", { name: guideName })}
+            </p>
             <textarea
               autoFocus
               className="w-full mt-4 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
-              placeholder="Type your message (max 500 characters)..."
+              placeholder={t("chat.placeholder")}
               maxLength={500}
               rows={3}
             />
             <button
-              onClick={() => alert("Message sent!")}
+              onClick={() => alert(t("chat.sendAlert"))}
               className="mt-4 w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300"
             >
-              Send
+              {t("chat.sendButton")}
             </button>
           </div>
         </div>

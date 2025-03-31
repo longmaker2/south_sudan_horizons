@@ -8,43 +8,52 @@ const availableGuides = [
   {
     id: "507f1f77bcf86cd799439011",
     name: "Diana Otieno",
-    profile: "guideProfile.guides.diana.profile",
+    profile: "Experienced guide with 5+ years of expertise in mountain tours.",
     email: "d.otieno@alustudent.com",
     phone: "+123 456 7890",
     testimonials: [
       {
-        text: "guideProfile.guides.diana.testimonials.0.text",
+        text: "Diana was an amazing guide! He made our trip unforgettable.",
         author: "Ruth S.",
       },
       {
-        text: "guideProfile.guides.diana.testimonials.1.text",
+        text: "Highly recommend John for mountain tours. He's very knowledgeable!",
         author: "David M.",
       },
     ],
-    specializations: [
-      "guideProfile.specializations.mountain",
-      "guideProfile.specializations.hiking",
-      "guideProfile.specializations.cultural",
-    ],
-    languages: ["English", "Spanish", "French"],
-    certifications: [
-      "guideProfile.certifications.mountain",
-      "guideProfile.certifications.firstAid",
-      "guideProfile.certifications.wilderness",
-    ],
-    packages: [
-      "guideProfile.packages.trek",
-      "guideProfile.packages.heritage",
-      "guideProfile.packages.sports",
+  },
+  {
+    id: "507f1f77bcf86cd799439012",
+    name: "Daniel Burongu",
+    profile: "Specializes in cultural and historical tours.",
+    email: "d.burongu@alustudent.com",
+    phone: "+123 456 7891",
+    testimonials: [
+      {
+        text: "Daniel is fantastic! Her knowledge of history is unparalleled.",
+        author: "Ayuel M.",
+      },
     ],
   },
-  // Other guides would follow the same pattern
+  {
+    id: "507f1f77bcf86cd799439013",
+    name: "Kayongo Brian",
+    profile: "Adventure guide with a focus on extreme sports.",
+    email: "b.kayongo@alustudent.com",
+    phone: "+123 456 7892",
+    testimonials: [
+      {
+        text: "Brian made our adventure trip thrilling and safe!",
+        author: "Chol G.",
+      },
+    ],
+  },
 ];
 
 const GuideProfile = () => {
-  const { t } = useTranslation();
   const { guideId } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation(); // Hook to access translations
   const guide = availableGuides.find((g) => g.id === guideId);
 
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -57,7 +66,7 @@ const GuideProfile = () => {
           onClick={() => navigate(-1)}
           className="mt-4 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-all duration-300"
         >
-          {t("guideProfile.backButton")}
+          {t("guideProfile.backToBooking")}
         </button>
       </div>
     );
@@ -76,21 +85,21 @@ const GuideProfile = () => {
       <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6">
         <img
           src="https://via.placeholder.com/800x400"
-          alt={guide.name}
+          alt={t("guideProfile.imageAlt", { name: guide.name })}
           className="w-full h-64 object-cover rounded-lg"
         />
         <h1 className="text-3xl font-bold text-green-800 mt-6">{guide.name}</h1>
-        <p className="mt-4 text-gray-600">{t(guide.profile)}</p>
+        <p className="mt-4 text-gray-600">{guide.profile}</p>
 
         <div className="mt-4">
           <div className="flex items-center">
             <span className="text-yellow-500">★★★★☆</span>
             <span className="ml-2 text-gray-600">
-              {t("guideProfile.rating", { score: 4.5, count: 120 })}
+              {t("guideProfile.rating")}
             </span>
           </div>
           <button
-            onClick={() => alert(t("guideProfile.viewReviewsAlert"))}
+            onClick={() => alert("View all reviews")}
             className="mt-2 text-sm text-green-600 hover:text-green-800"
           >
             {t("guideProfile.viewReviews")}
@@ -102,9 +111,9 @@ const GuideProfile = () => {
             {t("guideProfile.specializationsTitle")}
           </h2>
           <ul className="mt-2 list-disc list-inside text-gray-600">
-            {guide.specializations.map((spec, index) => (
-              <li key={index}>{t(spec)}</li>
-            ))}
+            <li>{t("guideProfile.specialization1")}</li>
+            <li>{t("guideProfile.specialization2")}</li>
+            <li>{t("guideProfile.specialization3")}</li>
           </ul>
         </div>
 
@@ -112,7 +121,7 @@ const GuideProfile = () => {
           <h2 className="text-xl font-semibold text-green-800">
             {t("guideProfile.languagesTitle")}
           </h2>
-          <p className="mt-2 text-gray-600">{guide.languages.join(", ")}</p>
+          <p className="mt-2 text-gray-600">{t("guideProfile.languages")}</p>
         </div>
 
         <div className="mt-4">
@@ -120,20 +129,20 @@ const GuideProfile = () => {
             {t("guideProfile.certificationsTitle")}
           </h2>
           <ul className="mt-2 list-disc list-inside text-gray-600">
-            {guide.certifications.map((cert, index) => (
-              <li key={index}>{t(cert)}</li>
-            ))}
+            <li>{t("guideProfile.certification1")}</li>
+            <li>{t("guideProfile.certification2")}</li>
+            <li>{t("guideProfile.certification3")}</li>
           </ul>
         </div>
 
         <div className="mt-4">
           <h2 className="text-xl font-semibold text-green-800">
-            {t("guideProfile.packagesTitle")}
+            {t("guideProfile.tourPackagesTitle")}
           </h2>
           <ul className="mt-2 list-disc list-inside text-gray-600">
-            {guide.packages.map((pkg, index) => (
-              <li key={index}>{t(pkg)}</li>
-            ))}
+            <li>{t("guideProfile.tourPackage1")}</li>
+            <li>{t("guideProfile.tourPackage2")}</li>
+            <li>{t("guideProfile.tourPackage3")}</li>
           </ul>
         </div>
 
@@ -157,7 +166,7 @@ const GuideProfile = () => {
             <a
               href="https://facebook.com"
               className="text-green-600 hover:text-green-800"
-              aria-label={t("guideProfile.social.facebook")}
+              title={t("guideProfile.followFacebook")}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -171,7 +180,7 @@ const GuideProfile = () => {
             <a
               href="https://instagram.com"
               className="text-green-600 hover:text-green-800"
-              aria-label={t("guideProfile.social.instagram")}
+              title={t("guideProfile.followInstagram")}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -185,7 +194,7 @@ const GuideProfile = () => {
             <a
               href="https://twitter.com"
               className="text-green-600 hover:text-green-800"
-              aria-label={t("guideProfile.social.twitter")}
+              title={t("guideProfile.followTwitter")}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -199,7 +208,7 @@ const GuideProfile = () => {
             <a
               href="https://linkedin.com"
               className="text-green-600 hover:text-green-800"
-              aria-label={t("guideProfile.social.linkedin")}
+              title={t("guideProfile.followLinkedIn")}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -220,7 +229,7 @@ const GuideProfile = () => {
           <div className="mt-2 space-y-4">
             {guide.testimonials.map((testimonial, index) => (
               <div key={index} className="bg-gray-50 p-4 rounded-lg">
-                <p className="text-gray-600">"{t(testimonial.text)}"</p>
+                <p className="text-gray-600">"{testimonial.text}"</p>
                 <p className="mt-2 text-sm text-gray-500">
                   - {testimonial.author}
                 </p>
@@ -240,11 +249,12 @@ const GuideProfile = () => {
             onClick={handleBackToBooking}
             className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-all duration-300"
           >
-            {t("guideProfile.backButton")}
+            {t("guideProfile.backToBooking")}
           </button>
         </div>
       </div>
 
+      {/* Use the Chat component */}
       <Chat
         guideName={guide.name}
         isOpen={isChatOpen}

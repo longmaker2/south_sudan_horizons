@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { FaUser, FaEdit } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 interface Tourist {
   name: string;
@@ -17,6 +18,8 @@ const ProfileComponent: React.FC<ProfileComponentProps> = ({
   tourist,
   onEditProfile,
 }) => {
+  const { t } = useTranslation(); // Hook to access translations
+
   const getInitials = (name: string) => {
     const names = name.split(" ");
     return names
@@ -37,13 +40,13 @@ const ProfileComponent: React.FC<ProfileComponentProps> = ({
       className="bg-white p-6 rounded-lg shadow-md mb-6"
     >
       <h2 className="text-xl font-bold text-green-800 mb-4 flex items-center">
-        <FaUser className="mr-2" /> Profile
+        <FaUser className="mr-2" /> {t("profileComponent.title")}
       </h2>
       <div className="flex items-center space-x-4">
         {imageUrl ? (
           <img
             src={imageUrl}
-            alt="Profile"
+            alt={t("profileComponent.profileImageAlt")} // Translated alt text
             className="w-16 h-16 rounded-full object-cover"
             onError={(e) => {
               console.error("Image failed to load:", imageUrl);
@@ -64,7 +67,7 @@ const ProfileComponent: React.FC<ProfileComponentProps> = ({
         onClick={onEditProfile}
         className="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-300 flex items-center"
       >
-        <FaEdit className="mr-2" /> Edit Profile
+        <FaEdit className="mr-2" /> {t("profileComponent.editProfile")}
       </button>
     </motion.div>
   );
