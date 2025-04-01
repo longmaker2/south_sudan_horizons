@@ -390,8 +390,8 @@
     },
     "team": {
       "title": "Rencontrez notre équipe",
-      "james": {
-        "name": "James Deng",
+      "long": {
+        "name": "Long Maker Long Deng",
         "role": "Fondateur & PDG"
       },
       "sarah": {

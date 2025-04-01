@@ -5,9 +5,9 @@ import { useTranslation } from "react-i18next";
 const teamMembers = [
   {
     id: 1,
-    name: "about.team.james.name",
-    role: "about.team.james.role",
-    image: "/assets/team/james.jpg",
+    name: "about.team.long.name",
+    role: "about.team.long.role",
+    image: "/assets/team/long.jpg",
   },
   {
     id: 2,
