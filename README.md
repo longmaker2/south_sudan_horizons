@@ -45,7 +45,7 @@ South Sudan Horizons bridges the gap between travelers and South Sudan’s rich 
 ### Deployment & Hosting
 
 - **Frontend**: Hosted on **[Vercel](https://south-sudan-horizons.vercel.app/)** – [Live Demo](https://south-sudan-horizons.vercel.app/)
-- **Backend**: Deployed on **[Render](https://render.com/)**
+- **Backend**: Deployed on **[Render](https://south-sudan-horizons.onrender.com)**
 
 ## 📂 Project Structure
 
