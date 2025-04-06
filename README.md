@@ -41,6 +41,7 @@ South Sudan Horizons bridges the gap between travelers and South Sudan’s rich 
 - **[Node.js v22.13.1](https://nodejs.org/)** & **[Express.js](https://expressjs.com/)**: Robust server-side framework.
 - **[MongoDB](https://www.mongodb.com/)** with **[Mongoose ORM](https://mongoosejs.com/)**: Flexible NoSQL database with schema validation.
 - **[JWT Authentication](https://jwt.io/)**: Secure user authentication and session management.
+- **[OAuth 2.0](https://oauth.net/2/)** with **Passport.js**: Enables third-party authentication (e.g., Google, Facebook) for a smoother and more secure login experience.
 
 ### Deployment & Hosting
 
