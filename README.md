@@ -23,18 +23,17 @@ South Sudan Horizons bridges the gap between travelers and South Sudan’s rich 
 - **Profile Management**: Customize and update user profiles with ease.
 - **Tour Search & Discovery**: Find tours with powerful search and filtering tools.
 - **Booking System**: Effortlessly book tours in a few clicks.
-- **Real-Time Chat**: Connect with guides and fellow travelers instantly.
 - **Ratings & Reviews**: Share and read feedback on tours.
-- **Cultural & Natural Insights**: Learn about South Sudan’s heritage and landscapes.
-- **Multi-Language Support**: Available in English and French (more languages planned).
+- **Cultural, Adventure, Wildlife & Natural Insights**: Learn about South Sudan’s heritage and landscapes.
+- **Multi-Language Support**: Available in English, Arabic and French (more languages planned).
 
 ## 🛠️ Tech Stack
 
 ### Frontend
 
 - **[React 19](https://react.dev/)** with **[TypeScript](https://www.typescriptlang.org/)**: Modern, type-safe UI development.
+- **[TypeScript](https://www.typescriptlang.org/)**: Strongly typed language that enhances JavaScript, improves code quality, and reduces bugs.
 - **[Vite](https://vitejs.dev/)**: Lightning-fast build tool for development and production.
-- **[Redux](https://redux.js.org/)**: Predictable state management for complex interactions.
 - **[Tailwind CSS 4](https://tailwindcss.com/)**: Utility-first styling for rapid, responsive design.
 
 ### Backend
@@ -80,9 +79,14 @@ Create a `.env` file in the `backend/` directory with the following:
 #### Backend (e.g., `backend/.env`)
 
 ```plaintext
+MONGO_URI=mongodb_connection_string
+JWT_SECRET=jwt_secret_key
 PORT=5000
-MONGO_URI=mongodb:mongdb_connection
-JWT_SECRET=secret-key
+GUIDES_KEY=guide_key
+ADMIN_KEY=admin_key
+STRIPE_SECRET_KEY=stripe_secret_key_here
+EMAIL_USER=email_address
+EMAIL_PASS=email_password_or_app_pass_here
 ```
 
 ### 3️⃣ Install Dependencies
